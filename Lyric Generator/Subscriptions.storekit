@@ -1,0 +1,95 @@
+{
+  "identifier" : "8C9DF447",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "409AF3F7",
+      "localizations" : [
+
+      ],
+      "name" : "Thrifty Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "29.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "F5B37C88",
+          "introductoryOffer" : {
+            "internalID" : "38AEA79B",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P3D"
+          },
+          "localizations" : [
+            {
+              "description" : "Unlock Unlimited Item Scanning & Price Tracking",
+              "displayName" : "Thrifty Unlimited",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "",
+              "displayName" : "",
+              "locale" : "ar"
+            }
+          ],
+                      "productID" : "com.thrifty.thrifty.unlimited.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Thrifty Unlimited Monthly",
+          "subscriptionGroupID" : "409AF3F7",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "19.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "F5B37C89",
+          "introductoryOffer" : {
+            "internalID" : "38AEA79C",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P3D"
+          },
+          "localizations" : [
+            {
+              "description" : "Special One-Time Offer - Unlock Unlimited Item Scanning & Price Tracking",
+              "displayName" : "Thrifty Unlimited (Special Offer)",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "",
+              "displayName" : "",
+              "locale" : "ar"
+            }
+          ],
+                      "productID" : "com.thrifty.thrifty.unlimited.monthly.winback",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Thrifty Unlimited Monthly - Winback Offer",
+          "subscriptionGroupID" : "409AF3F7",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}

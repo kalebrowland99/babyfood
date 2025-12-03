@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "firebase": "^12.5.0"
+  }
+}

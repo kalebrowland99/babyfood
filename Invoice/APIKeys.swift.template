@@ -1,0 +1,8 @@
+import Foundation
+
+// IMPORTANT: Copy this file to APIKeys.swift and replace the placeholder with your actual API key
+// DO NOT commit your actual API key to version control!
+
+enum APIKeys {
+    static let openAI = "YOUR-OPENAI-API-KEY-HERE"
+} 

@@ -1,0 +1,67 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check file size (max 10MB)
+    function isValidSize() {
+      return request.resource.size < 10 * 1024 * 1024;
+    }
+    
+    // Helper function to check if file is an image
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    // Helper function to check if file is a PDF
+    function isPDF() {
+      return request.resource.contentType == 'application/pdf';
+    }
+    
+    // User profile pictures
+    match /users/{userId}/profile/{filename} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+                      request.auth.uid == userId && 
+                      isImage() && 
+                      isValidSize();
+    }
+    
+    // Invoice attachments (photos, PDFs)
+    match /invoices/{userId}/{invoiceId}/{filename} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if isAuthenticated() && 
+                      request.auth.uid == userId && 
+                      (isImage() || isPDF()) && 
+                      isValidSize();
+    }
+    
+    // Estimate attachments
+    match /estimates/{userId}/{estimateId}/{filename} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if isAuthenticated() && 
+                      request.auth.uid == userId && 
+                      (isImage() || isPDF()) && 
+                      isValidSize();
+    }
+    
+    // Client attachments
+    match /clients/{userId}/{clientId}/{filename} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if isAuthenticated() && 
+                      request.auth.uid == userId && 
+                      (isImage() || isPDF()) && 
+                      isValidSize();
+    }
+    
+    // Deny all other access by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

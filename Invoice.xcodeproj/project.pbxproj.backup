@@ -1,0 +1,781 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1ABB18876684410BB4745E37B4F97AAD /* Run It Up.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1ABB18876684410BB4745E37B4F97AAC /* Run It Up.mp3 */; };
+		313EA2470939424FB17E3EF1CBCA079F /* Better Mornings.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 313EA2470939424FB17E3EF1CBCA079E /* Better Mornings.mp3 */; };
+		5E3796BBEF284349845E6CB22F3AC65A /* Yacht Parties.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5E3796BBEF284349845E6CB22F3AC659 /* Yacht Parties.mp3 */; };
+		9B0A9C2C2E31D920006C762E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 9B0A9C2B2E31D920006C762E /* FirebaseFirestore */; };
+		9B31141A2E283071006BF7E6 /* ThriftyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B3114192E283071006BF7E6 /* ThriftyApp.swift */; };
+		9B31141C2E283071006BF7E6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B31141B2E283071006BF7E6 /* ContentView.swift */; };
+		9B31141E2E283074006BF7E6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B31141D2E283074006BF7E6 /* Assets.xcassets */; };
+		9B3114222E283074006BF7E6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B3114212E283074006BF7E6 /* Preview Assets.xcassets */; };
+		9B31142C2E283074006BF7E6 /* ThriftyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B31142B2E283074006BF7E6 /* ThriftyTests.swift */; };
+		9B3114362E283074006BF7E6 /* ThriftyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B3114352E283074006BF7E6 /* ThriftyUITests.swift */; };
+		9B3114382E283074006BF7E6 /* ThriftyUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B3114372E283074006BF7E6 /* ThriftyUITestsLaunchTests.swift */; };
+		9B471DA02E303EFC00113BCC /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 9B471D9F2E303EFC00113BCC /* FirebaseAuth */; };
+		9B471DA32E30400A00113BCC /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9B471DA22E30400A00113BCC /* GoogleSignIn */; };
+		9B77E8DD2E2CBA9A0025E339 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B77E8D72E2CBA9A0025E339 /* Config.swift */; };
+		9B77E8DE2E2CBA9A0025E339 /* ToolPromptService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B77E8D82E2CBA9A0025E339 /* ToolPromptService.swift */; };
+		9B77E8DF2E2CBA9A0025E339 /* LyricServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B77E8D92E2CBA9A0025E339 /* LyricServices.swift */; };
+		9B77E8E02E2CBA9A0025E339 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B77E8DA2E2CBA9A0025E339 /* APIKeys.swift */; };
+		9B77E8E12E2CBA9A0025E339 /* OpenAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B77E8DB2E2CBA9A0025E339 /* OpenAIService.swift */; };
+		9B77E8E22E2CBA9A0025E339 /* ToolPrompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B77E8DC2E2CBA9A0025E339 /* ToolPrompts.swift */; };
+		9B932B872E2968D800549AE9 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B932B862E2968D800549AE9 /* StoreKit.framework */; };
+		9BCCD2512E30A72000545DD8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9BCCD2502E30A71F00545DD8 /* GoogleService-Info.plist */; };
+		9BCCD2532E31665E00545DD8 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 9BCCD2522E31665E00545DD8 /* FirebaseFunctions */; };
+		B442D08FCB4A4DFC92A6DD51009C7AE6 /* Pleasent Poetry.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = B442D08FCB4A4DFC92A6DD51009C7AE5 /* Pleasent Poetry.mp3 */; };
+		E964A22E3D7C4C25BE6D53920A85FD8A /* 10AM In The South.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E964A22E3D7C4C25BE6D53920A85FD8B /* 10AM In The South.mp3 */; };
+		F8BCEA032E33512A00197AD1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8BCEA022E33512A00197AD1 /* UIKit.framework */; platformFilter = ios; };
+		F8C800182E395B41000B3ED0 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F8C800172E395B41000B3ED0 /* FirebaseStorage */; };
+		F8C800242E398566000B3ED0 /* SerpAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C800212E398566000B3ED0 /* SerpAPIService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9B3114282E283074006BF7E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9B31140E2E283071006BF7E6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9B3114152E283071006BF7E6;
+			remoteInfo = "Lyric Generator";
+		};
+		9B3114322E283074006BF7E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9B31140E2E283071006BF7E6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9B3114152E283071006BF7E6;
+			remoteInfo = "Lyric Generator";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1ABB18876684410BB4745E37B4F97AAC /* Run It Up.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Run It Up.mp3"; path = "Audio/Run It Up.mp3"; sourceTree = "<group>"; };
+		313EA2470939424FB17E3EF1CBCA079E /* Better Mornings.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Better Mornings.mp3"; path = "Audio/Better Mornings.mp3"; sourceTree = "<group>"; };
+		5E3796BBEF284349845E6CB22F3AC659 /* Yacht Parties.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Yacht Parties.mp3"; path = "Audio/Yacht Parties.mp3"; sourceTree = "<group>"; };
+		9B3114162E283071006BF7E6 /* Thrifty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thrifty.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B3114192E283071006BF7E6 /* ThriftyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThriftyApp.swift; sourceTree = "<group>"; };
+		9B31141B2E283071006BF7E6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		9B31141D2E283074006BF7E6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9B31141F2E283074006BF7E6 /* Thrifty.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Thrifty.entitlements; sourceTree = "<group>"; };
+		9B3114212E283074006BF7E6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		9B3114272E283074006BF7E6 /* ThriftyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThriftyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B31142B2E283074006BF7E6 /* ThriftyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThriftyTests.swift; sourceTree = "<group>"; };
+		9B3114312E283074006BF7E6 /* ThriftyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThriftyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B3114352E283074006BF7E6 /* ThriftyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThriftyUITests.swift; sourceTree = "<group>"; };
+		9B3114372E283074006BF7E6 /* ThriftyUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThriftyUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		9B6A1D0E2E302A870089314F /* Thrifty-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Thrifty-Info.plist"; sourceTree = SOURCE_ROOT; };
+		9B77E8D72E2CBA9A0025E339 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		9B77E8D82E2CBA9A0025E339 /* ToolPromptService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolPromptService.swift; sourceTree = "<group>"; };
+		9B77E8D92E2CBA9A0025E339 /* LyricServices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LyricServices.swift; sourceTree = "<group>"; };
+		9B77E8DA2E2CBA9A0025E339 /* APIKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
+		9B77E8DB2E2CBA9A0025E339 /* OpenAIService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenAIService.swift; sourceTree = "<group>"; };
+		9B77E8DC2E2CBA9A0025E339 /* ToolPrompts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolPrompts.swift; sourceTree = "<group>"; };
+		9B932B862E2968D800549AE9 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		9B932B882E2972A300549AE9 /* Subscriptions.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Subscriptions.storekit; path = Thrifty/Subscriptions.storekit; sourceTree = "<group>"; };
+		9BCCD2502E30A71F00545DD8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B442D08FCB4A4DFC92A6DD51009C7AE5 /* Pleasent Poetry.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Pleasent Poetry.mp3"; path = "Audio/Pleasent Poetry.mp3"; sourceTree = "<group>"; };
+		E964A22E3D7C4C25BE6D53920A85FD8B /* 10AM In The South.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "10AM In The South.mp3"; path = "Audio/10AM In The South.mp3"; sourceTree = "<group>"; };
+		F8BCEA022E33512A00197AD1 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		F8C800212E398566000B3ED0 /* SerpAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerpAPIService.swift; sourceTree = "<group>"; };
+		F8C800252E39885B000B3ED0 /* SerpAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SerpAPIService.swift; path = Thrifty/Services/SerpAPIService.swift; sourceTree = "<group>"; };
+		F8C800262E39885B000B3ED0 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Config.swift; path = Thrifty/Services/Config.swift; sourceTree = "<group>"; };
+		F8C800272E39885B000B3ED0 /* FirebaseStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FirebaseStorageService.swift; path = Thrifty/Services/FirebaseStorageService.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9B3114132E283071006BF7E6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8BCEA032E33512A00197AD1 /* UIKit.framework in Frameworks */,
+				9B932B872E2968D800549AE9 /* StoreKit.framework in Frameworks */,
+				9B471DA02E303EFC00113BCC /* FirebaseAuth in Frameworks */,
+				9B471DA32E30400A00113BCC /* GoogleSignIn in Frameworks */,
+				F8C800182E395B41000B3ED0 /* FirebaseStorage in Frameworks */,
+				9B0A9C2C2E31D920006C762E /* FirebaseFirestore in Frameworks */,
+				9BCCD2532E31665E00545DD8 /* FirebaseFunctions in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B3114242E283074006BF7E6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B31142E2E283074006BF7E6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9B31140D2E283071006BF7E6 = {
+			isa = PBXGroup;
+			children = (
+				9B932B882E2972A300549AE9 /* Subscriptions.storekit */,
+				9B3114182E283071006BF7E6 /* Thrifty */,
+				9B31142A2E283074006BF7E6 /* ThriftyTests */,
+				9B3114342E283074006BF7E6 /* ThriftyUITests */,
+				9B3114172E283071006BF7E6 /* Products */,
+				9B932B852E2968D800549AE9 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		9B3114172E283071006BF7E6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9B3114162E283071006BF7E6 /* Thrifty.app */,
+				9B3114272E283074006BF7E6 /* ThriftyTests.xctest */,
+				9B3114312E283074006BF7E6 /* ThriftyUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9B3114182E283071006BF7E6 /* Thrifty */ = {
+			isa = PBXGroup;
+			children = (
+				F8C800212E398566000B3ED0 /* SerpAPIService.swift */,
+				9BCCD2502E30A71F00545DD8 /* GoogleService-Info.plist */,
+				9B6A1D0E2E302A870089314F /* Thrifty-Info.plist */,
+				9B77E8DA2E2CBA9A0025E339 /* APIKeys.swift */,
+				9B77E8D72E2CBA9A0025E339 /* Config.swift */,
+				9B77E8D92E2CBA9A0025E339 /* LyricServices.swift */,
+				9B77E8DB2E2CBA9A0025E339 /* OpenAIService.swift */,
+				9B77E8DC2E2CBA9A0025E339 /* ToolPrompts.swift */,
+				9B77E8D82E2CBA9A0025E339 /* ToolPromptService.swift */,
+				9B3114192E283071006BF7E6 /* ThriftyApp.swift */,
+				9B31141B2E283071006BF7E6 /* ContentView.swift */,
+				9B31141D2E283074006BF7E6 /* Assets.xcassets */,
+				9B31141F2E283074006BF7E6 /* Thrifty.entitlements */,
+				9B3114202E283074006BF7E6 /* Preview Content */,
+				E964A22E3D7C4C25BE6D53920A85FD8B /* 10AM In The South.mp3 */,
+				313EA2470939424FB17E3EF1CBCA079E /* Better Mornings.mp3 */,
+				B442D08FCB4A4DFC92A6DD51009C7AE5 /* Pleasent Poetry.mp3 */,
+				1ABB18876684410BB4745E37B4F97AAC /* Run It Up.mp3 */,
+				5E3796BBEF284349845E6CB22F3AC659 /* Yacht Parties.mp3 */,
+			);
+			path = Thrifty;
+			sourceTree = "<group>";
+		};
+		9B3114202E283074006BF7E6 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				9B3114212E283074006BF7E6 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		9B31142A2E283074006BF7E6 /* ThriftyTests */ = {
+			isa = PBXGroup;
+			children = (
+				9B31142B2E283074006BF7E6 /* ThriftyTests.swift */,
+			);
+			path = ThriftyTests;
+			sourceTree = "<group>";
+		};
+		9B3114342E283074006BF7E6 /* ThriftyUITests */ = {
+			isa = PBXGroup;
+			children = (
+				9B3114352E283074006BF7E6 /* ThriftyUITests.swift */,
+				9B3114372E283074006BF7E6 /* ThriftyUITestsLaunchTests.swift */,
+			);
+			path = ThriftyUITests;
+			sourceTree = "<group>";
+		};
+		9B932B852E2968D800549AE9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F8C800262E39885B000B3ED0 /* Config.swift */,
+				F8C800272E39885B000B3ED0 /* FirebaseStorageService.swift */,
+				F8C800252E39885B000B3ED0 /* SerpAPIService.swift */,
+				F8BCEA022E33512A00197AD1 /* UIKit.framework */,
+				9B932B862E2968D800549AE9 /* StoreKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9B3114152E283071006BF7E6 /* Thrifty */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9B31143B2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "Thrifty" */;
+			buildPhases = (
+				9B3114122E283071006BF7E6 /* Sources */,
+				9B3114132E283071006BF7E6 /* Frameworks */,
+				9B3114142E283071006BF7E6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Thrifty;
+			packageProductDependencies = (
+				9B471D9F2E303EFC00113BCC /* FirebaseAuth */,
+				9B471DA22E30400A00113BCC /* GoogleSignIn */,
+				9BCCD2522E31665E00545DD8 /* FirebaseFunctions */,
+				9B0A9C2B2E31D920006C762E /* FirebaseFirestore */,
+				F8C800172E395B41000B3ED0 /* FirebaseStorage */,
+			);
+			productName = Thrifty;
+			productReference = 9B3114162E283071006BF7E6 /* Thrifty.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9B3114262E283074006BF7E6 /* ThriftyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9B31143E2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "ThriftyTests" */;
+			buildPhases = (
+				9B3114232E283074006BF7E6 /* Sources */,
+				9B3114242E283074006BF7E6 /* Frameworks */,
+				9B3114252E283074006BF7E6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9B3114292E283074006BF7E6 /* PBXTargetDependency */,
+			);
+			name = ThriftyTests;
+			productName = ThriftyTests;
+			productReference = 9B3114272E283074006BF7E6 /* ThriftyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		9B3114302E283074006BF7E6 /* ThriftyUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9B3114412E283074006BF7E6 /* Build configuration list for PBXNativeTarget "ThriftyUITests" */;
+			buildPhases = (
+				9B31142D2E283074006BF7E6 /* Sources */,
+				9B31142E2E283074006BF7E6 /* Frameworks */,
+				9B31142F2E283074006BF7E6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9B3114332E283074006BF7E6 /* PBXTargetDependency */,
+			);
+			name = ThriftyUITests;
+			productName = ThriftyUITests;
+			productReference = 9B3114312E283074006BF7E6 /* ThriftyUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9B31140E2E283071006BF7E6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					9B3114152E283071006BF7E6 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					9B3114262E283074006BF7E6 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 9B3114152E283071006BF7E6;
+					};
+					9B3114302E283074006BF7E6 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 9B3114152E283071006BF7E6;
+					};
+				};
+			};
+			buildConfigurationList = 9B3114112E283071006BF7E6 /* Build configuration list for PBXProject "Thrifty" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 9B31140D2E283071006BF7E6;
+			packageReferences = (
+				9B471D9E2E303EFC00113BCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				9B471DA12E30400A00113BCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
+			productRefGroup = 9B3114172E283071006BF7E6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9B3114152E283071006BF7E6 /* Thrifty */,
+				9B3114262E283074006BF7E6 /* ThriftyTests */,
+				9B3114302E283074006BF7E6 /* ThriftyUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9B3114142E283071006BF7E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B3114222E283074006BF7E6 /* Preview Assets.xcassets in Resources */,
+				9B31141E2E283074006BF7E6 /* Assets.xcassets in Resources */,
+				9BCCD2512E30A72000545DD8 /* GoogleService-Info.plist in Resources */,
+				E964A22E3D7C4C25BE6D53920A85FD8A /* 10AM In The South.mp3 in Resources */,
+				313EA2470939424FB17E3EF1CBCA079F /* Better Mornings.mp3 in Resources */,
+				B442D08FCB4A4DFC92A6DD51009C7AE6 /* Pleasent Poetry.mp3 in Resources */,
+				1ABB18876684410BB4745E37B4F97AAD /* Run It Up.mp3 in Resources */,
+				5E3796BBEF284349845E6CB22F3AC65A /* Yacht Parties.mp3 in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B3114252E283074006BF7E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B31142F2E283074006BF7E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9B3114122E283071006BF7E6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B77E8E12E2CBA9A0025E339 /* OpenAIService.swift in Sources */,
+				9B77E8E02E2CBA9A0025E339 /* APIKeys.swift in Sources */,
+				9B31141C2E283071006BF7E6 /* ContentView.swift in Sources */,
+				9B77E8DF2E2CBA9A0025E339 /* LyricServices.swift in Sources */,
+				9B31141A2E283071006BF7E6 /* ThriftyApp.swift in Sources */,
+				9B77E8DD2E2CBA9A0025E339 /* Config.swift in Sources */,
+				9B77E8DE2E2CBA9A0025E339 /* ToolPromptService.swift in Sources */,
+				9B77E8E22E2CBA9A0025E339 /* ToolPrompts.swift in Sources */,
+				F8C800242E398566000B3ED0 /* SerpAPIService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B3114232E283074006BF7E6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B31142C2E283074006BF7E6 /* ThriftyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B31142D2E283074006BF7E6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B3114382E283074006BF7E6 /* ThriftyUITestsLaunchTests.swift in Sources */,
+				9B3114362E283074006BF7E6 /* ThriftyUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9B3114292E283074006BF7E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9B3114152E283071006BF7E6 /* Thrifty */;
+			targetProxy = 9B3114282E283074006BF7E6 /* PBXContainerItemProxy */;
+		};
+		9B3114332E283074006BF7E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9B3114152E283071006BF7E6 /* Thrifty */;
+			targetProxy = 9B3114322E283074006BF7E6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		9B3114392E283074006BF7E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = W3WCKHSXJ5;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		9B31143A2E283074006BF7E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = W3WCKHSXJ5;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		9B31143C2E283074006BF7E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Thrifty/Thrifty.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Thrifty/Preview Content\"";
+				DEVELOPMENT_TEAM = W3WCKHSXJ5;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Thrifty-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Thrifty;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thrifty.thrifty;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.thrifty.thrifty;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		9B31143D2E283074006BF7E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Thrifty/Thrifty.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Thrifty/Preview Content\"";
+				DEVELOPMENT_TEAM = W3WCKHSXJ5;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Thrifty-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Thrifty;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thrifty.thrifty;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.thrifty.thrifty;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		9B31143F2E283074006BF7E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.TrvzrWViGDUN.LyricsGenerator.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thrifty.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Thrifty";
+			};
+			name = Debug;
+		};
+		9B3114402E283074006BF7E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.TrvzrWViGDUN.LyricsGenerator.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thrifty.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Thrifty";
+			};
+			name = Release;
+		};
+		9B3114422E283074006BF7E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.TrvzrWViGDUN.LyricsGenerator.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Thrifty;
+			};
+			name = Debug;
+		};
+		9B3114432E283074006BF7E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.TrvzrWViGDUN.LyricsGenerator.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Thrifty;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9B3114112E283071006BF7E6 /* Build configuration list for PBXProject "Thrifty" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9B3114392E283074006BF7E6 /* Debug */,
+				9B31143A2E283074006BF7E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9B31143B2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "Thrifty" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9B31143C2E283074006BF7E6 /* Debug */,
+				9B31143D2E283074006BF7E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9B31143E2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "ThriftyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9B31143F2E283074006BF7E6 /* Debug */,
+				9B3114402E283074006BF7E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9B3114412E283074006BF7E6 /* Build configuration list for PBXNativeTarget "ThriftyUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9B3114422E283074006BF7E6 /* Debug */,
+				9B3114432E283074006BF7E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9B471D9E2E303EFC00113BCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 10.29.0;
+			};
+		};
+		9B471DA12E30400A00113BCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9B0A9C2B2E31D920006C762E /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B471D9E2E303EFC00113BCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		9B471D9F2E303EFC00113BCC /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B471D9E2E303EFC00113BCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		9B471DA22E30400A00113BCC /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B471DA12E30400A00113BCC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		9BCCD2522E31665E00545DD8 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B471D9E2E303EFC00113BCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		F8C800172E395B41000B3ED0 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B471D9E2E303EFC00113BCC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 9B31140E2E283071006BF7E6 /* Project object */;
+}

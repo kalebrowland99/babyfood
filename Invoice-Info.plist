@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.thrifty.thrifty.skadevents</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>GoogleSignIn</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.477330728361-mniq4fdcdfdt13n7tghcs867kfmld5pt</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.facebook.sdk</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1313964556984936</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.thrifty.thrifty</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>thriftyapp</string>
+			</array>
+		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>1313964556984936</string>
+	<key>FacebookClientToken</key>
+	<string>8a0ec108ef6a2b03fda69aa18cb5afa8</string>
+	<key>FacebookDisplayName</key>
+	<string>Thrifty</string>
+	<key>FacebookAdvertiserIDCollectionEnabled</key>
+	<true/>
+	<key>GIDClientID</key>
+	<string>477330728361-mniq4fdcdfdt13n7tghcs867kfmld5pt.apps.googleusercontent.com</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Invoice needs camera access to capture photos for your invoices.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Invoice uses your location to provide location-based services.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Invoice needs photo library access to attach photos to your invoices.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Invoice may use microphone access for audio features.</string>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>invoice.app.skadevents</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>processing</string>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,15 @@
+{
+  "hardpaywall": true,
+  "stripepaywall": true,
+  "usestripesheet": true,
+  "useproductionmode": false,
+  "stripecheckouturl": "https://us-central1-thrift-882cb.cloudfunctions.net/getStripeCheckoutUrl",
+  "stripecheckouturltest": "https://us-central1-thrift-882cb.cloudfunctions.net/getStripeCheckoutUrl",
+  "winbackcheckouturl": "https://us-central1-thrift-882cb.cloudfunctions.net/getStripeCheckoutUrl?isWinback=true",
+  "winbackcheckouturltest": "https://us-central1-thrift-882cb.cloudfunctions.net/getStripeCheckoutUrl?isWinback=true",
+  "stripebuttontext": "Try for $0.00",
+  "stripedisclaimertext": "Free for 3 days, then $79.99 per year after.",
+  "winbackdisclaimertext": "Free for 3 days, then $79.00 per year after.",
+  "termsurl": "https://thrifty.com/terms"
+}
+
