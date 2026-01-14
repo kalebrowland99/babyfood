@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		1ABB18876684410BB4745E37B4F97AAD /* Run It Up.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1ABB18876684410BB4745E37B4F97AAC /* Run It Up.mp3 */; };
 		313EA2470939424FB17E3EF1CBCA079F /* Better Mornings.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 313EA2470939424FB17E3EF1CBCA079E /* Better Mornings.mp3 */; };
+		3421BC3C2F1604C8002594DF /* FacebookBasics in Frameworks */ = {isa = PBXBuildFile; productRef = F8D5DFE12EB6798C00B376C1 /* FacebookBasics */; };
+		3421BC3D2F1604C8002594DF /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = F8D5DFE32EB6798C00B376C1 /* FacebookCore */; };
+		3421BC3E2F1604C8002594DF /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = F817012B2EC4308500570816 /* Stripe */; };
+		3421BC3F2F1604C8002594DF /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = F817012D2EC4308500570816 /* StripeApplePay */; };
+		3421BC402F1604C8002594DF /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = F817012F2EC4308500570816 /* StripePaymentSheet */; };
+		3421BC522F176060002594DF /* TransactionUsageTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3421BC512F176060002594DF /* TransactionUsageTracker.swift */; };
 		5E3796BBEF284349845E6CB22F3AC65A /* Yacht Parties.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5E3796BBEF284349845E6CB22F3AC659 /* Yacht Parties.mp3 */; };
 		9B31141A2E283071006BF7E6 /* InvoiceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B3114192E283071006BF7E6 /* InvoiceApp.swift */; };
 		9B31141C2E283071006BF7E6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B31141B2E283071006BF7E6 /* ContentView.swift */; };
@@ -26,19 +32,10 @@
 		9B77E8E22E2CBA9A0025E339 /* ToolPrompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B77E8DC2E2CBA9A0025E339 /* ToolPrompts.swift */; };
 		9B932B872E2968D800549AE9 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B932B862E2968D800549AE9 /* StoreKit.framework */; };
 		9BCCD2512E30A72000545DD8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9BCCD2502E30A71F00545DD8 /* GoogleService-Info.plist */; };
-		AB1234562F000001006BF7E6 /* InvoiceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1234552F000001006BF7E6 /* InvoiceViews.swift */; };
-		AB1234582F000002006BF7E6 /* ProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1234572F000002006BF7E6 /* ProfileSettingsView.swift */; };
-		AB12345A2F000003006BF7E6 /* SettingsDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1234592F000003006BF7E6 /* SettingsDetailViews.swift */; };
-		AB12345C2F000004006BF7E6 /* CreateInvoiceFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12345B2F000004006BF7E6 /* CreateInvoiceFlow.swift */; };
-		AB12345E2F000005006BF7E6 /* InvoiceSendFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12345D2F000005006BF7E6 /* InvoiceSendFlow.swift */; };
-		AB1234602F000006006BF7E6 /* ClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB12345F2F000006006BF7E6 /* ClientManager.swift */; };
 		B442D08FCB4A4DFC92A6DD51009C7AE6 /* Pleasent Poetry.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = B442D08FCB4A4DFC92A6DD51009C7AE5 /* Pleasent Poetry.mp3 */; };
 		E964A22E3D7C4C25BE6D53920A85FD8A /* 10AM In The South.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = E964A22E3D7C4C25BE6D53920A85FD8B /* 10AM In The South.mp3 */; };
-		F86C33DA2EC0FCCF00B79FE5 /* BusinessSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C33D92EC0FCCF00B79FE5 /* BusinessSettingsView.swift */; };
-		F86C33DE2EC12A7D00B79FE5 /* EditInvoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C33DD2EC12A7D00B79FE5 /* EditInvoiceView.swift */; };
 		F896B5382E8D873F001C63D8 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = F896B5372E8D873F001C63D8 /* RevenueCat */; };
 		F896B53A2E8D873F001C63D8 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = F896B5392E8D873F001C63D8 /* RevenueCatUI */; };
-		F896B5462E8D8A42001C63D8 /* TransactionUsageTracker 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = F896B5452E8D8A42001C63D8 /* TransactionUsageTracker 2.swift */; };
 		F896B5482E8D8C6F001C63D8 /* RefundRequestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F896B5472E8D8C6F001C63D8 /* RefundRequestService.swift */; };
 		F896D0C22E75C11B00196B76 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F896D0C12E75C11B00196B76 /* ConfettiSwiftUI */; };
 		F896D0C42E75C3B100196B76 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F896D0C32E75C3B100196B76 /* FirebaseAuth */; };
@@ -54,15 +51,12 @@
 		F8FE60EA2E75DBE800014042 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = F8FE60E92E75DBE800014042 /* Mixpanel */; };
 		F8FE60F32E75DD8100014042 /* MixpanelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FE60F22E75DD7C00014042 /* MixpanelService.swift */; };
 		F8FE60FB2E75E16600014042 /* AppUsageTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FE60FA2E75E16600014042 /* AppUsageTracker.swift */; };
-		F8FE61062E75E28900014042 /* ConsumptionRequestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FE61052E75E28900014042 /* ConsumptionRequestService.swift */; };
 		F8FE61142E75E42000014042 /* Subscriptions.storekit in Resources */ = {isa = PBXBuildFile; fileRef = F8FE61132E75E42000014042 /* Subscriptions.storekit */; };
 		F8FE61152E75E42000014042 /* APIKeys.swift.template in Resources */ = {isa = PBXBuildFile; fileRef = F8FE610F2E75E42000014042 /* APIKeys.swift.template */; };
 		F8FE61162E75E42000014042 /* StaticVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FE61122E75E42000014042 /* StaticVideoPlayer.swift */; };
 		F8FE61172E75E42000014042 /* FirebaseStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FE61102E75E42000014042 /* FirebaseStorageService.swift */; };
 		F8FE61182E75E42000014042 /* SerpAPIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FE61112E75E42000014042 /* SerpAPIConfig.swift */; };
 		PB1234622F100007006BF7E6 /* PriceBookModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = PB1234612F100007006BF7E6 /* PriceBookModels.swift */; };
-		PB1234662F100009006BF7E6 /* AddPriceBookItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PB1234652F100009006BF7E6 /* AddPriceBookItemView.swift */; };
-		PB1234682F10000A006BF7E6 /* AddInvoiceItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = PB1234672F10000A006BF7E6 /* AddInvoiceItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,16 +79,17 @@
 /* Begin PBXFileReference section */
 		1ABB18876684410BB4745E37B4F97AAC /* Run It Up.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Run It Up.mp3"; path = "Audio/Run It Up.mp3"; sourceTree = "<group>"; };
 		313EA2470939424FB17E3EF1CBCA079E /* Better Mornings.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Better Mornings.mp3"; path = "Audio/Better Mornings.mp3"; sourceTree = "<group>"; };
+		3421BC512F176060002594DF /* TransactionUsageTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionUsageTracker.swift; sourceTree = "<group>"; };
 		5E3796BBEF284349845E6CB22F3AC659 /* Yacht Parties.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Yacht Parties.mp3"; path = "Audio/Yacht Parties.mp3"; sourceTree = "<group>"; };
-		9B3114162E283071006BF7E6 /* Invoice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Invoice.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B3114162E283071006BF7E6 /* calai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = calai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B3114192E283071006BF7E6 /* InvoiceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceApp.swift; sourceTree = "<group>"; };
 		9B31141B2E283071006BF7E6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9B31141D2E283074006BF7E6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9B31141F2E283074006BF7E6 /* Invoice.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Invoice.entitlements; sourceTree = "<group>"; };
 		9B3114212E283074006BF7E6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		9B3114272E283074006BF7E6 /* InvoiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InvoiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B3114272E283074006BF7E6 /* calaiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = calaiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B31142B2E283074006BF7E6 /* InvoiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceTests.swift; sourceTree = "<group>"; };
-		9B3114312E283074006BF7E6 /* InvoiceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InvoiceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B3114312E283074006BF7E6 /* calaiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = calaiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B3114352E283074006BF7E6 /* InvoiceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceUITests.swift; sourceTree = "<group>"; };
 		9B3114372E283074006BF7E6 /* InvoiceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		9B6A1D0E2E302A870089314F /* Invoice-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Invoice-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -107,17 +102,8 @@
 		9B932B862E2968D800549AE9 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		9B932B882E2972A300549AE9 /* Subscriptions.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Subscriptions.storekit; path = Invoice/Subscriptions.storekit; sourceTree = "<group>"; };
 		9BCCD2502E30A71F00545DD8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		AB1234552F000001006BF7E6 /* InvoiceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceViews.swift; sourceTree = "<group>"; };
-		AB1234572F000002006BF7E6 /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
-		AB1234592F000003006BF7E6 /* SettingsDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailViews.swift; sourceTree = "<group>"; };
-		AB12345B2F000004006BF7E6 /* CreateInvoiceFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateInvoiceFlow.swift; sourceTree = "<group>"; };
-		AB12345D2F000005006BF7E6 /* InvoiceSendFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceSendFlow.swift; sourceTree = "<group>"; };
-		AB12345F2F000006006BF7E6 /* ClientManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientManager.swift; sourceTree = "<group>"; };
 		B442D08FCB4A4DFC92A6DD51009C7AE5 /* Pleasent Poetry.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Pleasent Poetry.mp3"; path = "Audio/Pleasent Poetry.mp3"; sourceTree = "<group>"; };
 		E964A22E3D7C4C25BE6D53920A85FD8B /* 10AM In The South.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "10AM In The South.mp3"; path = "Audio/10AM In The South.mp3"; sourceTree = "<group>"; };
-		F86C33D92EC0FCCF00B79FE5 /* BusinessSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessSettingsView.swift; sourceTree = "<group>"; };
-		F86C33DD2EC12A7D00B79FE5 /* EditInvoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditInvoiceView.swift; sourceTree = "<group>"; };
-		F896B5452E8D8A42001C63D8 /* TransactionUsageTracker 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransactionUsageTracker 2.swift"; sourceTree = "<group>"; };
 		F896B5472E8D8C6F001C63D8 /* RefundRequestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefundRequestService.swift; sourceTree = "<group>"; };
 		F8B4ABCB2E79BFFA00906F4B /* FirebaseMessagingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseMessagingDelegate.swift; sourceTree = "<group>"; };
 		F8BCEA022E33512A00197AD1 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -126,15 +112,12 @@
 		F8F691EC2E788B250073C7F7 /* ConfettiSwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiSwiftUI.swift; sourceTree = "<group>"; };
 		F8FE60F22E75DD7C00014042 /* MixpanelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixpanelService.swift; sourceTree = "<group>"; };
 		F8FE60FA2E75E16600014042 /* AppUsageTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsageTracker.swift; sourceTree = "<group>"; };
-		F8FE61052E75E28900014042 /* ConsumptionRequestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumptionRequestService.swift; sourceTree = "<group>"; };
 		F8FE610F2E75E42000014042 /* APIKeys.swift.template */ = {isa = PBXFileReference; lastKnownFileType = text; path = APIKeys.swift.template; sourceTree = "<group>"; };
 		F8FE61102E75E42000014042 /* FirebaseStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorageService.swift; sourceTree = "<group>"; };
 		F8FE61112E75E42000014042 /* SerpAPIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerpAPIConfig.swift; sourceTree = "<group>"; };
 		F8FE61122E75E42000014042 /* StaticVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticVideoPlayer.swift; sourceTree = "<group>"; };
 		F8FE61132E75E42000014042 /* Subscriptions.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Subscriptions.storekit; sourceTree = "<group>"; };
 		PB1234612F100007006BF7E6 /* PriceBookModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceBookModels.swift; sourceTree = "<group>"; };
-		PB1234652F100009006BF7E6 /* AddPriceBookItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPriceBookItemView.swift; sourceTree = "<group>"; };
-		PB1234672F10000A006BF7E6 /* AddInvoiceItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInvoiceItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,21 +125,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3421BC402F1604C8002594DF /* StripePaymentSheet in Frameworks */,
+				3421BC3F2F1604C8002594DF /* StripeApplePay in Frameworks */,
+				3421BC3E2F1604C8002594DF /* Stripe in Frameworks */,
+				3421BC3D2F1604C8002594DF /* FacebookCore in Frameworks */,
+				3421BC3C2F1604C8002594DF /* FacebookBasics in Frameworks */,
 				F896D0C22E75C11B00196B76 /* ConfettiSwiftUI in Frameworks */,
-				F8D5DFE42EB6798C00B376C1 /* FacebookCore in Frameworks */,
 				F896B53A2E8D873F001C63D8 /* RevenueCatUI in Frameworks */,
 				F896D0C42E75C3B100196B76 /* FirebaseAuth in Frameworks */,
 				F896D0CA2E75C3B100196B76 /* FirebaseStorage in Frameworks */,
 				F896D0C82E75C3B100196B76 /* FirebaseFunctions in Frameworks */,
 				F8BCEA032E33512A00197AD1 /* UIKit.framework in Frameworks */,
-				F8D5DFE22EB6798C00B376C1 /* FacebookBasics in Frameworks */,
 				F8FE60EA2E75DBE800014042 /* Mixpanel in Frameworks */,
 				9B932B872E2968D800549AE9 /* StoreKit.framework in Frameworks */,
 				F896B5382E8D873F001C63D8 /* RevenueCat in Frameworks */,
 				9B471DA32E30400A00113BCC /* GoogleSignIn in Frameworks */,
-				F817012C2EC4308500570816 /* Stripe in Frameworks */,
 				F8B4ABCA2E79BE8500906F4B /* FirebaseMessaging in Frameworks */,
-				F81701302EC4308500570816 /* StripePaymentSheet in Frameworks */,
 				F896D0C62E75C3B100196B76 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -193,9 +177,9 @@
 		9B3114172E283071006BF7E6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9B3114162E283071006BF7E6 /* Invoice.app */,
-				9B3114272E283074006BF7E6 /* InvoiceTests.xctest */,
-				9B3114312E283074006BF7E6 /* InvoiceUITests.xctest */,
+				9B3114162E283071006BF7E6 /* calai.app */,
+				9B3114272E283074006BF7E6 /* calaiTests.xctest */,
+				9B3114312E283074006BF7E6 /* calaiUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -203,10 +187,8 @@
 		9B3114182E283071006BF7E6 /* Invoice */ = {
 			isa = PBXGroup;
 			children = (
-				F86C33DD2EC12A7D00B79FE5 /* EditInvoiceView.swift */,
-				F86C33D92EC0FCCF00B79FE5 /* BusinessSettingsView.swift */,
+				3421BC512F176060002594DF /* TransactionUsageTracker.swift */,
 				F896B5472E8D8C6F001C63D8 /* RefundRequestService.swift */,
-				F896B5452E8D8A42001C63D8 /* TransactionUsageTracker 2.swift */,
 				F8B4ABCB2E79BFFA00906F4B /* FirebaseMessagingDelegate.swift */,
 				F8F691EC2E788B250073C7F7 /* ConfettiSwiftUI.swift */,
 				F8F691EA2E7680F20073C7F7 /* ai-summary.png */,
@@ -216,10 +198,8 @@
 				F8FE61112E75E42000014042 /* SerpAPIConfig.swift */,
 				F8FE61122E75E42000014042 /* StaticVideoPlayer.swift */,
 				F8FE61132E75E42000014042 /* Subscriptions.storekit */,
-				F8FE61052E75E28900014042 /* ConsumptionRequestService.swift */,
 				F8FE60FA2E75E16600014042 /* AppUsageTracker.swift */,
 				F8FE60F22E75DD7C00014042 /* MixpanelService.swift */,
-				F8STRIPE0052E75DBE800014042 /* StripePaymentService.swift */,
 				9BCCD2502E30A71F00545DD8 /* GoogleService-Info.plist */,
 				9B6A1D0E2E302A870089314F /* Invoice-Info.plist */,
 				9B77E8DA2E2CBA9A0025E339 /* APIKeys.swift */,
@@ -230,15 +210,7 @@
 				9B77E8D82E2CBA9A0025E339 /* ToolPromptService.swift */,
 				9B3114192E283071006BF7E6 /* InvoiceApp.swift */,
 				9B31141B2E283071006BF7E6 /* ContentView.swift */,
-				AB1234552F000001006BF7E6 /* InvoiceViews.swift */,
-				AB1234572F000002006BF7E6 /* ProfileSettingsView.swift */,
-				AB1234592F000003006BF7E6 /* SettingsDetailViews.swift */,
-				AB12345B2F000004006BF7E6 /* CreateInvoiceFlow.swift */,
-				AB12345D2F000005006BF7E6 /* InvoiceSendFlow.swift */,
-				AB12345F2F000006006BF7E6 /* ClientManager.swift */,
 				PB1234612F100007006BF7E6 /* PriceBookModels.swift */,
-				PB1234652F100009006BF7E6 /* AddPriceBookItemView.swift */,
-				PB1234672F10000A006BF7E6 /* AddInvoiceItemView.swift */,
 				9B31141D2E283074006BF7E6 /* Assets.xcassets */,
 				9B31141F2E283074006BF7E6 /* Invoice.entitlements */,
 				9B3114202E283074006BF7E6 /* Preview Content */,
@@ -288,9 +260,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9B3114152E283071006BF7E6 /* Invoice */ = {
+		9B3114152E283071006BF7E6 /* calai */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9B31143B2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "Invoice" */;
+			buildConfigurationList = 9B31143B2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "calai" */;
 			buildPhases = (
 				9B3114122E283071006BF7E6 /* Sources */,
 				9B3114132E283071006BF7E6 /* Frameworks */,
@@ -300,7 +272,7 @@
 			);
 			dependencies = (
 			);
-			name = Invoice;
+			name = calai;
 			packageProductDependencies = (
 				9B471DA22E30400A00113BCC /* GoogleSignIn */,
 				F896D0C12E75C11B00196B76 /* ConfettiSwiftUI */,
@@ -319,12 +291,12 @@
 				F817012F2EC4308500570816 /* StripePaymentSheet */,
 			);
 			productName = Invoice;
-			productReference = 9B3114162E283071006BF7E6 /* Invoice.app */;
+			productReference = 9B3114162E283071006BF7E6 /* calai.app */;
 			productType = "com.apple.product-type.application";
 		};
-		9B3114262E283074006BF7E6 /* InvoiceTests */ = {
+		9B3114262E283074006BF7E6 /* calaiTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9B31143E2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "InvoiceTests" */;
+			buildConfigurationList = 9B31143E2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "calaiTests" */;
 			buildPhases = (
 				9B3114232E283074006BF7E6 /* Sources */,
 				9B3114242E283074006BF7E6 /* Frameworks */,
@@ -335,14 +307,14 @@
 			dependencies = (
 				9B3114292E283074006BF7E6 /* PBXTargetDependency */,
 			);
-			name = InvoiceTests;
+			name = calaiTests;
 			productName = InvoiceTests;
-			productReference = 9B3114272E283074006BF7E6 /* InvoiceTests.xctest */;
+			productReference = 9B3114272E283074006BF7E6 /* calaiTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		9B3114302E283074006BF7E6 /* InvoiceUITests */ = {
+		9B3114302E283074006BF7E6 /* calaiUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9B3114412E283074006BF7E6 /* Build configuration list for PBXNativeTarget "InvoiceUITests" */;
+			buildConfigurationList = 9B3114412E283074006BF7E6 /* Build configuration list for PBXNativeTarget "calaiUITests" */;
 			buildPhases = (
 				9B31142D2E283074006BF7E6 /* Sources */,
 				9B31142E2E283074006BF7E6 /* Frameworks */,
@@ -353,9 +325,9 @@
 			dependencies = (
 				9B3114332E283074006BF7E6 /* PBXTargetDependency */,
 			);
-			name = InvoiceUITests;
+			name = calaiUITests;
 			productName = InvoiceUITests;
-			productReference = 9B3114312E283074006BF7E6 /* InvoiceUITests.xctest */;
+			productReference = 9B3114312E283074006BF7E6 /* calaiUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -403,9 +375,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9B3114152E283071006BF7E6 /* Invoice */,
-				9B3114262E283074006BF7E6 /* InvoiceTests */,
-				9B3114302E283074006BF7E6 /* InvoiceUITests */,
+				9B3114152E283071006BF7E6 /* calai */,
+				9B3114262E283074006BF7E6 /* calaiTests */,
+				9B3114302E283074006BF7E6 /* calaiUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -452,24 +424,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B77E8E12E2CBA9A0025E339 /* OpenAIService.swift in Sources */,
+				3421BC522F176060002594DF /* TransactionUsageTracker.swift in Sources */,
 				9B77E8E02E2CBA9A0025E339 /* APIKeys.swift in Sources */,
 				9B31141C2E283071006BF7E6 /* ContentView.swift in Sources */,
-				AB1234562F000001006BF7E6 /* InvoiceViews.swift in Sources */,
-				AB1234582F000002006BF7E6 /* ProfileSettingsView.swift in Sources */,
-				F86C33DA2EC0FCCF00B79FE5 /* BusinessSettingsView.swift in Sources */,
-				AB12345A2F000003006BF7E6 /* SettingsDetailViews.swift in Sources */,
-				AB12345C2F000004006BF7E6 /* CreateInvoiceFlow.swift in Sources */,
-				F86C33DE2EC12A7D00B79FE5 /* EditInvoiceView.swift in Sources */,
-				AB12345E2F000005006BF7E6 /* InvoiceSendFlow.swift in Sources */,
-				AB1234602F000006006BF7E6 /* ClientManager.swift in Sources */,
 				PB1234622F100007006BF7E6 /* PriceBookModels.swift in Sources */,
-				PB1234662F100009006BF7E6 /* AddPriceBookItemView.swift in Sources */,
-				PB1234682F10000A006BF7E6 /* AddInvoiceItemView.swift in Sources */,
 				F8F691ED2E788B260073C7F7 /* ConfettiSwiftUI.swift in Sources */,
 				F8FE60F32E75DD8100014042 /* MixpanelService.swift in Sources */,
 				9B77E8DF2E2CBA9A0025E339 /* LyricServices.swift in Sources */,
 				9B31141A2E283071006BF7E6 /* InvoiceApp.swift in Sources */,
-				F896B5462E8D8A42001C63D8 /* TransactionUsageTracker 2.swift in Sources */,
 				9B77E8DD2E2CBA9A0025E339 /* Config.swift in Sources */,
 				F8B4ABCC2E79BFFA00906F4B /* FirebaseMessagingDelegate.swift in Sources */,
 				9B77E8DE2E2CBA9A0025E339 /* ToolPromptService.swift in Sources */,
@@ -478,9 +440,7 @@
 				F8FE61182E75E42000014042 /* SerpAPIConfig.swift in Sources */,
 				9B77E8E22E2CBA9A0025E339 /* ToolPrompts.swift in Sources */,
 				F8FE60FB2E75E16600014042 /* AppUsageTracker.swift in Sources */,
-				F8FE61062E75E28900014042 /* ConsumptionRequestService.swift in Sources */,
 				F896B5482E8D8C6F001C63D8 /* RefundRequestService.swift in Sources */,
-				F8STRIPE0042E75DBE800014042 /* StripePaymentService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -506,12 +466,12 @@
 /* Begin PBXTargetDependency section */
 		9B3114292E283074006BF7E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9B3114152E283071006BF7E6 /* Invoice */;
+			target = 9B3114152E283071006BF7E6 /* calai */;
 			targetProxy = 9B3114282E283074006BF7E6 /* PBXContainerItemProxy */;
 		};
 		9B3114332E283074006BF7E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9B3114152E283071006BF7E6 /* Invoice */;
+			target = 9B3114152E283071006BF7E6 /* calai */;
 			targetProxy = 9B3114322E283074006BF7E6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -649,12 +609,12 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Invoice-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = Thrifty;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Thrifty needs camera access to analyze thrift store items and help you find the best deals.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Thrifty uses your location to find nearby thrift stores and provide local shopping recommendations.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Thrifty may use microphone access for audio features and voice interactions.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Thrifty needs photo library access to analyze your thrift store item photos.";
+				INFOPLIST_KEY_CFBundleDisplayName = "Cal AI";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Cal AI needs camera access to scan food items and track your nutrition.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Invoice uses your location to provide location-based services.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Invoice may use microphone access for audio features.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Invoice needs photo library access to attach photos to your invoices.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -670,8 +630,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
 				MARKETING_VERSION = 2.8;
-				PRODUCT_BUNDLE_IDENTIFIER = invoice.app;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = invoice.app;
+				PRODUCT_BUNDLE_IDENTIFIER = calai.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
@@ -700,12 +659,12 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Invoice-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = Thrifty;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Thrifty needs camera access to analyze thrift store items and help you find the best deals.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Thrifty uses your location to find nearby thrift stores and provide local shopping recommendations.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Thrifty may use microphone access for audio features and voice interactions.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Thrifty needs photo library access to analyze your thrift store item photos.";
+				INFOPLIST_KEY_CFBundleDisplayName = "Cal AI";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Cal AI needs camera access to scan food items and track your nutrition.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Invoice uses your location to provide location-based services.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Invoice may use microphone access for audio features.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Invoice needs photo library access to attach photos to your invoices.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -721,8 +680,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
 				MARKETING_VERSION = 2.8;
-				PRODUCT_BUNDLE_IDENTIFIER = invoice.app;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = invoice.app;
+				PRODUCT_BUNDLE_IDENTIFIER = calai.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
@@ -745,7 +703,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = invoice.app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = calai.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -767,7 +725,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = invoice.app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = calai.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -832,7 +790,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9B31143B2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "Invoice" */ = {
+		9B31143B2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "calai" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9B31143C2E283074006BF7E6 /* Debug */,
@@ -841,7 +799,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9B31143E2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "InvoiceTests" */ = {
+		9B31143E2E283074006BF7E6 /* Build configuration list for PBXNativeTarget "calaiTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9B31143F2E283074006BF7E6 /* Debug */,
@@ -850,7 +808,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9B3114412E283074006BF7E6 /* Build configuration list for PBXNativeTarget "InvoiceUITests" */ = {
+		9B3114412E283074006BF7E6 /* Build configuration list for PBXNativeTarget "calaiUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9B3114422E283074006BF7E6 /* Debug */,

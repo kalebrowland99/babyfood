@@ -4,7 +4,7 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.thrifty.thrifty.skadevents</string>
+		<string>invoice.app.skadevents</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -15,7 +15,7 @@
 			<string>GoogleSignIn</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.477330728361-mniq4fdcdfdt13n7tghcs867kfmld5pt</string>
+				<string>com.googleusercontent.apps.442045211912-p06i2u6v4kgdqrhnjtq8nti2562mv4j9</string>
 			</array>
 		</dict>
 		<dict>
@@ -39,28 +39,16 @@
 			</array>
 		</dict>
 	</array>
+	<key>FacebookAdvertiserIDCollectionEnabled</key>
+	<true/>
 	<key>FacebookAppID</key>
 	<string>1313964556984936</string>
 	<key>FacebookClientToken</key>
 	<string>8a0ec108ef6a2b03fda69aa18cb5afa8</string>
 	<key>FacebookDisplayName</key>
 	<string>Thrifty</string>
-	<key>FacebookAdvertiserIDCollectionEnabled</key>
-	<true/>
 	<key>GIDClientID</key>
-	<string>477330728361-mniq4fdcdfdt13n7tghcs867kfmld5pt.apps.googleusercontent.com</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Invoice needs camera access to capture photos for your invoices.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Invoice uses your location to provide location-based services.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Invoice needs photo library access to attach photos to your invoices.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Invoice may use microphone access for audio features.</string>
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-	<array>
-		<string>invoice.app.skadevents</string>
-	</array>
+	<string>442045211912-p06i2u6v4kgdqrhnjtq8nti2562mv4j9.apps.googleusercontent.com</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>processing</string>

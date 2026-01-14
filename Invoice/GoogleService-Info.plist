@@ -3,32 +3,32 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>477330728361-mniq4fdcdfdt13n7tghcs867kfmld5pt.apps.googleusercontent.com</string>
+	<string>442045211912-p06i2u6v4kgdqrhnjtq8nti2562mv4j9.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.477330728361-mniq4fdcdfdt13n7tghcs867kfmld5pt</string>
+	<string>com.googleusercontent.apps.442045211912-p06i2u6v4kgdqrhnjtq8nti2562mv4j9</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDX8lKSZ1rTMuW21Eac8NfxzWm8SSm4MNI</string>
+	<string>AIzaSyBh_w98WlDSAh_fCpR9DJ-u8gK25XlKrVA</string>
 	<key>GCM_SENDER_ID</key>
-	<string>477330728361</string>
+	<string>442045211912</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>invoice.app</string>
+	<string>calai.app</string>
 	<key>PROJECT_ID</key>
-	<string>invoice-8b29c</string>
+	<string>cal-app-f3017</string>
 	<key>STORAGE_BUCKET</key>
-	<string>invoice-8b29c.firebasestorage.app</string>
+	<string>cal-app-f3017.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:477330728361:ios:fd0e23014ea8d98ea8d0b8</string>
+	<string>1:442045211912:ios:8415f6622018b0d642f8bd</string>
 </dict>
 </plist>

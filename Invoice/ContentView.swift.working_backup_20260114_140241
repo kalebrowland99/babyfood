@@ -12894,7 +12894,6 @@ class ProfileManager: ObservableObject {
 
 
 struct MainAppView: View {
-    @StateObject private var authManager = AuthenticationManager.shared
     @State private var selectedDay = 5 // Tuesday is selected (index 5 in the week)
     @State private var selectedTab = 1 // Start with Progress tab
     @State private var streakCount = 0
@@ -12923,7 +12922,6 @@ struct MainAppView: View {
                     ProgressView()
                 } else if selectedTab == 2 {
                     ProfileView()
-                        .environmentObject(authManager)
                 }
                 
                 // Bottom Navigation
