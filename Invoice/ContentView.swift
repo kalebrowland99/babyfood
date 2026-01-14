@@ -1979,44 +1979,6 @@ struct GoogleSignInButton: View {
     }
 }
 
-// Completely static Continue with Email Button - no visual changes allowed
-struct EmailSignInButton: View {
-    @Binding var showingEmailSignIn: Bool
-    @ObservedObject var authManager: AuthenticationManager
-    let onTap: () -> Void
-    
-    var body: some View {
-        ZStack {
-            // Static white background with border - never changes
-            Rectangle()
-                .fill(Color.white)
-                .frame(maxWidth: .infinity, maxHeight: 56)
-                .cornerRadius(28)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 28)
-                        .stroke(Color.gray.opacity(0.15), lineWidth: 1)
-                )
-            
-            // Static content - never changes
-            HStack {
-                Image(systemName: "envelope.fill")
-                    .font(.system(size: 20))
-                    .foregroundColor(.black)
-                Text("Continue with email")
-                    .font(.system(size: 17, weight: .medium))
-                    .foregroundColor(.black)
-            }
-        }
-        .contentShape(Rectangle()) // Define tap area
-        .onTapGesture {
-            // Simple tap action - no button styling at all
-            showingEmailSignIn = true
-            onTap()
-        }
-        .allowsHitTesting(!authManager.isLoading) // Disable when loading but no visual change
-    }
-}
-
 // Completely static Get Started Button - no visual changes allowed
 struct GetStartedButton: View {
     @Binding var showingOnboarding: Bool
@@ -2465,7 +2427,6 @@ enum StoreError: Error {
 struct SignInView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var authManager = AuthenticationManager.shared
-    @Binding var showingEmailSignIn: Bool
     @State private var showingPrivacyPolicy = false
     
     var body: some View {
@@ -2498,11 +2459,6 @@ struct SignInView: View {
                 
                 // Google Sign In - RE-ENABLED with real CLIENT_ID
                 GoogleSignInButton(authManager: authManager)
-                
-                // Continue with email - Static button
-                EmailSignInButton(showingEmailSignIn: $showingEmailSignIn, authManager: authManager) {
-                    dismiss()
-                }
             }
             .padding(.top, 48)
             .padding(.horizontal, 24)
@@ -4543,7 +4499,7 @@ struct RatingView: View {
                 
                 // Social proof section
                 VStack(spacing: 12) { // Reduced from 16
-                    Text("Thrifty was made for\npeople like you")
+                    Text("Cal AI was made for\npeople like you")
                         .font(.system(size: 20, weight: .medium))
                         .multilineTextAlignment(.center)
                         .padding(.top, 24) // Reduced from 32
@@ -4582,7 +4538,7 @@ struct RatingView: View {
                     }
                     .padding(.top, 8)
                     
-                    Text("+ 1000 Thrifty users")
+                    Text("+ 1000 Cal AI users")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(.gray)
                         .padding(.top, 4)
@@ -4618,7 +4574,7 @@ struct RatingView: View {
                                 }
                             }
                             
-                            Text("\"I flip vintage clothes online, and this tool helps me spot undervalued gems faster. It's like having a pro thrifter in my pocket!\"")
+                            Text("\"Cal AI takes the guesswork out of nutrition. I can finally reach my fitness goals without spending hours tracking every meal. It's a game changer!\"")
                                 .font(.system(size: 13)) // Reduced from 14
                                 .foregroundColor(.white.opacity(0.95))
                                 .lineLimit(nil)
@@ -4823,46 +4779,23 @@ struct CompletionView: View {
                 .scaleEffect(showContent ? 1 : 0)
                 .animation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.3), value: showContent)
                 
-                // "All done!" text
-                Text("All done!")
-                    .font(.system(size: 17, weight: .medium))
-                    .padding(.top, 8)
-                    .opacity(showContent ? 1 : 0)
-                    .animation(.easeOut(duration: 0.6).delay(0.6), value: showContent)
-                
                 // Main title
                 Text("Thank you for trusting us")
                     .font(.system(size: 32, weight: .bold))
                     .multilineTextAlignment(.center)
                     .padding(.top, 32)
                     .opacity(showContent ? 1 : 0)
-                    .animation(.easeOut(duration: 0.6).delay(0.8), value: showContent)
+                    .animation(.easeOut(duration: 0.6).delay(0.6), value: showContent)
                 
-                // Subtitle
-                Text("Now let's personalize Cal AI for you...")
+                // Privacy message
+                Text("We promise to always keep your personal information private and secure.")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
                     .opacity(showContent ? 1 : 0)
-                    .animation(.easeOut(duration: 0.6).delay(1.0), value: showContent)
-                
-                // Privacy section
-                VStack(spacing: 12) {
-                    Image(systemName: "lock.shield")
-                        .font(.system(size: 32))
-                        .foregroundColor(.gray)
-                    
-                    Text("Your privacy and security matter to us.")
-                        .font(.system(size: 17, weight: .semibold))
-                    
-                    Text("We promise to always keep your personal information private and secure.")
-                        .font(.system(size: 15))
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.top, 32)
-                .opacity(showContent ? 1 : 0)
-                .animation(.easeOut(duration: 0.6).delay(1.2), value: showContent)
+                    .animation(.easeOut(duration: 0.6).delay(0.8), value: showContent)
                 
                 Spacer()
                 
@@ -8397,316 +8330,6 @@ struct CustomPlanView: View {
     }
 }
 
-// Email Sign In View - Two Screen Flow
-struct EmailSignInView: View {
-    @Environment(\.dismiss) var dismiss
-    @StateObject private var authManager = AuthenticationManager.shared
-    @State private var currentScreen: EmailSignInScreen = .emailEntry
-    @State private var email = ""
-    @State private var verificationCode = ""
-    @State private var codeDigits = ["", "", "", ""]
-    @FocusState private var focusedDigit: Int?
-    
-    enum EmailSignInScreen {
-        case emailEntry
-        case codeVerification
-    }
-    
-    var body: some View {
-        NavigationView {
-        VStack(spacing: 0) {
-                switch currentScreen {
-                case .emailEntry:
-                    emailEntryScreen
-                case .codeVerification:
-                    codeVerificationScreen
-                }
-            }
-            .background(Color.white)
-            .navigationBarHidden(true)
-            .alert("Error", isPresented: .constant(authManager.errorMessage != nil)) {
-                Button("OK") {
-                    authManager.errorMessage = nil
-                }
-            } message: {
-                Text(authManager.errorMessage ?? "")
-            }
-        }
-    }
-    
-    // MARK: - Email Entry Screen
-    private var emailEntryScreen: some View {
-        VStack(spacing: 0) {
-            // Header with back button
-            HStack {
-                Button(action: { dismiss() }) {
-                    Circle()
-                        .fill(Color(.systemGray6))
-                        .frame(width: 40, height: 40)
-                        .overlay(
-                            Image(systemName: "arrow.left")
-                                .foregroundColor(.black)
-                                .font(.system(size: 18))
-                        )
-                }
-                
-                Spacer()
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 16)
-            
-            // Title
-            Text("Sign In")
-                .font(.system(size: 32, weight: .bold))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 24)
-                .padding(.top, 40)
-            
-            // Email input field
-            VStack(spacing: 20) {
-                TextField("Email", text: $email)
-                    .font(.system(size: 17))
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 18)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color(.systemGray4), lineWidth: 1)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.white)
-                            )
-                    )
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
-                    .textContentType(.emailAddress)
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 60)
-                
-                Spacer()
-                
-            // Continue button
-            Button(action: {
-                sendVerificationCode()
-            }) {
-                Text("Continue")
-                    .font(.system(size: 17, weight: .semibold))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(isEmailValid ? Color.black : Color(.systemGray4))
-                    .foregroundColor(isEmailValid ? .white : Color(.systemGray2))
-                    .cornerRadius(28)
-            }
-            .disabled(!isEmailValid || authManager.isLoading)
-            .padding(.horizontal, 24)
-            .padding(.bottom, 34)
-        }
-    }
-    
-    // MARK: - Code Verification Screen
-    private var codeVerificationScreen: some View {
-        VStack(spacing: 0) {
-            // Header with back button
-            HStack {
-                Button(action: { currentScreen = .emailEntry }) {
-                    Circle()
-                        .fill(Color(.systemGray6))
-                        .frame(width: 40, height: 40)
-                        .overlay(
-                            Image(systemName: "arrow.left")
-                                .foregroundColor(.black)
-                                .font(.system(size: 18))
-                        )
-                }
-                
-                Spacer()
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 16)
-            
-            // Title
-            Text("Confirm your email")
-                .font(.system(size: 32, weight: .bold))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 24)
-                .padding(.top, 40)
-            
-            // Description
-                VStack(alignment: .leading, spacing: 8) {
-                Text("Please enter the 4-digit code we've just sent to")
-                    .font(.system(size: 17))
-                        .foregroundColor(.gray)
-                    
-                Text(maskedEmail)
-                    .font(.system(size: 17, weight: .medium))
-                    .foregroundColor(.black)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 24)
-            .padding(.top, 16)
-            
-            // 4-digit code input
-            HStack(spacing: 16) {
-                ForEach(0..<4, id: \.self) { index in
-                    CodeDigitField(
-                        text: $codeDigits[index],
-                        isActive: focusedDigit == index
-                    )
-                    .focused($focusedDigit, equals: index)
-                    .onChange(of: codeDigits[index]) { newValue in
-                        handleCodeInput(at: index, value: newValue)
-                    }
-                }
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 48)
-            
-            // Resend code
-            HStack(spacing: 4) {
-                Text("Didn't receive the code?")
-                    .font(.system(size: 17))
-                            .foregroundColor(.gray)
-                        
-                Button("Resend") {
-                    resendCode()
-                }
-                .font(.system(size: 17, weight: .medium))
-                .foregroundColor(.black)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 24)
-            .padding(.top, 32)
-            
-            Spacer()
-        }
-    }
-    
-    // MARK: - Helper Properties
-    private var isEmailValid: Bool {
-        email.contains("@") && email.contains(".") && !email.isEmpty
-    }
-    
-    private var maskedEmail: String {
-        let components = email.components(separatedBy: "@")
-        guard components.count == 2 else { return email }
-        
-        let username = components[0]
-        let domain = components[1]
-        
-        if username.count <= 2 {
-            return "\(username)••••@\(domain)"
-        } else {
-            let prefix = String(username.prefix(2))
-            return "\(prefix)••••@\(domain)"
-        }
-    }
-    
-    // MARK: - Helper Methods
-    private func sendVerificationCode() {
-        authManager.sendEmailVerificationCode(email: email) { success, message in
-            DispatchQueue.main.async {
-                if success {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        self.currentScreen = .codeVerification
-                    }
-                    self.focusedDigit = 0
-                    
-                    // Show success message if needed
-                    if let message = message {
-                        print("✅ \(message)")
-                    }
-                } else {
-                    // Show error message
-                    self.authManager.errorMessage = message ?? "Failed to send verification code"
-                }
-            }
-        }
-    }
-    
-    private func handleCodeInput(at index: Int, value: String) {
-        // Only allow single digits
-        if value.count > 1 {
-            codeDigits[index] = String(value.last ?? Character(""))
-        }
-        
-        // Move to next field if digit entered
-        if !value.isEmpty && index < 3 {
-            focusedDigit = index + 1
-        }
-        
-        // Check if all digits are filled
-        if codeDigits.allSatisfy({ !$0.isEmpty }) {
-            verifyCode()
-        }
-    }
-    
-    private func resendCode() {
-        // Reset code fields
-        codeDigits = ["", "", "", ""]
-        focusedDigit = 0
-        
-        // Use AuthenticationManager to resend code
-        authManager.resendVerificationCode { success, message in
-            DispatchQueue.main.async {
-                if let message = message {
-                    if success {
-                        print("✅ \(message)")
-        } else {
-                        self.authManager.errorMessage = message
-                    }
-                }
-            }
-        }
-    }
-    
-    private func verifyCode() {
-        let enteredCode = codeDigits.joined()
-        
-        // Use AuthenticationManager to verify the real code
-        authManager.verifyEmailCode(email: email, code: enteredCode) { success, message in
-            DispatchQueue.main.async {
-                if success {
-                    // Successfully verified, AuthenticationManager handles sign in
-                    self.dismiss()
-                } else {
-                    // Show error and reset code fields
-                    self.authManager.errorMessage = message ?? "Invalid verification code"
-                    self.codeDigits = ["", "", "", ""]
-                    self.focusedDigit = 0
-                }
-            }
-        }
-    }
-}
-
-// MARK: - Code Digit Field Component
-struct CodeDigitField: View {
-    @Binding var text: String
-    let isActive: Bool
-    
-    var body: some View {
-        TextField("", text: $text)
-            .font(.system(size: 24, weight: .medium))
-            .multilineTextAlignment(.center)
-            .keyboardType(.numberPad)
-            .frame(width: 60, height: 60)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isActive ? Color.black : Color(.systemGray4), lineWidth: isActive ? 2 : 1)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.white)
-                    )
-            )
-            .onChange(of: text) { newValue in
-                // Limit to single digit
-                if newValue.count > 1 {
-                    text = String(newValue.last ?? Character(""))
-            }
-        }
-    }
-}
-
 // MARK: - Google Maps View (DISABLED - Removed GoogleMaps dependency)
 /* Commented out to remove GoogleMaps dependency
 struct GoogleMapsView: UIViewRepresentable {
@@ -9502,7 +9125,6 @@ class RecentFindsManager: ObservableObject {
 struct ContentView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @State private var showingSignIn = false
-    @State private var showingEmailSignIn = false
     @State private var showingOnboarding = false
     @State private var navigateToTryForFree = false
 
@@ -9552,7 +9174,7 @@ struct ContentView: View {
                         .padding(.bottom, 30)
                     
                     // Title Text
-                    Text("Thrifting\nmade easy")
+                    Text("Tracking\nmade easy")
                         .font(.system(size: 42, weight: .bold))
                         .multilineTextAlignment(.center)
                         .padding(.bottom, 40)
@@ -9589,14 +9211,9 @@ struct ContentView: View {
                 get: { showingSignIn && !authManager.isLoggedIn },
                 set: { showingSignIn = $0 }
             )) {
-                SignInView(showingEmailSignIn: $showingEmailSignIn)
+                SignInView()
                     .presentationDetents([.height(UIScreen.main.bounds.height * 0.52)])
                     .presentationDragIndicator(.hidden)
-            }
-            .sheet(isPresented: $showingEmailSignIn) {
-                EmailSignInView()
-                    .presentationDetents([.height(UIScreen.main.bounds.height * 0.7)])
-                    .presentationDragIndicator(.visible)
             }
             .fullScreenCover(isPresented: $showingOnboarding) {
                 NavigationView {
@@ -9625,7 +9242,6 @@ struct ContentView: View {
                 if isLoggedIn {
                     // User became authenticated, dismiss any open sheets
                     showingSignIn = false
-                    showingEmailSignIn = false
                     
                     // If user hasn't completed onboarding, show onboarding flow
                     if !authManager.hasCompletedOnboarding {
@@ -10230,37 +9846,37 @@ struct CustomPlanSummaryView: View {
                             GridItem(.flexible())
                         ], spacing: 12) {
                             
-                            // Boost in clarity
+                            // Nutrition clarity
                             RecommendationCircle(
                                 icon: "eye.fill",
-                                title: "Boost in clarity",
+                                title: "Nutrition clarity",
                                 value: "79%",
                                 color: Color.purple,
                                 delay: 1.2
                             )
                             
-                            // Boost in savings
+                            // Goal achievement
                             RecommendationCircle(
-                                icon: "dollarsign.circle.fill",
-                                title: "Boost in savings",
+                                icon: "chart.line.uptrend.xyaxis",
+                                title: "Goal achievement",
                                 value: "71%",
                                 color: Color.green,
                                 delay: 1.4
                             )
                             
-                            // Time saved per day
+                            // Time saved tracking
                             RecommendationCircle(
                                 icon: "clock.fill",
-                                title: "Time saved per day",
+                                title: "Time saved tracking",
                                 value: "2.5h",
                                 color: Color.blue,
                                 delay: 1.6
                             )
                             
-                            // Boost in enjoyment
+                            // Wellness boost
                             RecommendationCircle(
                                 icon: "heart.fill",
-                                title: "Boost in enjoyment",
+                                title: "Wellness boost",
                                 value: "85%",
                                 color: Color.orange,
                                 delay: 1.8
@@ -10914,7 +10530,7 @@ struct TryForFreeView: View {
             // Main content
             VStack(spacing: 0) {
                 // Title
-                Text(remoteConfig.hardPaywall ? "We want you to try\nThrifty for free" : "We want you to try\nThrifty")
+                Text(remoteConfig.hardPaywall ? "We want you to try\nCal AI for free" : "We want you to try\nCal AI")
                     .font(.system(size: 28, weight: .bold))
                     .multilineTextAlignment(.center)
                     .foregroundColor(.black)
@@ -12454,8 +12070,8 @@ class AuthenticationManager: NSObject, ObservableObject {
         currentUser = userData
         isLoggedIn = true
         isLoading = false
-        // Reset onboarding status - all users should go through onboarding on sign in
-        hasCompletedOnboarding = false
+        // Load onboarding status from Firebase instead of resetting it
+        loadOnboardingStatusFromFirebase()
         // Reset subscription status for new user - will be updated by Firebase call
         hasCompletedSubscription = false
         saveAuthenticationState()
@@ -12477,6 +12093,7 @@ class AuthenticationManager: NSObject, ObservableObject {
     func markOnboardingCompleted() {
         hasCompletedOnboarding = true
         saveAuthenticationState()
+        saveOnboardingStatusToFirebase()
         print("✅ Onboarding marked as completed")
     }
     
@@ -12513,6 +12130,31 @@ class AuthenticationManager: NSObject, ObservableObject {
         print("👤 Set guest mode - user is now logged in")
     }
     
+    private func saveOnboardingStatusToFirebase() {
+        guard let email = currentUser?.email else {
+            print("❌ No email available to save onboarding status")
+            return
+        }
+        
+        let db = Firestore.firestore()
+        let onboardingData: [String: Any] = [
+            "hasCompletedOnboarding": true,
+            "completedAt": FieldValue.serverTimestamp(),
+            "email": email,
+            "userID": currentUser?.id ?? "unknown"
+        ]
+        
+        // Use email as the document ID for cross-auth provider compatibility
+        let emailKey = email.lowercased().replacingOccurrences(of: ".", with: "_").replacingOccurrences(of: "@", with: "_")
+        db.collection("user_onboarding").document(emailKey).setData(onboardingData) { error in
+            if let error = error {
+                print("❌ Error saving onboarding status to Firebase: \(error.localizedDescription)")
+            } else {
+                print("✅ Successfully saved onboarding completion to Firebase for email: \(email)")
+            }
+        }
+    }
+    
     private func saveSubscriptionStatusToFirebase() {
         guard let email = currentUser?.email else {
             print("❌ No email available to save subscription status")
@@ -12534,6 +12176,43 @@ class AuthenticationManager: NSObject, ObservableObject {
                 print("❌ Error saving subscription status to Firebase: \(error.localizedDescription)")
             } else {
                 print("✅ Successfully saved subscription completion to Firebase for email: \(email)")
+            }
+        }
+    }
+    
+    private func loadOnboardingStatusFromFirebase() {
+        guard let email = currentUser?.email else {
+            print("❌ No email available to load onboarding status")
+            hasCompletedOnboarding = false
+            saveAuthenticationState()
+            return
+        }
+        
+        let db = Firestore.firestore()
+        // Use email as the document ID for cross-auth provider compatibility
+        let emailKey = email.lowercased().replacingOccurrences(of: ".", with: "_").replacingOccurrences(of: "@", with: "_")
+        db.collection("user_onboarding").document(emailKey).getDocument { [weak self] document, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("❌ Error loading onboarding status from Firebase: \(error.localizedDescription)")
+                    // On error, default to false (show onboarding)
+                    self?.hasCompletedOnboarding = false
+                    self?.saveAuthenticationState()
+                    return
+                }
+                
+                if let document = document, document.exists,
+                   let data = document.data(),
+                   let hasCompleted = data["hasCompletedOnboarding"] as? Bool {
+                    self?.hasCompletedOnboarding = hasCompleted
+                    self?.saveAuthenticationState()
+                    print("✅ Loaded onboarding status from Firestore for email \(email): \(hasCompleted)")
+                } else {
+                    // No onboarding record found - user hasn't completed onboarding
+                    print("📝 No onboarding status found in Firestore for email: \(email) - defaulting to false")
+                    self?.hasCompletedOnboarding = false
+                    self?.saveAuthenticationState()
+                }
             }
         }
     }
@@ -12568,6 +12247,90 @@ class AuthenticationManager: NSObject, ObservableObject {
                     print("📝 No subscription status found in Firestore for email: \(email) - defaulting to false")
                     self?.hasCompletedSubscription = false
                     self?.saveAuthenticationState()
+                }
+            }
+        }
+    }
+    
+    func deleteAccount(completion: @escaping (Bool, String?) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            completion(false, "No user is currently signed in")
+            return
+        }
+        
+        guard let email = currentUser?.email else {
+            completion(false, "No email found for current user")
+            return
+        }
+        
+        isLoading = true
+        
+        let db = Firestore.firestore()
+        let emailKey = email.lowercased().replacingOccurrences(of: ".", with: "_").replacingOccurrences(of: "@", with: "_")
+        
+        // Create a dispatch group to handle multiple async operations
+        let group = DispatchGroup()
+        var firestoreError: Error?
+        
+        // Delete user_onboarding document
+        group.enter()
+        db.collection("user_onboarding").document(emailKey).delete { error in
+            if let error = error {
+                print("❌ Error deleting onboarding data: \(error.localizedDescription)")
+                firestoreError = error
+            } else {
+                print("✅ Deleted onboarding data for \(email)")
+            }
+            group.leave()
+        }
+        
+        // Delete user_subscriptions document
+        group.enter()
+        db.collection("user_subscriptions").document(emailKey).delete { error in
+            if let error = error {
+                print("❌ Error deleting subscription data: \(error.localizedDescription)")
+                firestoreError = error
+            } else {
+                print("✅ Deleted subscription data for \(email)")
+            }
+            group.leave()
+        }
+        
+        // Wait for Firestore deletions to complete, then delete Firebase Auth account
+        group.notify(queue: .main) { [weak self] in
+            // Delete the Firebase Auth account
+            user.delete { error in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    
+                    if let error = error {
+                        print("❌ Error deleting Firebase Auth account: \(error.localizedDescription)")
+                        self?.errorMessage = "Failed to delete account: \(error.localizedDescription)"
+                        completion(false, error.localizedDescription)
+                    } else {
+                        print("✅ Successfully deleted Firebase Auth account for \(email)")
+                        
+                        // Sign out from Google if needed
+                        GoogleSignIn.GIDSignIn.sharedInstance.signOut()
+                        
+                        // Clear all local data
+                        self?.currentUser = nil
+                        self?.isLoggedIn = false
+                        self?.isLoading = false
+                        self?.errorMessage = nil
+                        self?.hasCompletedOnboarding = false
+                        self?.hasCompletedSubscription = false
+                        self?.isOnPaywallScreen = false
+                        self?.hasSeenFirstTimeCongratsPopup = false
+                        
+                        // Clear cached data
+                        UserDefaults.standard.removeObject(forKey: "recent_user_email")
+                        UserDefaults.standard.removeObject(forKey: "pending_subscription")
+                        self?.saveAuthenticationState()
+                        
+                        print("🗑️ Account deleted successfully")
+                        completion(true, "Account deleted successfully")
+                    }
                 }
             }
         }
@@ -13889,11 +13652,16 @@ struct ProfileView: View {
         .alert("Delete Account", isPresented: $showDeleteAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive) {
-                // Delete account functionality
-                authManager.logOut()
+                authManager.deleteAccount { success, message in
+                    if success {
+                        print("✅ Account deleted successfully")
+                    } else {
+                        print("❌ Failed to delete account: \(message ?? "Unknown error")")
+                    }
+                }
             }
         } message: {
-            Text("Are you sure you want to delete your account? This action cannot be undone.")
+            Text("Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently deleted.")
         }
     }
 }
