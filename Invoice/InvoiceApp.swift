@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseCore
+import FirebaseFirestore
 import GoogleSignIn
 
 @main
@@ -16,6 +17,21 @@ struct InvoiceApp: App {
     init() {
         // Configure Firebase when app launches
         FirebaseApp.configure()
+        
+        // Suppress verbose Firebase internal logs AFTER configuration
+        // This stops the constant [FirebaseFirestore][I-FST000001] messages
+        let firestore = Firestore.firestore()
+        let settings = firestore.settings
+        settings.isSSLEnabled = true // Ensure secure connection
+        firestore.settings = settings
+        
+        // Disable Firebase internal logging
+        #if DEBUG
+        FirebaseConfiguration.shared.setLoggerLevel(.warning) // Only show warnings/errors in debug
+        #else
+        FirebaseConfiguration.shared.setLoggerLevel(.error) // Only show errors in production
+        #endif
+        
         print("🔥 Firebase configured successfully")
     }
     

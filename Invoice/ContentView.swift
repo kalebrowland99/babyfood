@@ -6230,6 +6230,7 @@ struct LongTermResultsView: View {
 struct HeightWeightView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var coordinator = OnboardingCoordinator()
+    @ObservedObject var onboardingData = OnboardingDataManager.shared
     @State private var isImperial = true
     @State private var selectedFeet = 5
     @State private var selectedInches = 4
@@ -6401,6 +6402,14 @@ struct HeightWeightView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
             .simultaneousGesture(TapGesture().onEnded {
+                // Save height and weight to onboarding data
+                onboardingData.isImperial = isImperial
+                onboardingData.heightFeet = selectedFeet
+                onboardingData.heightInches = selectedInches
+                onboardingData.heightCm = selectedCentimeters
+                onboardingData.weightLbs = Double(selectedWeight)
+                onboardingData.weightKg = Double(selectedWeightKg)
+                
                 let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                 impactFeedback.impactOccurred()
                 coordinator.nextStep()
@@ -6419,6 +6428,7 @@ struct HeightWeightView: View {
 struct BirthdateView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var coordinator = OnboardingCoordinator()
+    @ObservedObject var onboardingData = OnboardingDataManager.shared
     @State private var selectedMonth = 0 // January
     @State private var selectedDay = 0 // 1st
     @State private var selectedYear = 25 // 1999 (offset from 1974)
@@ -6523,6 +6533,11 @@ struct BirthdateView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
             .simultaneousGesture(TapGesture().onEnded {
+                // Save birthdate to onboarding data
+                onboardingData.birthMonth = selectedMonth
+                onboardingData.birthDay = selectedDay
+                onboardingData.birthYear = selectedYear
+                
                 let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                 impactFeedback.impactOccurred()
                 coordinator.nextStep()
@@ -6665,6 +6680,7 @@ struct PersonalCoachView: View {
 struct GoalSelectionView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var coordinator = OnboardingCoordinator()
+    @ObservedObject var onboardingData = OnboardingDataManager.shared
     @State private var selectedGoal: String?
     @State private var navigateToWeight = false
     
@@ -6749,7 +6765,10 @@ struct GoalSelectionView: View {
             }
             .disabled(selectedGoal == nil)
             .simultaneousGesture(TapGesture().onEnded {
-                if selectedGoal != nil {
+                if let goal = selectedGoal {
+                    // Save fitness goal to onboarding data
+                    onboardingData.fitnessGoal = goal
+                    
                     let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                     impactFeedback.impactOccurred()
                     coordinator.nextStep()
@@ -6769,6 +6788,7 @@ struct GoalSelectionView: View {
 struct DesiredWeightView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var coordinator = OnboardingCoordinator()
+    @ObservedObject var onboardingData = OnboardingDataManager.shared
     let currentWeight: Int
     let selectedGoal: String
     @State private var desiredWeight: Double
@@ -6878,6 +6898,10 @@ struct DesiredWeightView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
             .simultaneousGesture(TapGesture().onEnded {
+                // Save desired weight to onboarding data
+                onboardingData.desiredWeightLbs = desiredWeight
+                onboardingData.desiredWeightKg = desiredWeight / 2.20462
+                
                 let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                 impactFeedback.impactOccurred()
                 coordinator.nextStep()
@@ -6997,6 +7021,7 @@ struct WeightTargetResultView: View {
 struct WeightLossSpeedView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var coordinator = OnboardingCoordinator()
+    @ObservedObject var onboardingData = OnboardingDataManager.shared
     let desiredWeight: Double
     let currentWeight: Double
     @State private var weightLossSpeed: Double = 1.0
@@ -7023,6 +7048,20 @@ struct WeightLossSpeedView: View {
         } else {
             return 1200
         }
+    }
+    
+    var macroGoals: (protein: Int, carbs: Int, fats: Int) {
+        // Calculate macros based on daily calories
+        // 30% protein, 40% carbs, 30% fats
+        let proteinCals = Double(dailyCalories) * 0.30
+        let carbsCals = Double(dailyCalories) * 0.40
+        let fatsCals = Double(dailyCalories) * 0.30
+        
+        return (
+            protein: Int(proteinCals / 4), // 4 cal per gram
+            carbs: Int(carbsCals / 4),     // 4 cal per gram
+            fats: Int(fatsCals / 9)        // 9 cal per gram
+        )
     }
     
     var body: some View {
@@ -7151,6 +7190,21 @@ struct WeightLossSpeedView: View {
                 let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                 impactFeedback.impactOccurred()
                 coordinator.nextStep()
+                
+                // Save weight loss speed to onboarding data
+                onboardingData.weightLossSpeed = weightLossSpeed
+                
+                // Generate and save nutrition goals using actual user data
+                let goals = onboardingData.generateNutritionGoals()
+                FoodDataManager.shared.saveNutritionGoals(goals)
+                print("✅ Saved personalized nutrition goals based on user data:")
+                print("   📊 Daily calories: \(goals.dailyCalories) cal")
+                print("   🥩 Protein: \(goals.protein)g")
+                print("   🍞 Carbs: \(goals.carbs)g")
+                print("   🥑 Fats: \(goals.fats)g")
+                print("   ⚖️ Current weight: \(goals.currentWeight) lbs")
+                print("   🎯 Target weight: \(goals.targetWeight) lbs")
+                
                 navigateToComparison = true
             })
             .padding(.horizontal, 24)
@@ -7781,10 +7835,191 @@ class OnboardingCoordinator: ObservableObject {
     }
 }
 
+// Onboarding Data Manager to store user's answers
+class OnboardingDataManager: ObservableObject {
+    static let shared = OnboardingDataManager()
+    
+    // User's physical data
+    @Published var gender: String = "Male"
+    @Published var heightFeet: Int = 5
+    @Published var heightInches: Int = 4
+    @Published var heightCm: Int = 165
+    @Published var isImperial: Bool = true
+    @Published var weightLbs: Double = 148.0
+    @Published var weightKg: Double = 67.0
+    @Published var birthMonth: Int = 0  // January
+    @Published var birthDay: Int = 0    // 1st
+    @Published var birthYear: Int = 25  // 1999 (offset from 1974)
+    
+    // User's goals
+    @Published var fitnessGoal: String = "Lose weight"  // "Lose weight", "Maintain", "Gain weight"
+    @Published var desiredWeightLbs: Double = 135.0
+    @Published var desiredWeightKg: Double = 61.0
+    @Published var weightLossSpeed: Double = 1.0  // lbs per week
+    
+    // Other preferences
+    @Published var hasPersonalCoach: Bool = false
+    @Published var dietType: String = "None"
+    @Published var obstacles: Set<String> = []
+    
+    private init() {}
+    
+    // Calculate age from birth data
+    func calculateAge() -> Int {
+        let calendar = Calendar.current
+        let birthYearActual = 1974 + birthYear
+        let birthDate = DateComponents(year: birthYearActual, month: birthMonth + 1, day: birthDay + 1)
+        
+        if let date = calendar.date(from: birthDate) {
+            let ageComponents = calendar.dateComponents([.year], from: date, to: Date())
+            return ageComponents.year ?? 25
+        }
+        return 25
+    }
+    
+    // Calculate height in inches
+    func getHeightInInches() -> Double {
+        if isImperial {
+            return Double(heightFeet * 12 + heightInches)
+        } else {
+            return Double(heightCm) / 2.54  // Convert cm to inches
+        }
+    }
+    
+    // Get current weight in lbs
+    func getCurrentWeightLbs() -> Double {
+        return isImperial ? weightLbs : weightKg * 2.20462
+    }
+    
+    // Get target weight in lbs
+    func getTargetWeightLbs() -> Double {
+        return isImperial ? desiredWeightLbs : desiredWeightKg * 2.20462
+    }
+    
+    // Calculate BMR using Mifflin-St Jeor Equation
+    func calculateBMR() -> Double {
+        let weightKg = getCurrentWeightLbs() / 2.20462
+        let heightCm = getHeightInInches() * 2.54
+        let age = Double(calculateAge())
+        
+        // BMR formula: 10 * weight(kg) + 6.25 * height(cm) - 5 * age + s
+        // s = +5 for males, -161 for females
+        let s = (gender == "Male") ? 5.0 : -161.0
+        let bmr = 10 * weightKg + 6.25 * heightCm - 5 * age + s
+        
+        return bmr
+    }
+    
+    // Calculate TDEE (Total Daily Energy Expenditure)
+    func calculateTDEE() -> Double {
+        let bmr = calculateBMR()
+        // Using moderate activity level (1.55) as default
+        // You can make this customizable based on activity level question
+        let activityMultiplier = 1.55
+        return bmr * activityMultiplier
+    }
+    
+    // Calculate daily calorie target based on goal
+    func calculateDailyCalories() -> Int {
+        let tdee = calculateTDEE()
+        var calorieAdjustment = 0.0
+        
+        switch fitnessGoal {
+        case "Lose weight":
+            // 500 calorie deficit per day = 1 lb per week
+            calorieAdjustment = -500.0 * weightLossSpeed
+        case "Gain weight":
+            // 500 calorie surplus per day = 1 lb per week
+            calorieAdjustment = 500.0 * weightLossSpeed
+        case "Maintain":
+            calorieAdjustment = 0.0
+        default:
+            calorieAdjustment = 0.0
+        }
+        
+        let targetCalories = tdee + calorieAdjustment
+        // Ensure minimum of 1200 calories for safety
+        return max(1200, Int(targetCalories))
+    }
+    
+    // Calculate macros (protein, carbs, fats)
+    func calculateMacros() -> (protein: Int, carbs: Int, fats: Int) {
+        let dailyCalories = calculateDailyCalories()
+        let weightLbs = getCurrentWeightLbs()
+        
+        // Protein: 0.8-1.0g per lb of body weight
+        let proteinGrams = Int(weightLbs * 0.9)
+        let proteinCalories = proteinGrams * 4
+        
+        // Fat: 25-30% of total calories
+        let fatCaloriesRatio = 0.27
+        let fatCalories = Int(Double(dailyCalories) * fatCaloriesRatio)
+        let fatGrams = fatCalories / 9
+        
+        // Carbs: remaining calories
+        let remainingCalories = dailyCalories - proteinCalories - fatCalories
+        let carbGrams = max(0, remainingCalories / 4)
+        
+        return (protein: proteinGrams, carbs: carbGrams, fats: fatGrams)
+    }
+    
+    // Generate complete nutrition goals
+    func generateNutritionGoals() -> NutritionGoals {
+        let dailyCalories = calculateDailyCalories()
+        let macros = calculateMacros()
+        let currentWeight = getCurrentWeightLbs()
+        let targetWeight = getTargetWeightLbs()
+        
+        // Calculate fiber goal based on calories (14g per 1000 calories)
+        let fiberGoal = Int((Double(dailyCalories) / 1000.0) * 14.0)
+        
+        // Sugar goal: max 10% of daily calories (WHO recommendation)
+        let sugarGoal = Int(Double(dailyCalories) * 0.10 / 4) // divide by 4 for grams
+        
+        // Sodium: standard 2300mg recommendation
+        let sodiumGoal = 2300
+        
+        return NutritionGoals(
+            dailyCalories: dailyCalories,
+            protein: macros.protein,
+            carbs: macros.carbs,
+            fats: macros.fats,
+            fiber: fiberGoal,
+            sugar: sugarGoal,
+            sodium: sodiumGoal,
+            currentWeight: currentWeight,
+            targetWeight: targetWeight,
+            weightLossSpeed: weightLossSpeed
+        )
+    }
+    
+    // Reset all data
+    func reset() {
+        gender = "Male"
+        heightFeet = 5
+        heightInches = 4
+        heightCm = 165
+        isImperial = true
+        weightLbs = 148.0
+        weightKg = 67.0
+        birthMonth = 0
+        birthDay = 0
+        birthYear = 25
+        fitnessGoal = "Lose weight"
+        desiredWeightLbs = 135.0
+        desiredWeightKg = 61.0
+        weightLossSpeed = 1.0
+        hasPersonalCoach = false
+        dietType = "None"
+        obstacles = []
+    }
+}
+
 // Gender Selection View
 struct GenderSelectionView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var coordinator = OnboardingCoordinator()
+    @ObservedObject var onboardingData = OnboardingDataManager.shared
     @State private var selectedGender: String?
     @State private var navigateToFrequency = false
     
@@ -7868,7 +8103,9 @@ struct GenderSelectionView: View {
             }
             .disabled(selectedGender == nil)
             .simultaneousGesture(TapGesture().onEnded {
-                if selectedGender != nil {
+                if let gender = selectedGender {
+                    // Save gender to onboarding data
+                    onboardingData.gender = gender
                     coordinator.nextStep()
                     navigateToFrequency = true
                 }
@@ -9408,6 +9645,7 @@ struct OnboardingView: View {
 struct LoadingView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var coordinator = OnboardingCoordinator()
+    @ObservedObject var onboardingData = OnboardingDataManager.shared
     @State private var progress: CGFloat = 0.0
     @State private var progressText = "0%"
     @State private var statusText = "Initializing your profile..."
@@ -9654,6 +9892,11 @@ struct LoadingView: View {
                     if !self.checkItems[4] {
                         self.checkItems[4] = true
                     }
+                    
+                    // Save nutrition goals as backup (in case it wasn't saved earlier)
+                    let goals = self.onboardingData.generateNutritionGoals()
+                    FoodDataManager.shared.saveNutritionGoals(goals)
+                    print("🎯 LoadingView: Saved nutrition goals backup to Firebase")
                 }
                 
                 // Navigate to final screen
@@ -10630,145 +10873,9 @@ struct SubscriptionView: View {
             // Main content
             VStack(spacing: 20) {
                 if currentStep == 1 {
-                    // Step 1: Bell reminder screen
-                    VStack(spacing: 0) {
-                        // Reminder text at the top
-                        Text("We'll send you a reminder\nbefore your free trial ends")
-                            .font(.system(size: 24, weight: .medium))
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.black)
-                            .padding(.top, 40)
-                            .opacity(showContent ? 1 : 0)
-                            .animation(.easeOut(duration: 0.6).delay(0.3), value: showContent)
-                        
-                        Spacer()
-                        
-                        // Bell icon with notification badge in the middle
-                        ZStack {
-                            // Bell with advanced realistic shake animation
-                            Image(systemName: "bell")
-                                .font(.system(size: 200, weight: .light))
-                                .foregroundColor(.black)
-                                .rotationEffect(.degrees(bellAnimating ? -15 : 0))
-                                .animation(
-                                    Animation.easeInOut(duration: 0.25)
-                                        .repeatForever(autoreverses: true),
-                                    value: bellAnimating
-                                )
-                                .scaleEffect(bellAnimating ? 0.98 : 1.0)
-                                .animation(
-                                    Animation.easeInOut(duration: 0.1)
-                                        .repeatForever(autoreverses: true),
-                                    value: bellAnimating
-                                )
-                            
-                            // Notification badge
-                            Circle()
-                                .fill(Color.black)
-                                .frame(width: 50, height: 50)
-                                .overlay(
-                                    Text("1")
-                                        .font(.system(size: 22, weight: .bold))
-                                        .foregroundColor(.white)
-                                )
-                                .offset(x: 55, y: -60)
-                                .rotationEffect(.degrees(bellAnimating ? -15 : 0))
-                                .animation(
-                                    Animation.easeInOut(duration: 0.25)
-                                        .repeatForever(autoreverses: true),
-                                    value: bellAnimating
-                                )
-                                .scaleEffect(bellAnimating ? 0.98 : 1.0)
-                                .animation(
-                                    Animation.easeInOut(duration: 0.1)
-                                        .repeatForever(autoreverses: true),
-                                    value: bellAnimating
-                                )
-                        }
-                        .opacity(showContent ? 1 : 0)
-                        .animation(.easeOut(duration: 0.6).delay(0.6), value: showContent)
-                        .onAppear {
-                            // Start bell animation after content appears
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
-                                bellAnimating = true
-                            }
-                        }
-                        
-                        Spacer()
-                    }
+                    step1Content
                 } else {
-                    // Step 2: Subscription details screen
-                    VStack(spacing: 0) {
-                                                // Title - positioned higher (conditional based on paywall mode)
-                        Text(remoteConfig.hardPaywall ? "Start your 3-Day FREE trial to continue." : "Subscribe to Thrifty Unlimited")
-                            .font(.system(size: 28, weight: .bold))
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.black)
-                            .lineLimit(nil) // Allow unlimited lines to prevent truncation
-                            .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion
-                            .padding(.top, 20)
-                            .padding(.bottom, 30)
-                            .padding(.horizontal, 24) // Add horizontal padding to ensure proper spacing
-                            .opacity(showContent ? 1 : 0)
-                            .animation(.easeOut(duration: 0.6).delay(0.3), value: showContent)
-                        
-                        // Add more space between title and timeline
-                        Spacer()
-                            .frame(height: 40)
-                        
-                                                // Proper timeline structure - each item is self-contained
-                            VStack(spacing: 0) {
-                            // Today item - top line (you can adjust lineHeight individually)
-                            TimelineItem(
-                                icon: "lock.fill",
-                                iconColor: .green,
-                                title: "Today",
-                                description: "Unlock all the app's features and reach your goals faster with AI-powered nutrition tracking daily.",
-                                isLast: false,
-                                showContent: showContent,
-                                lineColor: .green,
-                                lineHeight: 100, // Adjust this for top line length
-                                iconTopPadding: 15,
-                                textTopPadding: 25,
-                                showLine: true
-                            )
-                            
-                            // In 2 days item - middle line (you can adjust lineHeight individually)
-                            TimelineItem(
-                                icon: "bell.fill",
-                                iconColor: .green,
-                                title: "In 2 days - Reminder",
-                                description: "We'll send you a reminder that your trial is ending soon.",
-                                isLast: false,
-                                showContent: showContent,
-                                lineColor: .green,
-                                lineHeight: 80, // Adjust this for middle line length
-                                iconTopPadding: 15,
-                                textTopPadding: 25,
-                                showLine: true
-                            )
-                                
-                            // In 3 days item - bottom line (you can adjust lineHeight individually)
-                            TimelineItem(
-                                icon: "plus",
-                                iconColor: .gray,
-                                title: "In 3 days - Billing Starts",
-                                description: "You'll be charged, unless you cancel anytime before.",
-                                isLast: true,
-                                showContent: showContent,
-                                lineColor: .gray,
-                                lineHeight: 80, // Adjust this for bottom line length
-                                iconTopPadding: 15,
-                                textTopPadding: 25,
-                                showLine: true
-                            )
-                        }
-                        .padding(.horizontal, 24)
-                        .opacity(showContent ? 1 : 0)
-                        .animation(.easeOut(duration: 0.6).delay(0.6), value: showContent)
-                        
-                        Spacer()
-                    }
+                    step2Content
                 }
                 
                 // Bottom section with button and payment text
@@ -11098,6 +11205,148 @@ struct SubscriptionView: View {
     }
     
     // MARK: - Helper Views
+    
+    private var step1Content: some View {
+        VStack(spacing: 0) {
+            // Reminder text at the top
+            Text("We'll send you a reminder\nbefore your free trial ends")
+                .font(.system(size: 24, weight: .medium))
+                .multilineTextAlignment(.center)
+                .foregroundColor(.black)
+                .padding(.top, 40)
+                .opacity(showContent ? 1 : 0)
+                .animation(.easeOut(duration: 0.6).delay(0.3), value: showContent)
+            
+            Spacer()
+            
+            // Bell icon with notification badge in the middle
+            ZStack {
+                // Bell with advanced realistic shake animation
+                Image(systemName: "bell")
+                    .font(.system(size: 200, weight: .light))
+                    .foregroundColor(.black)
+                    .rotationEffect(.degrees(bellAnimating ? -15 : 0))
+                    .animation(
+                        Animation.easeInOut(duration: 0.25)
+                            .repeatForever(autoreverses: true),
+                        value: bellAnimating
+                    )
+                    .scaleEffect(bellAnimating ? 0.98 : 1.0)
+                    .animation(
+                        Animation.easeInOut(duration: 0.1)
+                            .repeatForever(autoreverses: true),
+                        value: bellAnimating
+                    )
+                
+                // Notification badge
+                Circle()
+                    .fill(Color.black)
+                    .frame(width: 50, height: 50)
+                    .overlay(
+                        Text("1")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(.white)
+                    )
+                    .offset(x: 55, y: -60)
+                    .rotationEffect(.degrees(bellAnimating ? -15 : 0))
+                    .animation(
+                        Animation.easeInOut(duration: 0.25)
+                            .repeatForever(autoreverses: true),
+                        value: bellAnimating
+                    )
+                    .scaleEffect(bellAnimating ? 0.98 : 1.0)
+                    .animation(
+                        Animation.easeInOut(duration: 0.1)
+                            .repeatForever(autoreverses: true),
+                        value: bellAnimating
+                    )
+            }
+            .opacity(showContent ? 1 : 0)
+            .animation(.easeOut(duration: 0.6).delay(0.6), value: showContent)
+            .onAppear {
+                // Start bell animation after content appears
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) {
+                    bellAnimating = true
+                }
+            }
+            
+            Spacer()
+        }
+    }
+    
+    private var step2Content: some View {
+        VStack(spacing: 0) {
+            // Title - positioned higher (conditional based on paywall mode)
+            Text(remoteConfig.hardPaywall ? "Start your 3-Day FREE trial to continue." : "Subscribe to Thrifty Unlimited")
+                .font(.system(size: 28, weight: .bold))
+                .multilineTextAlignment(.center)
+                .foregroundColor(.black)
+                .lineLimit(nil) // Allow unlimited lines to prevent truncation
+                .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion
+                .padding(.top, 20)
+                .padding(.bottom, 30)
+                .padding(.horizontal, 24) // Add horizontal padding to ensure proper spacing
+                .opacity(showContent ? 1 : 0)
+                .animation(.easeOut(duration: 0.6).delay(0.3), value: showContent)
+            
+            // Add more space between title and timeline
+            Spacer()
+                .frame(height: 40)
+            
+            // Proper timeline structure - each item is self-contained
+            VStack(spacing: 0) {
+                // Today item - top line (you can adjust lineHeight individually)
+                TimelineItem(
+                    icon: "lock.fill",
+                    iconColor: .green,
+                    title: "Today",
+                    description: "Unlock all the app's features and reach your goals faster with AI-powered nutrition tracking daily.",
+                    isLast: false,
+                    showContent: showContent,
+                    lineColor: .green,
+                    lineHeight: 100, // Adjust this for top line length
+                    iconTopPadding: 15,
+                    textTopPadding: 25,
+                    showLine: true
+                )
+                
+                // In 2 days item - middle line (you can adjust lineHeight individually)
+                TimelineItem(
+                    icon: "bell.fill",
+                    iconColor: .green,
+                    title: "In 2 days - Reminder",
+                    description: "We'll send you a reminder that your trial is ending soon.",
+                    isLast: false,
+                    showContent: showContent,
+                    lineColor: .green,
+                    lineHeight: 80, // Adjust this for middle line length
+                    iconTopPadding: 15,
+                    textTopPadding: 25,
+                    showLine: true
+                )
+                    
+                // In 3 days item - bottom line (you can adjust lineHeight individually)
+                TimelineItem(
+                    icon: "plus",
+                    iconColor: .gray,
+                    title: "In 3 days - Billing Starts",
+                    description: "You'll be charged, unless you cancel anytime before.",
+                    isLast: true,
+                    showContent: showContent,
+                    lineColor: .gray,
+                    lineHeight: 80, // Adjust this for bottom line length
+                    iconTopPadding: 15,
+                    textTopPadding: 25,
+                    showLine: true
+                )
+            }
+            .padding(.horizontal, 24)
+            .opacity(showContent ? 1 : 0)
+            .animation(.easeOut(duration: 0.6).delay(0.6), value: showContent)
+            
+            Spacer()
+        }
+    }
     
     private var headerView: some View {
         HStack {
@@ -12267,6 +12516,7 @@ class AuthenticationManager: NSObject, ObservableObject {
         
         let db = Firestore.firestore()
         let emailKey = email.lowercased().replacingOccurrences(of: ".", with: "_").replacingOccurrences(of: "@", with: "_")
+        let userId = user.uid
         
         // Create a dispatch group to handle multiple async operations
         let group = DispatchGroup()
@@ -12294,6 +12544,74 @@ class AuthenticationManager: NSObject, ObservableObject {
                 print("✅ Deleted subscription data for \(email)")
             }
             group.leave()
+        }
+        
+        // Delete all user data from users collection (nutrition goals, meals, profile, etc.)
+        group.enter()
+        db.collection("users").document(userId).delete { error in
+            if let error = error {
+                print("❌ Error deleting user profile data: \(error.localizedDescription)")
+                firestoreError = error
+            } else {
+                print("✅ Deleted user profile data for \(userId)")
+            }
+            group.leave()
+        }
+        
+        // Delete all subcollections under users/{userId}
+        // Delete nutrition goals
+        group.enter()
+        db.collection("users").document(userId).collection("profile").document("nutrition_goals").delete { error in
+            if let error = error {
+                print("⚠️ Error deleting nutrition goals: \(error.localizedDescription)")
+            } else {
+                print("✅ Deleted nutrition goals")
+            }
+            group.leave()
+        }
+        
+        // Delete streak data
+        group.enter()
+        db.collection("users").document(userId).collection("profile").document("streak").delete { error in
+            if let error = error {
+                print("⚠️ Error deleting streak data: \(error.localizedDescription)")
+            } else {
+                print("✅ Deleted streak data")
+            }
+            group.leave()
+        }
+        
+        // Delete all meals (this requires getting all meal documents first)
+        group.enter()
+        db.collection("users").document(userId).collection("meals").getDocuments { snapshot, error in
+            if let error = error {
+                print("⚠️ Error fetching meals for deletion: \(error.localizedDescription)")
+                group.leave()
+                return
+            }
+            
+            let mealDocs = snapshot?.documents ?? []
+            if mealDocs.isEmpty {
+                print("ℹ️ No meals to delete")
+                group.leave()
+                return
+            }
+            
+            let mealGroup = DispatchGroup()
+            for doc in mealDocs {
+                mealGroup.enter()
+                doc.reference.delete { error in
+                    if let error = error {
+                        print("⚠️ Error deleting meal document: \(error.localizedDescription)")
+                    }
+                    mealGroup.leave()
+                }
+            }
+            
+            mealGroup.notify(queue: .main) {
+                print("✅ Deleted all meal documents (\(mealDocs.count) meals)")
+                group.leave()
+            }
         }
         
         // Wait for Firestore deletions to complete, then delete Firebase Auth account
@@ -12659,11 +12977,13 @@ class ProfileManager: ObservableObject {
 struct MainAppView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @State private var selectedDay = 5 // Tuesday is selected (index 5 in the week)
-    @State private var selectedTab = 1 // Start with Progress tab
+    @State private var selectedTab = 0 // Start with Home tab
     @State private var streakCount = 0
     @State private var showAddMenu = false
     @State private var showScanFlow = false
     @State private var showFoodDatabase = false
+    @State private var confettiTrigger = 0
+    @AppStorage("hasSeenMainAppConfetti") private var hasSeenMainAppConfetti = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -12683,7 +13003,7 @@ struct MainAppView: View {
                 if selectedTab == 0 {
                     HomeView(selectedDay: $selectedDay, streakCount: $streakCount)
                 } else if selectedTab == 1 {
-                    ProgressView()
+                    ProgressTabView(showFoodDatabase: $showFoodDatabase)
                 } else if selectedTab == 2 {
                     ProfileView()
                         .environmentObject(authManager)
@@ -12824,6 +13144,22 @@ struct MainAppView: View {
         .fullScreenCover(isPresented: $showFoodDatabase) {
             FoodDatabaseView(isPresented: $showFoodDatabase)
         }
+        .confettiCannon(
+            trigger: $confettiTrigger,
+            num: 50,
+            colors: [.red, .yellow, .blue, .green, .purple, .pink, .orange, .cyan],
+            confettiSize: 10,
+            radius: 400
+        )
+        .onAppear {
+            // Show confetti only on first time entering main app
+            if !hasSeenMainAppConfetti {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    confettiTrigger += 1
+                    hasSeenMainAppConfetti = true
+                }
+            }
+        }
     }
     
     func requestCameraAccess() {
@@ -12845,8 +13181,98 @@ struct MainAppView: View {
 struct HomeView: View {
     @Binding var selectedDay: Int
     @Binding var streakCount: Int
+    @StateObject private var foodDataManager = FoodDataManager.shared
+    @State private var selectedDate: Date = Date()
+    @State private var weekDays: [Date] = []
+    @State private var daysWithMeals: Set<String> = []
+    @State private var macroPageIndex = 0
+    
+    private let calendar = Calendar.current
+    
+    // Get actual week days starting from Sunday
+    private func getWeekDays() -> [Date] {
+        let today = Date()
+        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        
+        return (0..<7).compactMap { dayOffset in
+            calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek)
+        }
+    }
+    
+    // Check if date is today
+    private func isToday(_ date: Date) -> Bool {
+        calendar.isDateInToday(date)
+    }
+    
+    // Get day number from date
+    private func dayNumber(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d"
+        return formatter.string(from: date)
+    }
+    
+    // Get day name from date
+    private func dayName(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "E"
+        let fullName = formatter.string(from: date)
+        return String(fullName.prefix(1))
+    }
+    
+    // Check if date has logged meals
+    private func hasLoggedMeals(_ date: Date) -> Bool {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: date)
+        return daysWithMeals.contains(dateString)
+    }
+    
+    // Load which days in the week have meals
+    private func loadWeekMeals() {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
+        let db = Firestore.firestore()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        var mealsSet: Set<String> = []
+        let group = DispatchGroup()
+        
+        for date in weekDays {
+            let dateString = dateFormatter.string(from: date)
+            group.enter()
+            
+            db.collection("users")
+                .document(userId)
+                .collection("meals")
+                .document(dateString)
+                .collection("items")
+                .getDocuments { snapshot, error in
+                    if let documents = snapshot?.documents, !documents.isEmpty {
+                        mealsSet.insert(dateString)
+                    }
+                    group.leave()
+                }
+        }
+        
+        group.notify(queue: .main) {
+            daysWithMeals = mealsSet
+        }
+    }
     
     var body: some View {
+        ZStack {
+            // Soft gradient background
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.98, green: 0.94, blue: 0.96),
+                    Color(red: 0.96, green: 0.93, blue: 0.98)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
         VStack(spacing: 0) {
             // Top Header
             HStack {
@@ -12865,7 +13291,7 @@ struct HomeView: View {
                 HStack(spacing: 5) {
                     Text("🔥")
                         .font(.system(size: 15))
-                    Text("\(streakCount)")
+                    Text("\(foodDataManager.streakCount)")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.black)
                 }
@@ -12878,43 +13304,88 @@ struct HomeView: View {
             .padding(.horizontal, 20)
             .padding(.top, 8)
             .padding(.bottom, 10)
+            .onAppear {
+                weekDays = getWeekDays()
+                selectedDate = Date()
+                loadWeekMeals()
+                foodDataManager.loadMealsForToday()
+                foodDataManager.loadStreak()
+                streakCount = foodDataManager.streakCount
+            }
+            .onChange(of: foodDataManager.streakCount) { newValue in
+                streakCount = newValue
+            }
+            .onChange(of: foodDataManager.todaysMeals) { _ in
+                // Reload week meals when meals change
+                loadWeekMeals()
+            }
             
             // Week View
             HStack(spacing: 0) {
-                ForEach(0..<7) { index in
+                ForEach(Array(weekDays.enumerated()), id: \.offset) { index, date in
+                    let isTodayDate = isToday(date)
+                    let isSelected = calendar.isDate(date, inSameDayAs: selectedDate)
+                    let hasMeals = hasLoggedMeals(date)
+                    
                     VStack(spacing: 7) {
-                        Text(dayName(for: index))
+                        Text(dayName(from: date))
                             .font(.system(size: 12, weight: .regular))
                             .kerning(0.2)
-                            .foregroundColor(index == selectedDay ? .black : Color.black.opacity(0.35))
+                            .foregroundColor(isSelected ? .black : Color.black.opacity(0.35))
                         
-                        ZStack {
-                            if index == selectedDay {
+                            ZStack {
+                            if isSelected {
                                 Circle()
                                     .fill(Color.white)
                                     .frame(width: 30, height: 30)
                                 
                                 Circle()
-                                    .stroke(Color.black.opacity(0.25), lineWidth: 2)
+                                    .stroke(Color(red: 0.92, green: 0.58, blue: 0.65), lineWidth: 2)
+                                    .frame(width: 30, height: 30)
+                            } else if isTodayDate {
+                                // Today but not selected - show subtle indicator
+                                Circle()
+                                    .stroke(Color(red: 0.92, green: 0.58, blue: 0.65), lineWidth: 1.5)
                                     .frame(width: 30, height: 30)
                             } else {
-                                DashedCircle(lineWidth: 1.5, dashLength: 3, color: Color.black.opacity(0.15))
+                                DashedCircle(lineWidth: 1.5, dashLength: 3, color: Color(red: 0.92, green: 0.58, blue: 0.65).opacity(0.5))
                                     .frame(width: 30, height: 30)
                             }
                             
-                            Text("\(index + 1)")
-                                .font(.system(size: 13, weight: index == selectedDay ? .medium : .regular))
-                                .foregroundColor(index == selectedDay ? .black : Color.black.opacity(0.3))
+                            Text(dayNumber(from: date))
+                                .font(.system(size: 13, weight: isSelected ? .medium : .regular))
+                                .foregroundColor(isSelected ? .black : Color.black.opacity(0.3))
+                            
+                            // Checkmark indicator for days with logged meals
+                            if hasMeals && !isSelected {
+                                Circle()
+                                    .fill(Color(red: 0.92, green: 0.58, blue: 0.65))
+                                    .frame(width: 8, height: 8)
+                                    .offset(x: 12, y: -12)
+                            }
                         }
                     }
-                    .padding(.vertical, index == selectedDay ? 10 : 0)
-                    .padding(.horizontal, index == selectedDay ? 6 : 0)
+                    .padding(.vertical, isSelected ? 10 : 0)
+                    .padding(.horizontal, isSelected ? 6 : 0)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(index == selectedDay ? Color.white : Color.clear)
-                            .shadow(color: index == selectedDay ? Color.black.opacity(0.06) : Color.clear, radius: 8, x: 0, y: 2)
+                            .fill(isSelected ? Color.white : Color.clear)
+                            .shadow(color: isSelected ? Color.black.opacity(0.06) : Color.clear, radius: 8, x: 0, y: 2)
                     )
                     .frame(maxWidth: .infinity)
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3)) {
+                            selectedDate = date
+                            // Load meals for selected date
+                            Task {
+                                let meals = await foodDataManager.loadMealsForDate(date)
+                                await MainActor.run {
+                                    foodDataManager.todaysMeals = meals
+                                    foodDataManager.calculateDailyTotals()
+                                }
+                            }
+                        }
+                    }
                 }
             }
             .frame(maxWidth: .infinity)
@@ -12931,21 +13402,24 @@ struct HomeView: View {
                         
                         HStack(spacing: 0) {
                             VStack(alignment: .leading, spacing: 10) {
-                                Text("1388")
+                                let remainingCalories = foodDataManager.getRemainingNutrition().calories
+                                let isOverLimit = remainingCalories < 0
+                                
+                                Text("\(remainingCalories)")
                                     .font(.system(size: 45, weight: .bold))
                                     .kerning(-2.5)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(isOverLimit ? Color(red: 0.90, green: 0.50, blue: 0.55) : .black)
                                 
                                 HStack(spacing: 8) {
-                                    Text("Calories left")
+                                    Text(isOverLimit ? "Calories over" : "Calories left")
                                         .font(.system(size: 14, weight: .regular))
-                                        .foregroundColor(Color.black.opacity(0.5))
+                                        .foregroundColor(isOverLimit ? Color(red: 0.90, green: 0.50, blue: 0.55).opacity(0.7) : Color.black.opacity(0.5))
                                     
                                     HStack(spacing: 4) {
                                         Image(systemName: "brain.head.profile")
                                             .font(.system(size: 11))
                                             .foregroundColor(Color.black.opacity(0.5))
-                                        Text("+1")
+                                        Text("+\(foodDataManager.todaysMeals.count)")
                                             .font(.system(size: 14, weight: .semibold))
                                             .foregroundColor(Color.black.opacity(0.5))
                                     }
@@ -12956,11 +13430,24 @@ struct HomeView: View {
                             Spacer()
                             
                             ZStack {
+                                let progress = min(1.0, CGFloat(foodDataManager.dailyTotals.calories) / CGFloat(max(1, foodDataManager.nutritionGoals.dailyCalories)))
+                                let isOverLimit = foodDataManager.dailyTotals.calories > foodDataManager.nutritionGoals.dailyCalories
+                                
                                 Circle()
-                                    .strokeBorder(Color.black.opacity(0.08), lineWidth: 10)
+                                    .strokeBorder(Color.black.opacity(0.08), lineWidth: 6)
                                     .frame(width: 128, height: 128)
                                 
-                                Text("🔥")
+                                // Progress circle
+                                Circle()
+                                    .trim(from: 0, to: progress)
+                                    .stroke(
+                                        isOverLimit ? Color(red: 0.90, green: 0.50, blue: 0.55) : Color(red: 0.92, green: 0.58, blue: 0.65),
+                                        style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                                    )
+                                    .frame(width: 128, height: 128)
+                                    .rotationEffect(.degrees(-90))
+                                
+                                Text("✨")
                                     .font(.system(size: 42))
                             }
                             .padding(.trailing, 30)
@@ -12970,45 +13457,106 @@ struct HomeView: View {
                     .frame(height: 190)
                     .padding(.horizontal, 20)
                     
-                    // Macro Cards
-                    HStack(spacing: 12) {
-                        MacroCard(
-                            amount: "136g",
-                            label: "Protein left",
-                            icon: "🍗",
-                            circleColor: Color(red: 0.89, green: 0.85, blue: 0.88).opacity(0.5)
-                        )
-                        .frame(maxWidth: .infinity)
+                    // Macro Cards - Swipeable
+                    TabView(selection: $macroPageIndex) {
+                        // Page 1: Protein, Carbs, Fats
+                        HStack(spacing: 12) {
+                            let remainingNutrition = foodDataManager.getRemainingNutrition()
+                            let dailyTotals = foodDataManager.dailyTotals
+                            let goals = foodDataManager.nutritionGoals
+                            
+                            MacroCard(
+                                amount: "\(remainingNutrition.protein)g",
+                                label: "Protein left",
+                                icon: "🍗",
+                                circleColor: Color(red: 0.85, green: 0.75, blue: 0.92).opacity(0.6),
+                                value: remainingNutrition.protein,
+                                consumed: dailyTotals.protein,
+                                goal: goals.protein
+                            )
+                            .frame(maxWidth: .infinity)
+                            
+                            MacroCard(
+                                amount: "\(remainingNutrition.carbs)g",
+                                label: "Carbs left",
+                                icon: "🌾",
+                                circleColor: Color(red: 0.98, green: 0.85, blue: 0.88).opacity(0.6),
+                                value: remainingNutrition.carbs,
+                                consumed: dailyTotals.carbs,
+                                goal: goals.carbs
+                            )
+                            .frame(maxWidth: .infinity)
+                            
+                            MacroCard(
+                                amount: "\(remainingNutrition.fats)g",
+                                label: "Fat left",
+                                icon: "💧",
+                                circleColor: Color(red: 0.92, green: 0.85, blue: 0.95).opacity(0.6),
+                                value: remainingNutrition.fats,
+                                consumed: dailyTotals.fats,
+                                goal: goals.fats
+                            )
+                            .frame(maxWidth: .infinity)
+                        }
+                        .padding(.horizontal, 20)
+                        .tag(0)
                         
-                        MacroCard(
-                            amount: "123g",
-                            label: "Carbs left",
-                            icon: "🌾",
-                            circleColor: Color(red: 0.96, green: 0.93, blue: 0.87).opacity(0.5)
-                        )
-                        .frame(maxWidth: .infinity)
-                        
-                        MacroCard(
-                            amount: "38g",
-                            label: "Fat left",
-                            icon: "💧",
-                            circleColor: Color(red: 0.87, green: 0.90, blue: 0.95).opacity(0.5)
-                        )
-                        .frame(maxWidth: .infinity)
+                        // Page 2: Fiber, Sugar, Sodium
+                        HStack(spacing: 12) {
+                            let remainingNutrition = foodDataManager.getRemainingNutrition()
+                            let dailyTotals = foodDataManager.dailyTotals
+                            let goals = foodDataManager.nutritionGoals
+                            
+                            MacroCard(
+                                amount: "\(dailyTotals.fiber)g",
+                                label: "Fiber eaten",
+                                icon: "🌾",
+                                circleColor: Color(red: 0.88, green: 0.82, blue: 0.92).opacity(0.6),
+                                value: dailyTotals.fiber,
+                                consumed: dailyTotals.fiber,
+                                goal: goals.fiber,
+                                isConsumed: true
+                            )
+                            .frame(maxWidth: .infinity)
+                            
+                            MacroCard(
+                                amount: "\(dailyTotals.sugar)g",
+                                label: "Sugar eaten",
+                                icon: "🍬",
+                                circleColor: Color(red: 0.98, green: 0.82, blue: 0.88).opacity(0.6),
+                                value: dailyTotals.sugar,
+                                consumed: dailyTotals.sugar,
+                                goal: goals.sugar,
+                                isConsumed: true
+                            )
+                            .frame(maxWidth: .infinity)
+                            
+                            MacroCard(
+                                amount: "\(dailyTotals.sodium)mg",
+                                label: "Sodium eaten",
+                                icon: "🧂",
+                                circleColor: Color(red: 0.90, green: 0.85, blue: 0.95).opacity(0.6),
+                                value: dailyTotals.sodium,
+                                consumed: dailyTotals.sodium,
+                                goal: goals.sodium,
+                                isConsumed: true
+                            )
+                            .frame(maxWidth: .infinity)
+                        }
+                        .padding(.horizontal, 20)
+                        .tag(1)
                     }
+                    .frame(height: 175)
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     .padding(.top, 6)
-                    .padding(.horizontal, 20)
                     
-                    // Page indicator dots
+                    // Page indicator dots (2 dots)
                     HStack(spacing: 8) {
                         Circle()
-                            .fill(Color.black)
+                            .fill(macroPageIndex == 0 ? Color(red: 0.92, green: 0.58, blue: 0.65) : Color(red: 0.92, green: 0.58, blue: 0.65).opacity(0.3))
                             .frame(width: 6, height: 6)
                         Circle()
-                            .fill(Color.black.opacity(0.2))
-                            .frame(width: 6, height: 6)
-                        Circle()
-                            .fill(Color.black.opacity(0.2))
+                            .fill(macroPageIndex == 1 ? Color(red: 0.92, green: 0.58, blue: 0.65) : Color(red: 0.92, green: 0.58, blue: 0.65).opacity(0.3))
                             .frame(width: 6, height: 6)
                     }
                     .frame(maxWidth: .infinity)
@@ -13022,52 +13570,60 @@ struct HomeView: View {
                             .foregroundColor(.black)
                             .padding(.horizontal, 20)
                         
-                        // Meal Card
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 24)
-                                .fill(Color.white)
-                                .shadow(color: Color.black.opacity(0.03), radius: 12, x: 0, y: 2)
-                            
-                            VStack(spacing: 0) {
-                                HStack(spacing: 14) {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color(red: 0.95, green: 0.95, blue: 0.96))
-                                            .frame(width: 65, height: 65)
-                                        
-                                        Text("🥗")
-                                            .font(.system(size: 34))
-                                    }
-                                    
-                                    VStack(alignment: .leading, spacing: 5) {
-                                        Rectangle()
-                                            .fill(Color(red: 0.92, green: 0.92, blue: 0.93))
-                                            .frame(width: 120, height: 10)
-                                            .cornerRadius(5)
-                                        
-                                        Rectangle()
-                                            .fill(Color(red: 0.94, green: 0.94, blue: 0.95))
-                                            .frame(width: 85, height: 8)
-                                            .cornerRadius(4)
-                                    }
-                                    
-                                    Spacer()
-                                }
-                                .padding(16)
-                                .frame(maxWidth: .infinity)
-                                .background(Color.white.opacity(0.5))
-                                .cornerRadius(24)
+                        if foodDataManager.todaysMeals.isEmpty {
+                            // Empty state
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 24)
+                                    .fill(Color.white)
+                                    .shadow(color: Color.black.opacity(0.03), radius: 12, x: 0, y: 2)
                                 
-                                Text("Tap + to add your first meal of the day")
-                                    .font(.system(size: 15, weight: .regular))
-                                    .foregroundColor(Color.black.opacity(0.4))
-                                    .multilineTextAlignment(.center)
-                                    .padding(.vertical, 30)
-                                    .padding(.horizontal, 24)
+                                VStack(spacing: 0) {
+                                    HStack(spacing: 14) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color(red: 0.95, green: 0.95, blue: 0.96))
+                                                .frame(width: 65, height: 65)
+                                            
+                                            Text("🥗")
+                                                .font(.system(size: 34))
+                                        }
+                                        
+                                        VStack(alignment: .leading, spacing: 5) {
+                                            Rectangle()
+                                                .fill(Color(red: 0.92, green: 0.92, blue: 0.93))
+                                                .frame(width: 120, height: 10)
+                                                .cornerRadius(5)
+                                            
+                                            Rectangle()
+                                                .fill(Color(red: 0.94, green: 0.94, blue: 0.95))
+                                                .frame(width: 85, height: 8)
+                                                .cornerRadius(4)
+                                        }
+                                        
+                                        Spacer()
+                                    }
+                                    .padding(16)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.white.opacity(0.5))
+                                    .cornerRadius(24)
+                                    
+                                    Text("Tap + to add your first meal of the day")
+                                        .font(.system(size: 15, weight: .regular))
+                                        .foregroundColor(Color.black.opacity(0.4))
+                                        .multilineTextAlignment(.center)
+                                        .padding(.vertical, 30)
+                                        .padding(.horizontal, 24)
+                                }
+                            }
+                            .frame(height: 195)
+                            .padding(.horizontal, 20)
+                        } else {
+                            // Meal list
+                            ForEach(foodDataManager.todaysMeals) { meal in
+                                MealRowView(meal: meal)
+                                    .padding(.horizontal, 20)
                             }
                         }
-                        .frame(height: 195)
-                        .padding(.horizontal, 20)
                     }
                     .padding(.top, 10)
                     
@@ -13075,17 +13631,95 @@ struct HomeView: View {
                 }
             }
         }
+        }
     }
     
-    func dayName(for index: Int) -> String {
-        let days = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"]
-        return days[index]
-    }
 }
 
 // MARK: - Progress View
-struct ProgressView: View {
+struct ProgressTabView: View {
+    @Binding var showFoodDatabase: Bool
+    @StateObject private var foodDataManager = FoodDataManager.shared
+    @ObservedObject var onboardingData = OnboardingDataManager.shared
+    
+    // Calculate BMI from user data
+    var currentBMI: Double {
+        let heightInches = onboardingData.getHeightInInches()
+        let weightLbs = onboardingData.getCurrentWeightLbs()
+        let heightMeters = heightInches * 0.0254
+        let weightKg = weightLbs / 2.20462
+        let bmi = weightKg / (heightMeters * heightMeters)
+        return bmi
+    }
+    
+    var bmiCategory: (name: String, color: Color) {
+        let bmi = currentBMI
+        if bmi < 18.5 {
+            return ("Underweight", Color(red: 0.40, green: 0.60, blue: 0.85))
+        } else if bmi < 25.0 {
+            return ("Healthy", Color(red: 0.45, green: 0.75, blue: 0.55))
+        } else if bmi < 30.0 {
+            return ("Overweight", Color(red: 0.85, green: 0.68, blue: 0.45))
+        } else {
+            return ("Obese", Color(red: 0.80, green: 0.50, blue: 0.50))
+        }
+    }
+    
+    var bmiIndicatorPosition: CGFloat {
+        let bmi = currentBMI
+        // Map BMI to position on scale (15-35 BMI range)
+        let minBMI = 15.0
+        let maxBMI = 35.0
+        let normalizedBMI = min(max(bmi, minBMI), maxBMI)
+        return CGFloat((normalizedBMI - minBMI) / (maxBMI - minBMI))
+    }
+    
+    // Calculate goal date
+    var goalDate: String {
+        let currentWeight = foodDataManager.nutritionGoals.currentWeight
+        let targetWeight = foodDataManager.nutritionGoals.targetWeight
+        let weightLossSpeed = foodDataManager.nutritionGoals.weightLossSpeed
+        
+        let weightDifference = abs(currentWeight - targetWeight)
+        let weeksToGoal = weightDifference / max(0.1, weightLossSpeed)
+        let daysToGoal = weeksToGoal * 7
+        
+        let goalDate = Calendar.current.date(byAdding: .day, value: Int(daysToGoal), to: Date()) ?? Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d, yyyy"
+        return formatter.string(from: goalDate)
+    }
+    
+    // Calculate weight progress percentage
+    var weightProgressPercentage: Int {
+        let startWeight = foodDataManager.nutritionGoals.currentWeight
+        let targetWeight = foodDataManager.nutritionGoals.targetWeight
+        let currentWeight = onboardingData.getCurrentWeightLbs()
+        
+        let totalWeightToLose = abs(startWeight - targetWeight)
+        let weightLost = abs(startWeight - currentWeight)
+        
+        if totalWeightToLose == 0 {
+            return 0
+        }
+        
+        let percentage = (weightLost / totalWeightToLose) * 100
+        return min(100, max(0, Int(percentage)))
+    }
+    
     var body: some View {
+        ZStack {
+            // Soft gradient background
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.98, green: 0.94, blue: 0.96),
+                    Color(red: 0.96, green: 0.93, blue: 0.98)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 16) {
                 // Progress Header
@@ -13122,14 +13756,14 @@ struct ProgressView: View {
                                     .font(.system(size: 12))
                                     .offset(x: -20, y: -35)
                                 
-                                // White circle with 0
+                                // White circle with streak count
                                 Circle()
                                     .fill(Color.white)
                                     .frame(width: 40, height: 40)
                                     .overlay(
-                                        Text("0")
+                                        Text("\(foodDataManager.streakCount)")
                                             .font(.system(size: 24, weight: .bold))
-                                            .foregroundColor(Color(red: 0.95, green: 0.62, blue: 0.35))
+                                            .foregroundColor(Color(red: 0.92, green: 0.58, blue: 0.65))
                                     )
                                     .offset(y: 25)
                             }
@@ -13158,47 +13792,44 @@ struct ProgressView: View {
                                     .font(.system(size: 15, weight: .regular))
                                     .foregroundColor(Color.black.opacity(0.5))
                                 
-                                Text("148 lbs")
+                                Text(String(format: "%.1f lbs", onboardingData.getCurrentWeightLbs()))
                                     .font(.system(size: 48, weight: .bold))
                                     .foregroundColor(.black)
                                     .fixedSize()
                             }
                             
                             Spacer()
-                            
-                            VStack(alignment: .trailing, spacing: 4) {
-                                Text("Next weigh-in: 7d")
-                                    .font(.system(size: 15, weight: .regular))
-                                    .foregroundColor(Color.black.opacity(0.5))
-                                    .fixedSize()
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(
-                                        Capsule()
-                                            .fill(Color.black.opacity(0.08))
-                                    )
-                            }
                         }
                         
-                        // Progress bar placeholder
-                        Rectangle()
-                            .fill(Color(red: 0.95, green: 0.95, blue: 0.96))
-                            .frame(height: 4)
-                            .cornerRadius(2)
+                        // Progress bar showing weight loss progress
+                        GeometryReader { geometry in
+                            ZStack(alignment: .leading) {
+                                Rectangle()
+                                    .fill(Color(red: 0.95, green: 0.95, blue: 0.96))
+                                    .frame(height: 4)
+                                    .cornerRadius(2)
+                                
+                                Rectangle()
+                                    .fill(Color(red: 0.92, green: 0.58, blue: 0.65))
+                                    .frame(width: geometry.size.width * CGFloat(weightProgressPercentage) / 100.0, height: 4)
+                                    .cornerRadius(2)
+                            }
+                        }
+                        .frame(height: 4)
                         
                         HStack {
-                            Text("Start: 148 lbs")
+                            Text(String(format: "Start: %.1f lbs", foodDataManager.nutritionGoals.currentWeight))
                                 .font(.system(size: 15, weight: .regular))
                                 .foregroundColor(Color.black.opacity(0.5))
                             
                             Spacer()
                             
-                            Text("Goal: 135.6 lbs")
+                            Text(String(format: "Goal: %.1f lbs", foodDataManager.nutritionGoals.targetWeight))
                                 .font(.system(size: 15, weight: .regular))
                                 .foregroundColor(Color.black.opacity(0.5))
                         }
                         
-                        Text("At your goal by Jul 16, 2026.")
+                        Text("At your goal by \(goalDate).")
                             .font(.system(size: 15, weight: .regular))
                             .foregroundColor(Color.black.opacity(0.5))
                     }
@@ -13225,18 +13856,28 @@ struct ProgressView: View {
                                     .font(.system(size: 12))
                                     .foregroundColor(Color.black.opacity(0.4))
                                 
-                                Text("0% of goal")
-                                    .font(.system(size: 15, weight: .regular))
-                                    .foregroundColor(Color.black.opacity(0.5))
+                            Text("\(weightProgressPercentage)% of goal")
+                                .font(.system(size: 15, weight: .regular))
+                                .foregroundColor(Color.black.opacity(0.5))
                             }
                         }
                         
                         // Chart
                         GeometryReader { geometry in
+                            let startWeight = foodDataManager.nutritionGoals.currentWeight
+                            let targetWeight = foodDataManager.nutritionGoals.targetWeight
+                            let currentWeight = onboardingData.getCurrentWeightLbs()
+                            
+                            let maxWeight = max(startWeight, targetWeight) + 4
+                            let minWeight = min(startWeight, targetWeight) - 4
+                            let weightRange = maxWeight - minWeight
+                            
+                            let weightValues = stride(from: Int(maxWeight), through: Int(minWeight), by: -2).map { $0 }
+                            
                             ZStack(alignment: .leading) {
                                 // Y-axis labels and grid lines
                                 VStack(alignment: .leading, spacing: 0) {
-                                    ForEach([152, 150, 148, 146, 144], id: \.self) { value in
+                                    ForEach(Array(weightValues.enumerated()), id: \.offset) { index, value in
                                         HStack(spacing: 8) {
                                             Text("\(value)")
                                                 .font(.system(size: 13, weight: .regular))
@@ -13248,13 +13889,13 @@ struct ProgressView: View {
                                                 .frame(height: 1)
                                         }
                                         
-                                        if value != 144 {
+                                        if index < weightValues.count - 1 {
                                             Spacer()
                                         }
                                     }
                                 }
                                 
-                                // Weight line (at 148)
+                                // Current weight line
                                 HStack(spacing: 8) {
                                     Text("")
                                         .frame(width: 30)
@@ -13263,7 +13904,18 @@ struct ProgressView: View {
                                         .fill(Color.black)
                                         .frame(height: 2)
                                 }
-                                .offset(y: geometry.size.height * 0.5) // Position at 148 (middle)
+                                .offset(y: geometry.size.height * CGFloat((maxWeight - currentWeight) / weightRange))
+                                
+                                // Target weight line (dotted)
+                                HStack(spacing: 8) {
+                                    Text("")
+                                        .frame(width: 30)
+                                    
+                                    Rectangle()
+                                        .fill(Color(red: 0.92, green: 0.58, blue: 0.65))
+                                        .frame(height: 1)
+                                }
+                                .offset(y: geometry.size.height * CGFloat((maxWeight - targetWeight) / weightRange))
                             }
                         }
                         .frame(height: 200)
@@ -13294,7 +13946,7 @@ struct ProgressView: View {
                         }
                         
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
-                            Text("25.4")
+                            Text(String(format: "%.1f", currentBMI))
                                 .font(.system(size: 52, weight: .bold))
                                 .foregroundColor(.black)
                             
@@ -13302,9 +13954,9 @@ struct ProgressView: View {
                                 .font(.system(size: 17, weight: .regular))
                                 .foregroundColor(Color.black.opacity(0.5))
                             
-                            Text("Overweight")
+                            Text(bmiCategory.name)
                                 .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(Color(red: 0.82, green: 0.65, blue: 0.42))
+                                .foregroundColor(bmiCategory.color)
                         }
                         
                         // BMI Scale Bar
@@ -13339,7 +13991,7 @@ struct ProgressView: View {
                                 Rectangle()
                                     .fill(Color.black)
                                     .frame(width: 3, height: 24)
-                                    .offset(x: geometry.size.width * 0.53) // 25.4 BMI position
+                                    .offset(x: geometry.size.width * bmiIndicatorPosition)
                             }
                         }
                         .frame(height: 24)
@@ -13429,14 +14081,19 @@ struct ProgressView: View {
                 .padding(.bottom, 120)
             }
         }
+        }
+        .opacity(showFoodDatabase ? 0 : 1)
     }
 }
 
 // MARK: - Profile View
 struct ProfileView: View {
     @EnvironmentObject var authManager: AuthenticationManager
+    @StateObject private var foodDataManager = FoodDataManager.shared
     @State private var showLogoutAlert = false
     @State private var showDeleteAlert = false
+    @State private var showPersonalDetailsSheet = false
+    @State private var showLanguageSheet = false
     
     // Debug function to reset app state
     private func resetAppState() {
@@ -13451,7 +14108,36 @@ struct ProfileView: View {
         print("🔧 DEBUG: App state reset - returning to login screen")
     }
     
+    // Function to send support email
+    private func sendSupportEmail() {
+        let email = "support@calorietracker.app" // Replace with your actual support email
+        let subject = "Support Request"
+        let body = "Please describe your issue:"
+        
+        let mailtoString = "mailto:\(email)?subject=\(subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")&body=\(body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        
+        if let url = URL(string: mailtoString) {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            } else {
+                print("⚠️ Cannot open mail app")
+            }
+        }
+    }
+    
     var body: some View {
+        ZStack {
+            // Soft gradient background
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.98, green: 0.94, blue: 0.96),
+                    Color(red: 0.96, green: 0.93, blue: 0.98)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 16) {
                 // Profile Header
@@ -13467,7 +14153,16 @@ struct ProfileView: View {
                     VStack(spacing: 12) {
                         // User Avatar
                         Circle()
-                            .fill(Color(red: 0.15, green: 0.15, blue: 0.20))
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(red: 0.92, green: 0.58, blue: 0.65),
+                                        Color(red: 0.85, green: 0.70, blue: 0.90)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                             .frame(width: 80, height: 80)
                             .overlay(
                                 Text(user.name?.prefix(1).uppercased() ?? user.email?.prefix(1).uppercased() ?? "U")
@@ -13502,7 +14197,9 @@ struct ProfileView: View {
                     ProfileButton(
                         icon: "person.text.rectangle",
                         title: "Personal Details",
-                        action: {}
+                        action: {
+                            showPersonalDetailsSheet = true
+                        }
                     )
                 }
                 .background(Color.white)
@@ -13522,7 +14219,9 @@ struct ProfileView: View {
                     ProfileButton(
                         icon: "character.textbox",
                         title: "Language",
-                        action: {}
+                        action: {
+                            showLanguageSheet = true
+                        }
                     )
                 }
                 .background(Color.white)
@@ -13542,7 +14241,9 @@ struct ProfileView: View {
                     ProfileButton(
                         icon: "envelope",
                         title: "Support Email",
-                        action: {}
+                        action: {
+                            sendSupportEmail()
+                        }
                     )
                 }
                 .background(Color.white)
@@ -13663,6 +14364,281 @@ struct ProfileView: View {
         } message: {
             Text("Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently deleted.")
         }
+        .sheet(isPresented: $showPersonalDetailsSheet) {
+            PersonalDetailsView()
+                .environmentObject(authManager)
+        }
+        .sheet(isPresented: $showLanguageSheet) {
+            LanguageSelectionView()
+        }
+        }
+    }
+}
+
+// MARK: - Personal Details View
+struct PersonalDetailsView: View {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var authManager: AuthenticationManager
+    @ObservedObject var onboardingData = OnboardingDataManager.shared
+    @StateObject private var foodDataManager = FoodDataManager.shared
+    
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    // User Info Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Account")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.black)
+                        
+                        VStack(spacing: 12) {
+                            HStack {
+                                Text("Email")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text(authManager.currentUser?.email ?? "Not available")
+                                    .foregroundColor(.black)
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Name")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text(authManager.currentUser?.name ?? "Not available")
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .padding(16)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                    }
+                    .padding(.horizontal, 20)
+                    
+                    // Physical Info Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Physical Information")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.black)
+                        
+                        VStack(spacing: 12) {
+                            HStack {
+                                Text("Gender")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text(onboardingData.gender)
+                                    .foregroundColor(.black)
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Height")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                if onboardingData.isImperial {
+                                    Text("\(onboardingData.heightFeet)' \(onboardingData.heightInches)\"")
+                                        .foregroundColor(.black)
+                                } else {
+                                    Text("\(onboardingData.heightCm) cm")
+                                        .foregroundColor(.black)
+                                }
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Current Weight")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                if onboardingData.isImperial {
+                                    Text(String(format: "%.1f lbs", onboardingData.weightLbs))
+                                        .foregroundColor(.black)
+                                } else {
+                                    Text(String(format: "%.1f kg", onboardingData.weightKg))
+                                        .foregroundColor(.black)
+                                }
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Age")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text("\(onboardingData.calculateAge()) years")
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .padding(16)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                    }
+                    .padding(.horizontal, 20)
+                    
+                    // Goals Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Goals")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.black)
+                        
+                        VStack(spacing: 12) {
+                            HStack {
+                                Text("Fitness Goal")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text(onboardingData.fitnessGoal)
+                                    .foregroundColor(.black)
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Target Weight")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                if onboardingData.isImperial {
+                                    Text(String(format: "%.1f lbs", onboardingData.desiredWeightLbs))
+                                        .foregroundColor(.black)
+                                } else {
+                                    Text(String(format: "%.1f kg", onboardingData.desiredWeightKg))
+                                        .foregroundColor(.black)
+                                }
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Weight Change Speed")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text(String(format: "%.1f lbs/week", onboardingData.weightLossSpeed))
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .padding(16)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                    }
+                    .padding(.horizontal, 20)
+                    
+                    // Nutrition Goals Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Daily Nutrition Goals")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.black)
+                        
+                        VStack(spacing: 12) {
+                            HStack {
+                                Text("Calories")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text("\(foodDataManager.nutritionGoals.dailyCalories) cal")
+                                    .foregroundColor(.black)
+                                    .fontWeight(.semibold)
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Protein")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text("\(foodDataManager.nutritionGoals.protein)g")
+                                    .foregroundColor(.black)
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Carbs")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text("\(foodDataManager.nutritionGoals.carbs)g")
+                                    .foregroundColor(.black)
+                            }
+                            
+                            Divider()
+                            
+                            HStack {
+                                Text("Fats")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text("\(foodDataManager.nutritionGoals.fats)g")
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .padding(16)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 40)
+                }
+                .padding(.top, 20)
+            }
+            .navigationTitle("Personal Details")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Language Selection View
+struct LanguageSelectionView: View {
+    @Environment(\.dismiss) var dismiss
+    @AppStorage("selectedLanguage") private var selectedLanguage = "English"
+    
+    let languages = [
+        "English",
+        "Spanish",
+        "French",
+        "German",
+        "Italian",
+        "Portuguese",
+        "Chinese",
+        "Japanese",
+        "Korean"
+    ]
+    
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(languages, id: \.self) { language in
+                    Button(action: {
+                        selectedLanguage = language
+                        dismiss()
+                    }) {
+                        HStack {
+                            Text(language)
+                                .foregroundColor(.black)
+                            Spacer()
+                            if selectedLanguage == language {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Language")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -13696,13 +14672,313 @@ struct ProfileButton: View {
     }
 }
 
+// MARK: - Meal Row View
+struct MealRowView: View {
+    let meal: ScannedFood
+    @State private var showFoodDetail = false
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 2)
+            
+            HStack(spacing: 14) {
+                // Food icon
+                ZStack {
+                    Circle()
+                        .fill(Color(red: 0.95, green: 0.95, blue: 0.96))
+                        .frame(width: 60, height: 60)
+                    
+                    Text(meal.icon)
+                        .font(.system(size: 30))
+                }
+                
+                // Food info
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(meal.name)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.black)
+                        .lineLimit(1)
+                    
+                    HStack(spacing: 8) {
+                        Text("\(meal.calories) cal")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(Color.black.opacity(0.6))
+                        
+                        Text("•")
+                            .foregroundColor(Color.black.opacity(0.3))
+                        
+                        Text(meal.timestamp)
+                            .font(.system(size: 14))
+                            .foregroundColor(Color.black.opacity(0.5))
+                    }
+                }
+                
+                Spacer()
+                
+                // Chevron
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(Color.black.opacity(0.3))
+            }
+            .padding(14)
+        }
+        .frame(height: 88)
+        .onTapGesture {
+            showFoodDetail = true
+        }
+        .sheet(isPresented: $showFoodDetail) {
+            FoodDetailView(meal: meal)
+        }
+    }
+}
+
+// MARK: - Food Detail View
+struct FoodDetailView: View {
+    @Environment(\.dismiss) var dismiss
+    @StateObject private var foodDataManager = FoodDataManager.shared
+    let meal: ScannedFood
+    @State private var showDeleteAlert = false
+    @State private var showMenu = false
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                // Header
+                HStack {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.black)
+                            .frame(width: 44, height: 44)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("Nutrition")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.black)
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        showMenu = true
+                    }) {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.black)
+                            .frame(width: 44, height: 44)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+                .padding(.bottom, 12)
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        // Time
+                        Text(meal.timestamp)
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundColor(Color.black.opacity(0.5))
+                            .padding(.horizontal, 24)
+                            .padding(.top, 8)
+                        
+                        // Food Name
+                        HStack {
+                            Text(meal.name)
+                                .font(.system(size: 32, weight: .bold))
+                                .foregroundColor(.black)
+                            
+                            Spacer()
+                            
+                            Button(action: {}) {
+                                Image(systemName: "bookmark")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .padding(.horizontal, 24)
+                        
+                        // Servings
+                        HStack {
+                            Text("Number of Servings")
+                                .font(.system(size: 17, weight: .regular))
+                                .foregroundColor(.black)
+                            
+                            Spacer()
+                            
+                            Text("1")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundColor(.black)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 12)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(12)
+                        }
+                        .padding(.horizontal, 24)
+                        
+                        // Nutrition Card
+                        VStack(spacing: 20) {
+                            // Calories
+                            HStack {
+                                Image(systemName: "flame.fill")
+                                    .font(.system(size: 28))
+                                    .foregroundColor(.black)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Calories")
+                                        .font(.system(size: 15, weight: .regular))
+                                        .foregroundColor(Color.black.opacity(0.5))
+                                    
+                                    Text("\(meal.calories)")
+                                        .font(.system(size: 42, weight: .bold))
+                                        .foregroundColor(.black)
+                                }
+                                
+                                Spacer()
+                            }
+                            .padding(.horizontal, 24)
+                            
+                            // Macros
+                            HStack(spacing: 12) {
+                                // Protein
+                                VStack(spacing: 8) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "circle.fill")
+                                            .font(.system(size: 10))
+                                            .foregroundColor(Color(red: 0.89, green: 0.85, blue: 0.88))
+                                        
+                                        Text("Protein")
+                                            .font(.system(size: 13, weight: .medium))
+                                            .foregroundColor(Color.black.opacity(0.6))
+                                    }
+                                    
+                                    Text("\(meal.protein)g")
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .foregroundColor(.black)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(16)
+                                
+                                // Carbs
+                                VStack(spacing: 8) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "circle.fill")
+                                            .font(.system(size: 10))
+                                            .foregroundColor(Color(red: 0.96, green: 0.93, blue: 0.87))
+                                        
+                                        Text("Carbs")
+                                            .font(.system(size: 13, weight: .medium))
+                                            .foregroundColor(Color.black.opacity(0.6))
+                                    }
+                                    
+                                    Text("\(meal.carbs)g")
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .foregroundColor(.black)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(16)
+                                
+                                // Fats
+                                VStack(spacing: 8) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "circle.fill")
+                                            .font(.system(size: 10))
+                                            .foregroundColor(Color(red: 0.87, green: 0.90, blue: 0.95))
+                                        
+                                        Text("Fats")
+                                            .font(.system(size: 13, weight: .medium))
+                                            .foregroundColor(Color.black.opacity(0.6))
+                                    }
+                                    
+                                    Text("\(meal.fats)g")
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .foregroundColor(.black)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(16)
+                            }
+                            .padding(.horizontal, 24)
+                        }
+                        .padding(.vertical, 24)
+                        .background(Color.white)
+                        .cornerRadius(24)
+                        .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 4)
+                        .padding(.horizontal, 24)
+                        
+                        Spacer(minLength: 100)
+                    }
+                }
+                
+                // Done button
+                Button(action: {
+                    dismiss()
+                }) {
+                    Text("Done")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color.black)
+                        .cornerRadius(16)
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
+            }
+            .background(Color(red: 0.97, green: 0.97, blue: 0.98))
+            .navigationBarHidden(true)
+        }
+        .confirmationDialog("", isPresented: $showMenu) {
+            Button("Delete", role: .destructive) {
+                showDeleteAlert = true
+            }
+            Button("Cancel", role: .cancel) {}
+        }
+        .alert("Delete Food", isPresented: $showDeleteAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                foodDataManager.deleteMeal(meal)
+                dismiss()
+            }
+        } message: {
+            Text("Are you sure you want to delete \(meal.name)?")
+        }
+    }
+}
+
 struct MacroCard: View {
     let amount: String
     let label: String
     let icon: String
     let circleColor: Color
+    let value: Int
+    let consumed: Int
+    let goal: Int
+    let isConsumed: Bool
+    
+    init(amount: String, label: String, icon: String, circleColor: Color, value: Int = 0, consumed: Int = 0, goal: Int = 1, isConsumed: Bool = false) {
+        self.amount = amount
+        self.label = label
+        self.icon = icon
+        self.circleColor = circleColor
+        self.value = value
+        self.consumed = consumed
+        self.goal = goal
+        self.isConsumed = isConsumed
+    }
     
     var body: some View {
+        let isOver = value < 0
+        let displayLabel = isOver ? label.replacingOccurrences(of: "left", with: "over") : label
+        let progress = min(1.0, Double(consumed) / Double(max(1, goal)))
+        
         ZStack {
             RoundedRectangle(cornerRadius: 24)
                 .fill(Color.white)
@@ -13711,33 +14987,49 @@ struct MacroCard: View {
             VStack(spacing: 8) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(amount)
-                        .font(.system(size: 26, weight: .bold)) // Smaller macro numbers
-                        .foregroundColor(.black)
+                        .font(.system(size: 26, weight: .bold))
+                        .foregroundColor(isOver ? Color(red: 0.90, green: 0.50, blue: 0.55) : .black)
                     
-                    Text(label)
-                        .font(.system(size: 12, weight: .regular)) // #7: Smaller labels
-                        .foregroundColor(Color.black.opacity(0.5))
+                    Text(displayLabel)
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundColor(isOver ? Color(red: 0.90, green: 0.50, blue: 0.55).opacity(0.7) : Color.black.opacity(0.5))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 4) // #9: Position higher
+                .padding(.top, 4)
                 
                 Spacer(minLength: 0)
                 
                 ZStack {
+                    // Background circle
                     Circle()
                         .fill(circleColor)
-                        .frame(width: 68, height: 68) // #18: Smaller circles (was 78)
+                        .frame(width: 68, height: 68)
                     
+                    // Progress ring
+                    Circle()
+                        .stroke(Color.black.opacity(0.1), lineWidth: 4)
+                        .frame(width: 78, height: 78)
+                    
+                    Circle()
+                        .trim(from: 0, to: CGFloat(progress))
+                        .stroke(
+                            consumed > goal ? Color(red: 0.90, green: 0.50, blue: 0.55) : Color(red: 0.92, green: 0.58, blue: 0.65),
+                            style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                        )
+                        .frame(width: 78, height: 78)
+                        .rotationEffect(.degrees(-90))
+                    
+                    // Icon
                     Text(icon)
-                        .font(.system(size: 24)) // #17: Smaller icons (was 28)
-                        .offset(y: 2) // #11: Lower in circle
+                        .font(.system(size: 24))
+                        .offset(y: 2)
                 }
                 .padding(.bottom, 2)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 14)
         }
-        .frame(height: 155) // #16: Shorter height (was 168)
+        .frame(height: 165)
     }
 }
 
@@ -13797,7 +15089,12 @@ struct FoodScanFlow: View {
             } else if currentStep == 4 {
                 CameraScanView(currentStep: $currentStep, scannedFood: $scannedFood)
             } else if currentStep == 5 {
-                FoodDetailView(food: scannedFood ?? ScannedFood.sample, isPresented: $isPresented)
+                if let food = scannedFood {
+                    FoodDetailView(meal: food)
+                        .onDisappear {
+                            isPresented = false
+                        }
+                }
             }
         }
     }
@@ -14051,6 +15348,8 @@ struct CameraScanView: View {
     @State private var flashOn = false
     @State private var showingImagePicker = false
     @State private var selectedImage: UIImage?
+    @State private var isAnalyzing = false
+    @State private var analysisError: String?
     
     var body: some View {
         ZStack {
@@ -14060,7 +15359,10 @@ struct CameraScanView: View {
             VStack(spacing: 0) {
                 // Top controls
                 HStack {
+                    // Close button
                     Button(action: {
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                        impactFeedback.impactOccurred()
                         currentStep = 2
                     }) {
                         Image(systemName: "xmark")
@@ -14071,12 +15373,15 @@ struct CameraScanView: View {
                     
                     Spacer()
                     
+                    // Flash toggle button
                     Button(action: {
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                        impactFeedback.impactOccurred()
                         flashOn.toggle()
                     }) {
                         Image(systemName: flashOn ? "bolt.fill" : "bolt.slash.fill")
                             .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(.white)
+                            .foregroundColor(flashOn ? .yellow : .white)
                             .frame(width: 44, height: 44)
                     }
                 }
@@ -14085,15 +15390,15 @@ struct CameraScanView: View {
                 
                 Spacer()
                 
-                // Camera controls
-                HStack(spacing: 0) {
-                    Spacer()
-                    
-                    // Shutter button
+                // Camera controls - properly centered
+                ZStack {
+                    // Centered shutter button
                     Button(action: {
-                        // Simulate taking photo and moving to results
-                        scannedFood = ScannedFood.sample
-                        currentStep = 5
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                        impactFeedback.impactOccurred()
+                        // TODO: Implement actual camera capture
+                        // For now, use a placeholder image
+                        analyzePlaceholderFood()
                     }) {
                         ZStack {
                             Circle()
@@ -14105,20 +15410,82 @@ struct CameraScanView: View {
                                 .frame(width: 64, height: 64)
                         }
                     }
+                    .disabled(isAnalyzing)
                     
-                    Spacer()
-                    
-                    // Photo library button
-                    Button(action: {
-                        showingImagePicker = true
-                    }) {
-                        Image(systemName: "photo.on.rectangle")
-                            .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(.white)
+                    // Photo library button aligned to the right
+                    HStack {
+                        Spacer()
+                        
+                        Button(action: {
+                            let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                            impactFeedback.impactOccurred()
+                            showingImagePicker = true
+                        }) {
+                            Image(systemName: "photo.on.rectangle")
+                                .font(.system(size: 24, weight: .medium))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                        }
+                        .padding(.trailing, 30)
+                        .disabled(isAnalyzing)
                     }
-                    .padding(.trailing, 40)
                 }
                 .padding(.bottom, 70)
+            }
+            
+            // Analyzing overlay
+            if isAnalyzing {
+                Color.black.opacity(0.8)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 20) {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(1.5)
+                    
+                    Text("Analyzing food...")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.white)
+                    
+                    Text("This may take a few seconds")
+                        .font(.system(size: 15))
+                        .foregroundColor(.white.opacity(0.7))
+                }
+            }
+            
+            // Error alert
+            if let error = analysisError {
+                VStack {
+                    Spacer()
+                    
+                    VStack(spacing: 12) {
+                        Text("Analysis Failed")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundColor(.white)
+                        
+                        Text(error)
+                            .font(.system(size: 15))
+                            .foregroundColor(.white.opacity(0.8))
+                            .multilineTextAlignment(.center)
+                        
+                        Button(action: {
+                            analysisError = nil
+                        }) {
+                            Text("Try Again")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 12)
+                                .background(Color.white.opacity(0.2))
+                                .cornerRadius(20)
+                        }
+                    }
+                    .padding(24)
+                    .background(Color.red.opacity(0.9))
+                    .cornerRadius(16)
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 100)
+                }
             }
             
             // Speed indicator (top center)
@@ -14142,251 +15509,58 @@ struct CameraScanView: View {
         }
         .sheet(isPresented: $showingImagePicker) {
             ImagePicker(image: $selectedImage) { image in
-                if image != nil {
-                    // When image is selected, move to food detail
-                    scannedFood = ScannedFood.sample
-                    currentStep = 5
+                if let image = image {
+                    analyzeFood(image: image)
                 }
             }
         }
     }
-}
-
-// MARK: - Food Detail View
-struct FoodDetailView: View {
-    let food: ScannedFood
-    @Binding var isPresented: Bool
-    @State private var showingFullDetails = false
     
-    var body: some View {
-        ZStack {
-            // Background with food image
-            if let imageName = food.imageName {
-                Image(systemName: imageName)
-                    .font(.system(size: 200))
-                    .foregroundColor(Color.black.opacity(0.1))
-                    .blur(radius: 50)
-            }
-            
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.20, green: 0.22, blue: 0.28),
-                    Color(red: 0.25, green: 0.27, blue: 0.32)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Top bar
-                HStack {
-                    Button(action: {
-                        isPresented = false
-                    }) {
-                        Image(systemName: "arrow.left")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(.white)
-                            .frame(width: 44, height: 44)
-                    }
-                    
-                    Spacer()
-                    
-                    Text("Nutrition")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    HStack(spacing: 16) {
-                        Button(action: {}) {
-                            Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 20, weight: .medium))
-                                .foregroundColor(.white)
-                        }
-                        
-                        Button(action: {}) {
-                            Image(systemName: "ellipsis")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 50)
+    private func analyzePlaceholderFood() {
+        // For testing: use sample data
+        // In production, this would capture from camera
+        scannedFood = ScannedFood.sample
+        currentStep = 5
+    }
+    
+    private func analyzeFood(image: UIImage) {
+        isAnalyzing = true
+        analysisError = nil
+        
+        Task {
+            do {
+                let food = try await FoodAnalysisService.shared.analyzeFood(image: image)
                 
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 20) {
-                        // Food image/icon
-                        ZStack {
-                            Circle()
-                                .fill(Color.white.opacity(0.1))
-                                .frame(width: 120, height: 120)
-                            
-                            Text(food.icon)
-                                .font(.system(size: 60))
-                        }
-                        .padding(.top, 20)
-                        
-                        // Time badge
-                        Text(food.timestamp)
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.white.opacity(0.15))
-                            .cornerRadius(20)
-                        
-                        // Food name
-                        HStack(spacing: 8) {
-                            Text(food.name)
-                                .font(.system(size: 28, weight: .bold))
-                                .foregroundColor(.white)
-                            
-                            Text("\(food.servings)")
-                                .font(.system(size: 20, weight: .medium))
-                                .foregroundColor(.white.opacity(0.6))
-                            
-                            Button(action: {}) {
-                                Image(systemName: "pencil")
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.6))
-                            }
-                        }
-                        
-                        // Calories
-                        HStack(spacing: 8) {
-                            Text("🔥")
-                                .font(.system(size: 20))
-                            
-                            Text("Calories")
-                                .font(.system(size: 15, weight: .regular))
-                                .foregroundColor(.white.opacity(0.8))
-                            
-                            Spacer()
-                            
-                            Text("\(food.calories)")
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.horizontal, 24)
-                        
-                        // Macros
-                        HStack(spacing: 20) {
-                            MacroItem(icon: "🍗", label: "Protein", value: "\(food.protein)g", color: Color(red: 0.89, green: 0.85, blue: 0.88))
-                            MacroItem(icon: "🌾", label: "Carbs", value: "\(food.carbs)g", color: Color(red: 0.96, green: 0.93, blue: 0.87))
-                            MacroItem(icon: "💧", label: "Fats", value: "\(food.fats)g", color: Color(red: 0.87, green: 0.90, blue: 0.95))
-                        }
-                        .padding(.horizontal, 24)
-                        
-                        // Divider
-                        Rectangle()
-                            .fill(Color.white.opacity(0.1))
-                            .frame(height: 1)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 8)
-                        
-                        // Additional nutrients
-                        if showingFullDetails {
-                            VStack(spacing: 16) {
-                                HStack(spacing: 20) {
-                                    NutrientItem(icon: "🥦", label: "Fiber", value: "\(food.fiber)g", color: Color.purple.opacity(0.3))
-                                    NutrientItem(icon: "🍬", label: "Sugar", value: "\(food.sugar)g", color: Color.pink.opacity(0.3))
-                                    NutrientItem(icon: "🧂", label: "Sodium", value: "\(food.sodium)mg", color: Color.orange.opacity(0.3))
-                                }
-                                .padding(.horizontal, 24)
-                                
-                                // Health Score
-                                VStack(spacing: 12) {
-                                    HStack {
-                                        Image(systemName: "heart.fill")
-                                            .foregroundColor(.pink)
-                                        Text("Health Score")
-                                            .font(.system(size: 15, weight: .medium))
-                                            .foregroundColor(.white.opacity(0.8))
-                                        
-                                        Spacer()
-                                        
-                                        Text("\(food.healthScore)/10")
-                                            .font(.system(size: 20, weight: .bold))
-                                            .foregroundColor(.white)
-                                    }
-                                    
-                                    // Health bar
-                                    GeometryReader { geo in
-                                        ZStack(alignment: .leading) {
-                                            RoundedRectangle(cornerRadius: 4)
-                                                .fill(Color.white.opacity(0.2))
-                                                .frame(height: 8)
-                                            
-                                            RoundedRectangle(cornerRadius: 4)
-                                                .fill(Color.yellow)
-                                                .frame(width: geo.size.width * CGFloat(food.healthScore) / 10.0, height: 8)
-                                        }
-                                    }
-                                    .frame(height: 8)
-                                }
-                                .padding(.horizontal, 24)
-                                
-                                Rectangle()
-                                    .fill(Color.white.opacity(0.1))
-                                    .frame(height: 1)
-                                    .padding(.horizontal, 24)
-                                    .padding(.vertical, 8)
-                            }
-                        }
-                        
-                        // Ingredients section
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("Ingredients")
-                                    .font(.system(size: 20, weight: .bold))
-                                    .foregroundColor(.white)
-                                
-                                Spacer()
-                                
-                                Button(action: {}) {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "plus")
-                                            .font(.system(size: 14, weight: .semibold))
-                                        Text("Add")
-                                            .font(.system(size: 15, weight: .semibold))
-                                    }
-                                    .foregroundColor(.white.opacity(0.8))
-                                }
-                            }
-                            
-                            ForEach(food.ingredients, id: \.self) { ingredient in
-                                HStack {
-                                    Text("•")
-                                        .foregroundColor(.white.opacity(0.6))
-                                    Text(ingredient)
-                                        .font(.system(size: 15, weight: .regular))
-                                        .foregroundColor(.white.opacity(0.9))
-                                    Spacer()
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 24)
-                        
-                        Spacer(minLength: 100)
+                await MainActor.run {
+                    scannedFood = food
+                    isAnalyzing = false
+                    currentStep = 5
+                    
+                    print("✅ Food analyzed: \(food.name)")
+                    print("   Calories: \(food.calories)")
+                    print("   Protein: \(food.protein)g")
+                    print("   Carbs: \(food.carbs)g")
+                    print("   Fats: \(food.fats)g")
+                }
+            } catch let error as FoodAnalysisService.FoodAnalysisError {
+                await MainActor.run {
+                    isAnalyzing = false
+                    switch error {
+                    case .imageConversionFailed:
+                        analysisError = "Failed to process image"
+                    case .networkError(let err):
+                        analysisError = "Network error: \(err.localizedDescription)"
+                    case .invalidResponse:
+                        analysisError = "Invalid response from AI"
+                    case .apiError(let msg):
+                        analysisError = "API error: \(msg)"
                     }
                 }
-                
-                // Bottom button
-                Button(action: {
-                    isPresented = false
-                }) {
-                    Text("Done")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .background(Color(red: 0.15, green: 0.15, blue: 0.20))
-                        .cornerRadius(28)
+            } catch {
+                await MainActor.run {
+                    isAnalyzing = false
+                    analysisError = "Unexpected error: \(error.localizedDescription)"
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 40)
             }
         }
     }
@@ -14397,6 +15571,7 @@ struct MacroItem: View {
     let label: String
     let value: String
     let color: Color
+    var lightBackground: Bool = false // For white backgrounds
     
     var body: some View {
         VStack(spacing: 8) {
@@ -14411,11 +15586,11 @@ struct MacroItem: View {
             
             Text(value)
                 .font(.system(size: 15, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(lightBackground ? .black : .white)
             
             Text(label)
                 .font(.system(size: 12, weight: .regular))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(lightBackground ? .gray : .white.opacity(0.7))
         }
         .frame(maxWidth: .infinity)
     }
@@ -14426,6 +15601,7 @@ struct NutrientItem: View {
     let label: String
     let value: String
     let color: Color
+    var lightBackground: Bool = false // For white backgrounds
     
     var body: some View {
         VStack(spacing: 8) {
@@ -14440,11 +15616,11 @@ struct NutrientItem: View {
             
             Text(value)
                 .font(.system(size: 15, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(lightBackground ? .black : .white)
             
             Text(label)
                 .font(.system(size: 12, weight: .regular))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(lightBackground ? .gray : .white.opacity(0.7))
         }
         .frame(maxWidth: .infinity)
     }
@@ -14491,10 +15667,61 @@ struct ImagePicker: UIViewControllerRepresentable {
 }
 
 // MARK: - Scanned Food Model
-struct ScannedFood {
+// MARK: - Nutrition Data Models
+struct NutritionGoals: Codable {
+    let dailyCalories: Int
+    let protein: Int
+    let carbs: Int
+    let fats: Int
+    let fiber: Int
+    let sugar: Int
+    let sodium: Int
+    let currentWeight: Double
+    let targetWeight: Double
+    let weightLossSpeed: Double
+    
+    static let `default` = NutritionGoals(
+        dailyCalories: 1387,
+        protein: 104,
+        carbs: 139,
+        fats: 46,
+        fiber: 28,      // Recommended daily fiber (25-30g)
+        sugar: 50,      // Max recommended added sugar (~50g)
+        sodium: 2300,   // Max recommended sodium (2300mg)
+        currentWeight: 148,
+        targetWeight: 135.6,
+        weightLossSpeed: 1.0
+    )
+}
+
+struct DailyTotals: Codable {
+    var calories: Int
+    var protein: Int
+    var carbs: Int
+    var fats: Int
+    var fiber: Int
+    var sugar: Int
+    var sodium: Int
+    
+    static let zero = DailyTotals(calories: 0, protein: 0, carbs: 0, fats: 0, fiber: 0, sugar: 0, sodium: 0)
+    
+    mutating func add(_ food: ScannedFood) {
+        calories += food.calories
+        protein += food.protein
+        carbs += food.carbs
+        fats += food.fats
+        fiber += food.fiber
+        sugar += food.sugar
+        sodium += food.sodium
+    }
+}
+
+struct ScannedFood: Codable, Identifiable, Equatable {
+    let id: String
     let name: String
     let servings: Int
     let timestamp: String
+    let date: Date
     let calories: Int
     let protein: Int
     let carbs: Int
@@ -14506,6 +15733,25 @@ struct ScannedFood {
     let icon: String
     let imageName: String?
     let ingredients: [String]
+    
+    init(id: String = UUID().uuidString, name: String, servings: Int, timestamp: String, date: Date = Date(), calories: Int, protein: Int, carbs: Int, fats: Int, fiber: Int, sugar: Int, sodium: Int, healthScore: Int, icon: String, imageName: String?, ingredients: [String]) {
+        self.id = id
+        self.name = name
+        self.servings = servings
+        self.timestamp = timestamp
+        self.date = date
+        self.calories = calories
+        self.protein = protein
+        self.carbs = carbs
+        self.fats = fats
+        self.fiber = fiber
+        self.sugar = sugar
+        self.sodium = sodium
+        self.healthScore = healthScore
+        self.icon = icon
+        self.imageName = imageName
+        self.ingredients = ingredients
+    }
     
     static let sample = ScannedFood(
         name: "Kopiko Black 3 in One",
@@ -14528,23 +15774,647 @@ struct ScannedFood {
     )
 }
 
+// MARK: - Food Data Manager (Firebase Persistence)
+class FoodDataManager: ObservableObject {
+    static let shared = FoodDataManager()
+    private let db = Firestore.firestore()
+    
+    @Published var todaysMeals: [ScannedFood] = []
+    @Published var nutritionGoals: NutritionGoals = .default
+    @Published var dailyTotals: DailyTotals = .zero
+    @Published var streakCount: Int = 0
+    
+    private init() {
+        // Set up authentication state listener
+        Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            if user != nil {
+                // User logged in - reload all data from Firebase
+                print("🔄 User logged in, reloading all data from Firebase...")
+                self?.reloadAllUserData()
+            } else {
+                // User logged out - clear local data
+                print("🔄 User logged out, clearing local data...")
+                self?.clearLocalData()
+            }
+        }
+    }
+    
+    // MARK: - Nutrition Goals
+    func saveNutritionGoals(_ goals: NutritionGoals) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("❌ Cannot save nutrition goals: No user logged in")
+            return
+        }
+        
+        print("💾 Saving nutrition goals to Firebase...")
+        
+        do {
+            let data = try JSONEncoder().encode(goals)
+            let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
+            
+            // Save to Firebase (NOT local cache)
+            db.collection("users").document(userId).collection("profile").document("nutrition_goals").setData(dict) { error in
+                if let error = error {
+                    print("❌ Error saving nutrition goals to Firebase: \(error)")
+                } else {
+                    print("✅ Nutrition goals saved to Firebase successfully")
+                    print("   📍 Path: users/\(userId)/profile/nutrition_goals")
+                    print("   🎯 Daily calories: \(goals.dailyCalories)")
+                    DispatchQueue.main.async {
+                        self.nutritionGoals = goals
+                    }
+                }
+            }
+        } catch {
+            print("❌ Error encoding nutrition goals: \(error)")
+        }
+    }
+    
+    // MARK: - Data Loading & Synchronization
+    
+    /// Reloads all user data from Firebase when user logs in
+    func reloadAllUserData() {
+        guard Auth.auth().currentUser != nil else {
+            print("⚠️ Cannot reload data: No user logged in")
+            return
+        }
+        
+        print("📥 Loading all user data from Firebase...")
+        loadNutritionGoals()
+        loadMealsForToday()
+        loadStreak()
+    }
+    
+    /// Clears local data when user logs out
+    private func clearLocalData() {
+        DispatchQueue.main.async {
+            self.todaysMeals = []
+            self.nutritionGoals = .default
+            self.dailyTotals = .zero
+            self.streakCount = 0
+            print("🗑️ Local data cleared")
+        }
+    }
+    
+    func loadNutritionGoals() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("⚠️ Cannot load nutrition goals: No user logged in")
+            return
+        }
+        
+        print("📥 Loading nutrition goals from Firebase for user: \(userId)")
+        
+        db.collection("users").document(userId).collection("profile").document("nutrition_goals").getDocument { snapshot, error in
+            if let error = error {
+                print("❌ Error loading nutrition goals: \(error)")
+                return
+            }
+            
+            guard let data = snapshot?.data(),
+                  let jsonData = try? JSONSerialization.data(withJSONObject: data),
+                  let goals = try? JSONDecoder().decode(NutritionGoals.self, from: jsonData) else {
+                print("⚠️ No nutrition goals found in Firebase, using defaults")
+                DispatchQueue.main.async {
+                    self.nutritionGoals = .default
+                }
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.nutritionGoals = goals
+                print("✅ Nutrition goals loaded from Firebase: \(goals.dailyCalories) cal/day")
+            }
+        }
+    }
+    
+    // MARK: - Meal Logging
+    func saveMeal(_ food: ScannedFood) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("❌ Cannot save meal: No user logged in")
+            return
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: food.date)
+        
+        print("💾 Saving meal to Firebase: \(food.name) for date: \(dateString)")
+        
+        do {
+            let data = try JSONEncoder().encode(food)
+            let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
+            
+            // Save to Firebase (NOT local cache)
+            db.collection("users")
+                .document(userId)
+                .collection("meals")
+                .document(dateString)
+                .collection("items")
+                .document(food.id)
+                .setData(dict) { error in
+                    if let error = error {
+                        print("❌ Error saving meal to Firebase: \(error)")
+                    } else {
+                        print("✅ Meal saved to Firebase: \(food.name)")
+                        print("   📍 Path: users/\(userId)/meals/\(dateString)/items/\(food.id)")
+                        // Real-time listener will auto-update todaysMeals
+                        self.updateStreak()
+                    }
+                }
+        } catch {
+            print("❌ Error encoding meal: \(error)")
+        }
+    }
+    
+    func loadMealsForToday() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("⚠️ Cannot load meals: No user logged in")
+            return
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let todayString = dateFormatter.string(from: Date())
+        
+        print("📥 Loading meals from Firebase for date: \(todayString)")
+        
+        // Use real-time listener for automatic updates
+        db.collection("users")
+            .document(userId)
+            .collection("meals")
+            .document(todayString)
+            .collection("items")
+            .order(by: "date", descending: true)
+            .addSnapshotListener { snapshot, error in
+                if let error = error {
+                    print("❌ Error loading meals from Firebase: \(error)")
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else {
+                    print("⚠️ No meal documents found for today")
+                    DispatchQueue.main.async {
+                        self.todaysMeals = []
+                        self.calculateDailyTotals()
+                    }
+                    return
+                }
+                
+                let meals = documents.compactMap { doc -> ScannedFood? in
+                    guard let jsonData = try? JSONSerialization.data(withJSONObject: doc.data()),
+                          let food = try? JSONDecoder().decode(ScannedFood.self, from: jsonData) else {
+                        print("⚠️ Failed to decode meal document: \(doc.documentID)")
+                        return nil
+                    }
+                    return food
+                }
+                
+                DispatchQueue.main.async {
+                    self.todaysMeals = meals
+                    self.calculateDailyTotals()
+                    print("✅ Loaded \(meals.count) meals from Firebase for today")
+                }
+            }
+    }
+    
+    func loadMealsForDate(_ date: Date) async -> [ScannedFood] {
+        guard let userId = Auth.auth().currentUser?.uid else { return [] }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: date)
+        
+        do {
+            let snapshot = try await db.collection("users")
+                .document(userId)
+                .collection("meals")
+                .document(dateString)
+                .collection("items")
+                .order(by: "date", descending: true)
+                .getDocuments()
+            
+            let meals = snapshot.documents.compactMap { doc -> ScannedFood? in
+                guard let jsonData = try? JSONSerialization.data(withJSONObject: doc.data()),
+                      let food = try? JSONDecoder().decode(ScannedFood.self, from: jsonData) else {
+                    return nil
+                }
+                return food
+            }
+            
+            return meals
+        } catch {
+            print("❌ Error loading meals for date: \(error)")
+            return []
+        }
+    }
+    
+    func deleteMeal(_ food: ScannedFood) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: food.date)
+        
+        db.collection("users")
+            .document(userId)
+            .collection("meals")
+            .document(dateString)
+            .collection("items")
+            .document(food.id)
+            .delete { error in
+                if let error = error {
+                    print("❌ Error deleting meal: \(error)")
+                } else {
+                    print("✅ Meal deleted: \(food.name)")
+                    self.loadMealsForToday()
+                }
+            }
+    }
+    
+    // MARK: - Calculations
+    func calculateDailyTotals() {
+        var totals = DailyTotals.zero
+        for meal in todaysMeals {
+            totals.add(meal)
+        }
+        self.dailyTotals = totals
+    }
+    
+    func getRemainingNutrition() -> DailyTotals {
+        return DailyTotals(
+            calories: nutritionGoals.dailyCalories - dailyTotals.calories,
+            protein: nutritionGoals.protein - dailyTotals.protein,
+            carbs: nutritionGoals.carbs - dailyTotals.carbs,
+            fats: nutritionGoals.fats - dailyTotals.fats,
+            fiber: nutritionGoals.fiber - dailyTotals.fiber,
+            sugar: nutritionGoals.sugar - dailyTotals.sugar,
+            sodium: nutritionGoals.sodium - dailyTotals.sodium
+        )
+    }
+    
+    // MARK: - Streak Tracking
+    func updateStreak() {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
+        Task {
+            let streak = await calculateStreak()
+            DispatchQueue.main.async {
+                self.streakCount = streak
+            }
+            
+            // Save streak to Firestore
+            do {
+                try await db.collection("users").document(userId).collection("profile").document("streak").setData([
+                    "count": streak,
+                    "lastUpdated": Timestamp(date: Date())
+                ])
+                print("✅ Streak saved to Firebase: \(streak) days")
+            } catch {
+                print("❌ Error saving streak to Firebase: \(error)")
+            }
+        }
+    }
+    
+    func loadStreak() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("⚠️ Cannot load streak: No user logged in")
+            return
+        }
+        
+        print("📥 Loading streak from Firebase...")
+        
+        db.collection("users").document(userId).collection("profile").document("streak").getDocument { snapshot, error in
+            if let error = error {
+                print("❌ Error loading streak from Firebase: \(error)")
+                return
+            }
+            
+            if let data = snapshot?.data(),
+               let count = data["count"] as? Int {
+                DispatchQueue.main.async {
+                    self.streakCount = count
+                    print("✅ Streak loaded from Firebase: \(count) days")
+                }
+            } else {
+                print("⚠️ No streak data found in Firebase, starting at 0")
+                DispatchQueue.main.async {
+                    self.streakCount = 0
+                }
+            }
+        }
+    }
+    
+    private func calculateStreak() async -> Int {
+        guard let userId = Auth.auth().currentUser?.uid else { return 0 }
+        
+        var streak = 0
+        let calendar = Calendar.current
+        var currentDate = calendar.startOfDay(for: Date())
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        // Check last 365 days for streak
+        for _ in 0..<365 {
+            let dateString = dateFormatter.string(from: currentDate)
+            
+            do {
+                let snapshot = try await db.collection("users")
+                    .document(userId)
+                    .collection("meals")
+                    .document(dateString)
+                    .collection("items")
+                    .limit(to: 1)
+                    .getDocuments()
+                
+                if !snapshot.documents.isEmpty {
+                    streak += 1
+                    currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? currentDate
+                } else {
+                    break
+                }
+            } catch {
+                break
+            }
+        }
+        
+        return streak
+    }
+}
+
+// MARK: - OpenAI Food Analysis Service
+class FoodAnalysisService {
+    static let shared = FoodAnalysisService()
+    private let apiKey = "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"
+    private let endpoint = "https://api.openai.com/v1/chat/completions"
+    
+    enum FoodAnalysisError: Error {
+        case imageConversionFailed
+        case networkError(Error)
+        case invalidResponse
+        case apiError(String)
+    }
+    
+    func analyzeFood(image: UIImage) async throws -> ScannedFood {
+        // Convert image to base64
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            throw FoodAnalysisError.imageConversionFailed
+        }
+        let base64Image = imageData.base64EncodedString()
+        
+        // Prepare the prompt
+        let prompt = """
+        Analyze this food image and provide detailed nutritional information in JSON format.
+        
+        If the image shows a nutrition label, extract the exact values from the label.
+        If it's a photo of actual food, estimate nutritional values based on typical serving sizes.
+        If multiple food items are visible, combine them into a single meal analysis.
+        
+        Return ONLY valid JSON (no markdown, no explanation) with this exact structure:
+        {
+          "name": "Descriptive food name",
+          "servings": 1,
+          "calories": 0,
+          "protein": 0,
+          "carbs": 0,
+          "fats": 0,
+          "fiber": 0,
+          "sugar": 0,
+          "sodium": 0,
+          "healthScore": 0,
+          "icon": "🍽️",
+          "ingredients": ["Ingredient 1 - calories, weight", "Ingredient 2 - calories, weight"]
+        }
+        
+        Guidelines:
+        - name: Clear, concise food name (e.g., "Grilled Chicken Salad")
+        - servings: Default to 1 unless label shows otherwise
+        - All nutritional values in integer format
+        - protein, carbs, fats, fiber, sugar in grams
+        - sodium in milligrams
+        - healthScore: 0-10 based on nutritional balance (10 = very healthy)
+        - icon: Single emoji that represents the food
+        - ingredients: List 2-4 main ingredients with their estimated calories and weight
+        
+        Health score criteria:
+        - High protein, fiber, vitamins: +points
+        - High sugar, sodium, saturated fat: -points
+        - Whole foods, vegetables: +points
+        - Processed foods, fried items: -points
+        """
+        
+        // Prepare request body
+        let requestBody: [String: Any] = [
+            "model": "gpt-4o",
+            "messages": [
+                [
+                    "role": "user",
+                    "content": [
+                        ["type": "text", "text": prompt],
+                        [
+                            "type": "image_url",
+                            "image_url": [
+                                "url": "data:image/jpeg;base64,\(base64Image)"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            "max_tokens": 1000,
+            "temperature": 0.3
+        ]
+        
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: requestBody),
+              let url = URL(string: endpoint) else {
+            throw FoodAnalysisError.invalidResponse
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jsonData
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw FoodAnalysisError.invalidResponse
+            }
+            
+            if httpResponse.statusCode != 200 {
+                if let errorJson = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let error = errorJson["error"] as? [String: Any],
+                   let message = error["message"] as? String {
+                    throw FoodAnalysisError.apiError(message)
+                }
+                throw FoodAnalysisError.apiError("HTTP \(httpResponse.statusCode)")
+            }
+            
+            // Parse OpenAI response
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let choices = json["choices"] as? [[String: Any]],
+                  let firstChoice = choices.first,
+                  let message = firstChoice["message"] as? [String: Any],
+                  let content = message["content"] as? String else {
+                throw FoodAnalysisError.invalidResponse
+            }
+            
+            // Clean content (remove markdown code blocks if present)
+            let cleanedContent = content
+                .replacingOccurrences(of: "```json", with: "")
+                .replacingOccurrences(of: "```", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            // Parse the food data JSON
+            guard let foodData = cleanedContent.data(using: .utf8),
+                  let foodJson = try? JSONSerialization.jsonObject(with: foodData) as? [String: Any] else {
+                throw FoodAnalysisError.invalidResponse
+            }
+            
+            // Create timestamp
+            let formatter = DateFormatter()
+            formatter.dateFormat = "h:mm a"
+            let timestamp = formatter.string(from: Date())
+            
+            // Extract values
+            let name = foodJson["name"] as? String ?? "Unknown Food"
+            let servings = foodJson["servings"] as? Int ?? 1
+            let calories = foodJson["calories"] as? Int ?? 0
+            let protein = foodJson["protein"] as? Int ?? 0
+            let carbs = foodJson["carbs"] as? Int ?? 0
+            let fats = foodJson["fats"] as? Int ?? 0
+            let fiber = foodJson["fiber"] as? Int ?? 0
+            let sugar = foodJson["sugar"] as? Int ?? 0
+            let sodium = foodJson["sodium"] as? Int ?? 0
+            let healthScore = foodJson["healthScore"] as? Int ?? 5
+            let icon = foodJson["icon"] as? String ?? "🍽️"
+            let ingredients = foodJson["ingredients"] as? [String] ?? []
+            
+            return ScannedFood(
+                name: name,
+                servings: servings,
+                timestamp: timestamp,
+                calories: calories,
+                protein: protein,
+                carbs: carbs,
+                fats: fats,
+                fiber: fiber,
+                sugar: sugar,
+                sodium: sodium,
+                healthScore: healthScore,
+                icon: icon,
+                imageName: nil,
+                ingredients: ingredients
+            )
+            
+        } catch let error as FoodAnalysisError {
+            throw error
+        } catch {
+            throw FoodAnalysisError.networkError(error)
+        }
+    }
+}
+
 // MARK: - OpenFoodFacts Service
 class OpenFoodFactsService {
     static let shared = OpenFoodFactsService()
     private let baseURL = "https://world.openfoodfacts.org"
     
+    // Simple cache with 5-minute expiration
+    private var searchCache: [String: (results: [OFFProduct], timestamp: Date)] = [:]
+    private let cacheExpirationSeconds: TimeInterval = 300 // 5 minutes
+    
     // Search for products by name
     func searchProducts(query: String) async throws -> [OFFProduct] {
+        // Check cache first
+        let lowercaseQuery = query.lowercased().trimmingCharacters(in: .whitespaces)
+        if let cached = searchCache[lowercaseQuery] {
+            let age = Date().timeIntervalSince(cached.timestamp)
+            if age < cacheExpirationSeconds {
+                print("✅ Returning cached results for: \(query) (age: \(Int(age))s)")
+                return cached.results
+            } else {
+                // Remove expired cache entry
+                searchCache.removeValue(forKey: lowercaseQuery)
+            }
+        }
+        
         let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
-        let urlString = "\(baseURL)/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1&page_size=25"
+        // Reduced page_size from 25 to 12 for faster loading
+        let urlString = "\(baseURL)/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1&page_size=12"
         
         guard let url = URL(string: urlString) else {
             throw URLError(.badURL)
         }
         
-        let (data, _) = try await URLSession.shared.data(from: url)
-        let response = try JSONDecoder().decode(OFFSearchResponse.self, from: data)
-        return response.products
+        print("🔍 Searching OpenFoodFacts for: \(query)")
+        
+        // Add 10-second timeout for faster failure
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 10.0
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        
+        // Parse JSON manually to handle missing fields gracefully
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let productsArray = json["products"] as? [[String: Any]] else {
+            print("❌ Failed to parse OpenFoodFacts response")
+            return []
+        }
+        
+        // Manually parse products, skipping invalid ones
+        var validProducts: [OFFProduct] = []
+        
+        for productDict in productsArray {
+            // Only include products with basic nutrition data
+            guard let productName = productDict["product_name"] as? String,
+                  !productName.isEmpty else {
+                continue
+            }
+            
+            // Parse nutriments if available
+            var nutriments: OFFNutriments?
+            if let nutrimentsDict = productDict["nutriments"] as? [String: Any] {
+                nutriments = OFFNutriments(
+                    energy_kcal_100g: nutrimentsDict["energy-kcal_100g"] as? Double,
+                    proteins_100g: nutrimentsDict["proteins_100g"] as? Double,
+                    carbohydrates_100g: nutrimentsDict["carbohydrates_100g"] as? Double,
+                    fat_100g: nutrimentsDict["fat_100g"] as? Double,
+                    fiber_100g: nutrimentsDict["fiber_100g"] as? Double,
+                    sugars_100g: nutrimentsDict["sugars_100g"] as? Double,
+                    sodium_100g: nutrimentsDict["sodium_100g"] as? Double,
+                    energy_kcal_serving: nutrimentsDict["energy-kcal_serving"] as? Double,
+                    proteins_serving: nutrimentsDict["proteins_serving"] as? Double,
+                    carbohydrates_serving: nutrimentsDict["carbohydrates_serving"] as? Double,
+                    fat_serving: nutrimentsDict["fat_serving"] as? Double
+                )
+            }
+            
+            let product = OFFProduct(
+                code: productDict["code"] as? String,
+                product_name: productName,
+                brands: productDict["brands"] as? String,
+                image_url: productDict["image_url"] as? String,
+                nutriments: nutriments,
+                serving_size: productDict["serving_size"] as? String
+            )
+            
+            validProducts.append(product)
+        }
+        
+        // Cache the results
+        searchCache[lowercaseQuery] = (results: validProducts, timestamp: Date())
+        
+        // Clean up old cache entries (keep only last 20 searches)
+        if searchCache.count > 20 {
+            let sortedKeys = searchCache.sorted { $0.value.timestamp < $1.value.timestamp }
+            for (key, _) in sortedKeys.prefix(searchCache.count - 20) {
+                searchCache.removeValue(forKey: key)
+            }
+        }
+        
+        print("✅ Found \(validProducts.count) valid products for: \(query)")
+        return validProducts
     }
     
     // Get product by barcode
@@ -14583,6 +16453,15 @@ struct OFFProduct: Codable, Identifiable {
     let nutriments: OFFNutriments?
     let serving_size: String?
     
+    init(code: String? = nil, product_name: String? = nil, brands: String? = nil, image_url: String? = nil, nutriments: OFFNutriments? = nil, serving_size: String? = nil) {
+        self.code = code
+        self.product_name = product_name
+        self.brands = brands
+        self.image_url = image_url
+        self.nutriments = nutriments
+        self.serving_size = serving_size
+    }
+    
     var id: String { code ?? UUID().uuidString }
     
     var displayName: String {
@@ -14609,6 +16488,20 @@ struct OFFNutriments: Codable {
     let carbohydrates_serving: Double?
     let fat_serving: Double?
     
+    init(energy_kcal_100g: Double? = nil, proteins_100g: Double? = nil, carbohydrates_100g: Double? = nil, fat_100g: Double? = nil, fiber_100g: Double? = nil, sugars_100g: Double? = nil, sodium_100g: Double? = nil, energy_kcal_serving: Double? = nil, proteins_serving: Double? = nil, carbohydrates_serving: Double? = nil, fat_serving: Double? = nil) {
+        self.energy_kcal_100g = energy_kcal_100g
+        self.proteins_100g = proteins_100g
+        self.carbohydrates_100g = carbohydrates_100g
+        self.fat_100g = fat_100g
+        self.fiber_100g = fiber_100g
+        self.sugars_100g = sugars_100g
+        self.sodium_100g = sodium_100g
+        self.energy_kcal_serving = energy_kcal_serving
+        self.proteins_serving = proteins_serving
+        self.carbohydrates_serving = carbohydrates_serving
+        self.fat_serving = fat_serving
+    }
+    
     enum CodingKeys: String, CodingKey {
         case energy_kcal_100g = "energy-kcal_100g"
         case proteins_100g
@@ -14628,124 +16521,149 @@ struct OFFNutriments: Codable {
 struct FoodDatabaseView: View {
     @Binding var isPresented: Bool
     @State private var searchText = ""
-    @State private var selectedTab = 0
     @State private var searchResults: [OFFProduct] = []
     @State private var isLoading = false
     @State private var selectedProduct: OFFProduct?
-    @State private var showProductDetail = false
+    @State private var searchTask: Task<Void, Never>?
     
-    let tabTitles = ["All", "My foods", "My meals", "Saved foods"]
-    
-    // Common food suggestions
-    let suggestions = [
-        ("Peanut Butter", "94 cal", "tbsp"),
-        ("Avocado", "130 cal", "serving"),
-        ("Egg", "74 cal", "large"),
-        ("Apples", "72 cal", "medium"),
-        ("Spinach", "7 cal", "cup"),
-        ("Banana", "105 cal", "medium"),
-        ("Chicken Breast", "165 cal", "100g"),
-        ("Rice", "130 cal", "cup")
+    // Quick action categories
+    let quickActions = [
+        ("Custom Food", "Add manually", "square.and.pencil"),
+        ("Recent Foods", "View history", "clock.arrow.circlepath"),
+        ("Favorites", "Quick access", "star.fill"),
+        ("Water", "Log hydration", "drop.fill")
     ]
     
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color.white
+                .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header
-                HStack {
-                    Button(action: {
-                        isPresented = false
-                    }) {
-                        Image(systemName: "arrow.left")
-                            .font(.system(size: 22, weight: .medium))
+                    // Header
+                    HStack {
+                        Button(action: {
+                            isPresented = false
+                        }) {
+                            Image(systemName: "arrow.left")
+                                .font(.system(size: 22, weight: .medium))
+                                .foregroundColor(.black)
+                                .frame(width: 44, height: 44)
+                        }
+                        
+                        Spacer()
+                        
+                        Text("Log Food")
+                            .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.black)
+                        
+                        Spacer()
+                        
+                        // Placeholder for symmetry
+                        Color.clear
                             .frame(width: 44, height: 44)
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 50)
+                    .padding(.bottom, 24)
                     
-                    Spacer()
-                    
-                    Text("Log Food")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.black)
-                    
-                    Spacer()
-                    
-                    // Placeholder for symmetry
-                    Color.clear
-                        .frame(width: 44, height: 44)
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 50)
-                .padding(.bottom, 16)
-                
-                // Tab Bar
-                HStack(spacing: 0) {
-                    ForEach(0..<tabTitles.count, id: \.self) { index in
-                        Button(action: {
-                            selectedTab = index
-                        }) {
-                            VStack(spacing: 8) {
-                                Text(tabTitles[index])
-                                    .font(.system(size: 16, weight: selectedTab == index ? .semibold : .regular))
-                                    .foregroundColor(selectedTab == index ? .black : Color.black.opacity(0.4))
-                                
-                                Rectangle()
-                                    .fill(selectedTab == index ? Color.black : Color.clear)
-                                    .frame(height: 2)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 16)
-                
-                // Search Bar
-                HStack(spacing: 12) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 20))
-                        .foregroundColor(Color.black.opacity(0.3))
-                    
-                    TextField("Describe what you ate", text: $searchText)
-                        .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.black)
-                        .submitLabel(.search)
-                        .onSubmit {
-                            performSearch()
-                        }
-                        .onChange(of: searchText) { newValue in
-                            if !newValue.isEmpty {
+                    // Search Bar
+                    HStack(spacing: 12) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 20))
+                            .foregroundColor(Color.black.opacity(0.3))
+                        
+                        TextField("Describe what you ate", text: $searchText)
+                            .font(.system(size: 17, weight: .regular))
+                            .foregroundColor(.black)
+                            .submitLabel(.search)
+                            .autocorrectionDisabled()
+                            .onSubmit {
+                                // Cancel debounce task and search immediately
+                                searchTask?.cancel()
                                 performSearch()
-                            } else {
-                                searchResults = []
                             }
-                        }
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
-                .background(Color(red: 0.96, green: 0.96, blue: 0.97))
-                .cornerRadius(16)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 24)
+                            .onChange(of: searchText) { newValue in
+                                // Cancel previous search task
+                                searchTask?.cancel()
+                                
+                                if newValue.isEmpty {
+                                    searchResults = []
+                                    isLoading = false
+                                    return
+                                }
+                                
+                                // Only search if at least 2 characters
+                                if newValue.count < 2 {
+                                    searchResults = []
+                                    isLoading = false
+                                    return
+                                }
+                                
+                                // Debounce search - wait 0.4 seconds after user stops typing (reduced from 0.5s)
+                                searchTask = Task {
+                                    try? await Task.sleep(nanoseconds: 400_000_000) // 0.4 second delay
+                                    
+                                    if !Task.isCancelled {
+                                        await MainActor.run {
+                                            performSearch()
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    .background(Color(red: 0.96, green: 0.96, blue: 0.97))
+                    .cornerRadius(16)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
                 
                 // Content
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        if isLoading {
-                            HStack {
-                                Spacer()
-                                VStack(spacing: 12) {
+                    ZStack {
+                        Color.white // Ensure solid background during transitions
+                        
+                        VStack(alignment: .leading, spacing: 12) {
+                            if isLoading {
+                                // Enhanced Loading Screen
+                                VStack(spacing: 24) {
+                                    Spacer()
+                                        .frame(height: 120)
+                                    
+                                    // Animated search icon
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color(red: 0.96, green: 0.96, blue: 0.97))
+                                            .frame(width: 100, height: 100)
+                                        
+                                        Image(systemName: "magnifyingglass")
+                                            .font(.system(size: 40, weight: .medium))
+                                            .foregroundColor(.black.opacity(0.3))
+                                    }
+                                    
+                                    VStack(spacing: 12) {
+                                        Text("Searching food database...")
+                                            .font(.system(size: 20, weight: .semibold))
+                                            .foregroundColor(.black)
+                                        
+                                        Text("Finding the best matches for you")
+                                            .font(.system(size: 16, weight: .regular))
+                                            .foregroundColor(.black.opacity(0.5))
+                                    }
+                                    .padding(.horizontal, 40)
+                                    
+                                    // Loading indicator
                                     ProgressView()
-                                    Text("Searching...")
-                                        .font(.system(size: 15, weight: .medium))
-                                        .foregroundColor(Color.black.opacity(0.5))
+                                        .scaleEffect(1.3)
+                                        .tint(.black)
+                                        .padding(.top, 8)
+                                    
+                                    Spacer()
+                                        .frame(height: 300)
                                 }
-                                Spacer()
-                            }
-                            .padding(.top, 60)
-                        } else if !searchResults.isEmpty {
+                                .frame(maxWidth: .infinity, minHeight: 600)
+                            } else if !searchResults.isEmpty {
                             // Search Results
                             Text("Results")
                                 .font(.system(size: 22, weight: .bold))
@@ -14760,63 +16678,134 @@ struct FoodDatabaseView: View {
                                     servingInfo: "100g",
                                     action: {
                                         selectedProduct = product
-                                        showProductDetail = true
                                     }
                                 )
                             }
                         } else {
-                            // Suggestions
-                            Text("Suggestions")
-                                .font(.system(size: 22, weight: .bold))
-                                .foregroundColor(.black)
-                                .padding(.horizontal, 20)
-                                .padding(.bottom, 4)
-                            
-                            ForEach(suggestions, id: \.0) { suggestion in
-                                FoodSuggestionRow(
-                                    name: suggestion.0,
-                                    calories: suggestion.1,
-                                    servingInfo: suggestion.2,
-                                    action: {
-                                        searchText = suggestion.0
-                                        performSearch()
+                            // Empty state with quick actions
+                            VStack(spacing: 32) {
+                                Spacer()
+                                    .frame(height: 40)
+                                
+                                // Search illustration
+                                VStack(spacing: 16) {
+                                    Image(systemName: "fork.knife.circle.fill")
+                                        .font(.system(size: 64))
+                                        .foregroundColor(.black.opacity(0.2))
+                                    
+                                    VStack(spacing: 8) {
+                                        Text("Search for any food")
+                                            .font(.system(size: 22, weight: .bold))
+                                            .foregroundColor(.black)
+                                        
+                                        Text("Type in the search bar above to find\nnutrition information")
+                                            .font(.system(size: 15, weight: .regular))
+                                            .foregroundColor(.black.opacity(0.5))
+                                            .multilineTextAlignment(.center)
                                     }
-                                )
+                                }
+                                .padding(.horizontal, 40)
+                                
+                                // Quick Actions Grid
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text("Quick Actions")
+                                        .font(.system(size: 17, weight: .semibold))
+                                        .foregroundColor(.black)
+                                        .padding(.horizontal, 20)
+                                    
+                                    VStack(spacing: 12) {
+                                        ForEach(quickActions, id: \.0) { action in
+                                            Button(action: {
+                                                // Handle quick action tap
+                                                print("Quick action tapped: \(action.0)")
+                                            }) {
+                                                HStack(spacing: 16) {
+                                                    ZStack {
+                                                        Circle()
+                                                            .fill(Color(red: 0.96, green: 0.96, blue: 0.97))
+                                                            .frame(width: 48, height: 48)
+                                                        
+                                                        Image(systemName: action.2)
+                                                            .font(.system(size: 20, weight: .medium))
+                                                            .foregroundColor(.black.opacity(0.6))
+                                                    }
+                                                    
+                                                    VStack(alignment: .leading, spacing: 2) {
+                                                        Text(action.0)
+                                                            .font(.system(size: 17, weight: .semibold))
+                                                            .foregroundColor(.black)
+                                                        
+                                                        Text(action.1)
+                                                            .font(.system(size: 14, weight: .regular))
+                                                            .foregroundColor(.black.opacity(0.5))
+                                                    }
+                                                    
+                                                    Spacer()
+                                                    
+                                                    Image(systemName: "chevron.right")
+                                                        .font(.system(size: 14, weight: .semibold))
+                                                        .foregroundColor(.black.opacity(0.3))
+                                                }
+                                                .padding(.horizontal, 20)
+                                                .padding(.vertical, 12)
+                                                .background(Color.white)
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                Spacer()
                             }
+                            .frame(maxWidth: .infinity)
                         }
                         
-                        Spacer(minLength: 40)
+                            Spacer(minLength: 40)
+                        }
+                        .padding(.top, 8)
                     }
-                    .padding(.top, 8)
                 }
             }
         }
-        .sheet(isPresented: $showProductDetail) {
-            if let product = selectedProduct {
-                OFFProductDetailView(product: product, isPresented: $showProductDetail)
-            }
+        .sheet(item: $selectedProduct) { product in
+            OFFProductDetailView(product: product, isPresented: Binding(
+                get: { selectedProduct != nil },
+                set: { if !$0 { selectedProduct = nil } }
+            ))
         }
     }
     
     private func performSearch() {
-        guard !searchText.isEmpty else {
+        guard !searchText.isEmpty && searchText.count >= 2 else {
             searchResults = []
+            isLoading = false
             return
         }
         
+        // Set loading state immediately
         isLoading = true
         
         Task {
             do {
                 let results = try await OpenFoodFactsService.shared.searchProducts(query: searchText)
                 await MainActor.run {
-                    self.searchResults = results
-                    self.isLoading = false
+                    // Update both states in a single transaction without animation
+                    var transaction = Transaction()
+                    transaction.disablesAnimations = true
+                    withTransaction(transaction) {
+                        self.searchResults = results
+                        self.isLoading = false
+                    }
+                    print("✅ Found \(results.count) results for: \(searchText)")
                 }
             } catch {
                 await MainActor.run {
-                    self.isLoading = false
-                    print("Search error: \(error)")
+                    var transaction = Transaction()
+                    transaction.disablesAnimations = true
+                    withTransaction(transaction) {
+                        self.searchResults = []
+                        self.isLoading = false
+                    }
+                    print("❌ Search error: \(error.localizedDescription)")
                 }
             }
         }
@@ -14881,18 +16870,12 @@ struct OFFProductDetailView: View {
     let product: OFFProduct
     @Binding var isPresented: Bool
     @State private var servingAmount: Double = 1.0
+    @State private var isSaving = false
     
     var body: some View {
         ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.20, green: 0.22, blue: 0.28),
-                    Color(red: 0.25, green: 0.27, blue: 0.32)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            Color.white
+                .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 // Top bar
@@ -14902,7 +16885,7 @@ struct OFFProductDetailView: View {
                     }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(.white)
+                            .foregroundColor(.black)
                             .frame(width: 44, height: 44)
                     }
                     
@@ -14910,7 +16893,7 @@ struct OFFProductDetailView: View {
                     
                     Text("Nutrition")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundColor(.black)
                     
                     Spacer()
                     
@@ -14932,7 +16915,7 @@ struct OFFProductDetailView: View {
                             } placeholder: {
                                 ZStack {
                                     Circle()
-                                        .fill(Color.white.opacity(0.1))
+                                        .fill(Color.gray.opacity(0.1))
                                         .frame(width: 120, height: 120)
                                     
                                     ProgressView()
@@ -14942,12 +16925,12 @@ struct OFFProductDetailView: View {
                         } else {
                             ZStack {
                                 Circle()
-                                    .fill(Color.white.opacity(0.1))
+                                    .fill(Color.gray.opacity(0.1))
                                     .frame(width: 120, height: 120)
                                 
                                 Image(systemName: "fork.knife")
                                     .font(.system(size: 48))
-                                    .foregroundColor(.white.opacity(0.6))
+                                    .foregroundColor(.gray)
                             }
                             .padding(.top, 20)
                         }
@@ -14956,14 +16939,14 @@ struct OFFProductDetailView: View {
                         VStack(spacing: 8) {
                             Text(product.displayName)
                                 .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(.white)
+                                .foregroundColor(.black)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 24)
                             
                             if !product.displayBrand.isEmpty {
                                 Text(product.displayBrand)
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.7))
+                                    .foregroundColor(.gray)
                             }
                         }
                         
@@ -14971,10 +16954,10 @@ struct OFFProductDetailView: View {
                         if let servingSize = product.serving_size {
                             Text("Serving: \(servingSize)")
                                 .font(.system(size: 15, weight: .medium))
-                                .foregroundColor(.white.opacity(0.8))
+                                .foregroundColor(.black)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
-                                .background(Color.white.opacity(0.15))
+                                .background(Color.gray.opacity(0.1))
                                 .cornerRadius(20)
                         }
                         
@@ -14989,17 +16972,17 @@ struct OFFProductDetailView: View {
                                         
                                         Text("Calories")
                                             .font(.system(size: 15, weight: .regular))
-                                            .foregroundColor(.white.opacity(0.8))
+                                            .foregroundColor(.gray)
                                         
                                         Spacer()
                                         
                                         Text("\(Int(calories))")
                                             .font(.system(size: 24, weight: .bold))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.black)
                                         
                                         Text("/ 100g")
                                             .font(.system(size: 14, weight: .medium))
-                                            .foregroundColor(.white.opacity(0.6))
+                                            .foregroundColor(.gray)
                                     }
                                     .padding(.horizontal, 24)
                                 }
@@ -15007,66 +16990,120 @@ struct OFFProductDetailView: View {
                                 // Macros
                                 HStack(spacing: 20) {
                                     if let protein = nutriments.proteins_100g {
-                                        MacroItem(
-                                            icon: "🍗",
-                                            label: "Protein",
-                                            value: String(format: "%.1fg", protein),
-                                            color: Color(red: 0.89, green: 0.85, blue: 0.88)
-                                        )
+                                        VStack(spacing: 8) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color(red: 0.89, green: 0.85, blue: 0.88).opacity(0.3))
+                                                    .frame(width: 48, height: 48)
+                                                Text("🍗").font(.system(size: 20))
+                                            }
+                                            Text(String(format: "%.1fg", protein))
+                                                .font(.system(size: 15, weight: .bold))
+                                                .foregroundColor(.black)
+                                            Text("Protein")
+                                                .font(.system(size: 12, weight: .regular))
+                                                .foregroundColor(.gray)
+                                        }
+                                        .frame(maxWidth: .infinity)
                                     }
                                     
                                     if let carbs = nutriments.carbohydrates_100g {
-                                        MacroItem(
-                                            icon: "🌾",
-                                            label: "Carbs",
-                                            value: String(format: "%.1fg", carbs),
-                                            color: Color(red: 0.96, green: 0.93, blue: 0.87)
-                                        )
+                                        VStack(spacing: 8) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color(red: 0.96, green: 0.93, blue: 0.87).opacity(0.3))
+                                                    .frame(width: 48, height: 48)
+                                                Text("🌾").font(.system(size: 20))
+                                            }
+                                            Text(String(format: "%.1fg", carbs))
+                                                .font(.system(size: 15, weight: .bold))
+                                                .foregroundColor(.black)
+                                            Text("Carbs")
+                                                .font(.system(size: 12, weight: .regular))
+                                                .foregroundColor(.gray)
+                                        }
+                                        .frame(maxWidth: .infinity)
                                     }
                                     
                                     if let fat = nutriments.fat_100g {
-                                        MacroItem(
-                                            icon: "💧",
-                                            label: "Fats",
-                                            value: String(format: "%.1fg", fat),
-                                            color: Color(red: 0.87, green: 0.90, blue: 0.95)
-                                        )
+                                        VStack(spacing: 8) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color(red: 0.87, green: 0.90, blue: 0.95).opacity(0.3))
+                                                    .frame(width: 48, height: 48)
+                                                Text("💧").font(.system(size: 20))
+                                            }
+                                            Text(String(format: "%.1fg", fat))
+                                                .font(.system(size: 15, weight: .bold))
+                                                .foregroundColor(.black)
+                                            Text("Fats")
+                                                .font(.system(size: 12, weight: .regular))
+                                                .foregroundColor(.gray)
+                                        }
+                                        .frame(maxWidth: .infinity)
                                     }
                                 }
                                 .padding(.horizontal, 24)
                                 
                                 // Additional nutrients
                                 Rectangle()
-                                    .fill(Color.white.opacity(0.1))
+                                    .fill(Color.gray.opacity(0.2))
                                     .frame(height: 1)
                                     .padding(.horizontal, 24)
                                 
                                 HStack(spacing: 20) {
                                     if let fiber = nutriments.fiber_100g {
-                                        NutrientItem(
-                                            icon: "🥦",
-                                            label: "Fiber",
-                                            value: String(format: "%.1fg", fiber),
-                                            color: Color.purple.opacity(0.3)
-                                        )
+                                        VStack(spacing: 8) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color.purple.opacity(0.3))
+                                                    .frame(width: 48, height: 48)
+                                                Text("🥦").font(.system(size: 20))
+                                            }
+                                            Text(String(format: "%.1fg", fiber))
+                                                .font(.system(size: 15, weight: .bold))
+                                                .foregroundColor(.black)
+                                            Text("Fiber")
+                                                .font(.system(size: 12, weight: .regular))
+                                                .foregroundColor(.gray)
+                                        }
+                                        .frame(maxWidth: .infinity)
                                     }
                                     
                                     if let sugar = nutriments.sugars_100g {
-                                        NutrientItem(
-                                            icon: "🍬",
-                                            label: "Sugar",
-                                            value: String(format: "%.1fg", sugar),
-                                            color: Color.pink.opacity(0.3)
-                                        )
+                                        VStack(spacing: 8) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color.pink.opacity(0.3))
+                                                    .frame(width: 48, height: 48)
+                                                Text("🍬").font(.system(size: 20))
+                                            }
+                                            Text(String(format: "%.1fg", sugar))
+                                                .font(.system(size: 15, weight: .bold))
+                                                .foregroundColor(.black)
+                                            Text("Sugar")
+                                                .font(.system(size: 12, weight: .regular))
+                                                .foregroundColor(.gray)
+                                        }
+                                        .frame(maxWidth: .infinity)
                                     }
                                     
                                     if let sodium = nutriments.sodium_100g {
-                                        NutrientItem(
-                                            icon: "🧂",
-                                            label: "Sodium",
-                                            value: String(format: "%.0fmg", sodium * 1000),
-                                            color: Color.orange.opacity(0.3)
-                                        )
+                                        VStack(spacing: 8) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color.orange.opacity(0.3))
+                                                    .frame(width: 48, height: 48)
+                                                Text("🧂").font(.system(size: 20))
+                                            }
+                                            Text(String(format: "%.0fmg", sodium * 1000))
+                                                .font(.system(size: 15, weight: .bold))
+                                                .foregroundColor(.black)
+                                            Text("Sodium")
+                                                .font(.system(size: 12, weight: .regular))
+                                                .foregroundColor(.gray)
+                                        }
+                                        .frame(maxWidth: .infinity)
                                     }
                                 }
                                 .padding(.horizontal, 24)
@@ -15079,20 +17116,159 @@ struct OFFProductDetailView: View {
                 
                 // Bottom button
                 Button(action: {
-                    // Add to diary functionality here
-                    isPresented = false
+                    addToDiary()
                 }) {
-                    Text("Add to Diary")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .background(Color(red: 0.15, green: 0.15, blue: 0.20))
-                        .cornerRadius(28)
+                    HStack(spacing: 8) {
+                        if isSaving {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(0.8)
+                        }
+                        Text(isSaving ? "Adding..." : "Add to Diary")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background(Color.black)
+                    .cornerRadius(28)
                 }
+                .disabled(isSaving)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 40)
             }
+        }
+    }
+    
+    private func addToDiary() {
+        // Haptic feedback first
+        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+        impactFeedback.impactOccurred()
+        
+        isSaving = true
+        
+        // Convert OFFProduct to ScannedFood
+        let scannedFood = convertToScannedFood(product: product)
+        
+        // Save to Firebase asynchronously
+        FoodDataManager.shared.saveMeal(scannedFood)
+        
+        // Close immediately without waiting for Firebase
+        // Firebase will update in background via real-time listener
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            isSaving = false
+            isPresented = false
+        }
+    }
+    
+    private func convertToScannedFood(product: OFFProduct) -> ScannedFood {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        let timestamp = formatter.string(from: Date())
+        
+        // Get nutrition values per 100g
+        let nutriments = product.nutriments
+        let calories = Int(nutriments?.energy_kcal_100g ?? 0)
+        let protein = Int(nutriments?.proteins_100g ?? 0)
+        let carbs = Int(nutriments?.carbohydrates_100g ?? 0)
+        let fats = Int(nutriments?.fat_100g ?? 0)
+        let fiber = Int(nutriments?.fiber_100g ?? 0)
+        let sugar = Int(nutriments?.sugars_100g ?? 0)
+        let sodium = Int((nutriments?.sodium_100g ?? 0) * 1000) // Convert to mg
+        
+        // Calculate health score
+        let healthScore = calculateHealthScore(
+            protein: protein,
+            fiber: fiber,
+            sugar: sugar,
+            sodium: sodium,
+            fats: fats
+        )
+        
+        // Determine food emoji based on categories or name
+        let icon = determineFoodIcon(for: product)
+        
+        // Create ingredients breakdown
+        let ingredients = [
+            "\(product.displayName) - \(calories) cal, 100g"
+        ]
+        
+        return ScannedFood(
+            name: product.displayName,
+            servings: 1,
+            timestamp: timestamp,
+            date: Date(),
+            calories: calories,
+            protein: protein,
+            carbs: carbs,
+            fats: fats,
+            fiber: fiber,
+            sugar: sugar,
+            sodium: sodium,
+            healthScore: healthScore,
+            icon: icon,
+            imageName: nil,
+            ingredients: ingredients
+        )
+    }
+    
+    private func calculateHealthScore(protein: Int, fiber: Int, sugar: Int, sodium: Int, fats: Int) -> Int {
+        var score = 5 // Start at neutral
+        
+        // Positive factors
+        if protein > 10 { score += 1 }
+        if fiber > 5 { score += 1 }
+        if protein > 20 { score += 1 }
+        
+        // Negative factors
+        if sugar > 15 { score -= 1 }
+        if sodium > 500 { score -= 1 }
+        if sugar > 30 { score -= 1 }
+        if fats > 20 { score -= 1 }
+        
+        return max(0, min(10, score))
+    }
+    
+    private func determineFoodIcon(for product: OFFProduct) -> String {
+        let name = product.displayName.lowercased()
+        
+        // Check for common food categories
+        if name.contains("chicken") || name.contains("turkey") || name.contains("meat") {
+            return "🍗"
+        } else if name.contains("salad") || name.contains("lettuce") {
+            return "🥗"
+        } else if name.contains("pizza") {
+            return "🍕"
+        } else if name.contains("burger") || name.contains("sandwich") {
+            return "🍔"
+        } else if name.contains("pasta") || name.contains("spaghetti") {
+            return "🍝"
+        } else if name.contains("rice") || name.contains("bowl") {
+            return "🍚"
+        } else if name.contains("fruit") || name.contains("apple") || name.contains("banana") {
+            return "🍎"
+        } else if name.contains("bread") || name.contains("toast") {
+            return "🍞"
+        } else if name.contains("egg") {
+            return "🥚"
+        } else if name.contains("fish") || name.contains("salmon") {
+            return "🐟"
+        } else if name.contains("milk") || name.contains("yogurt") {
+            return "🥛"
+        } else if name.contains("cheese") {
+            return "🧀"
+        } else if name.contains("coffee") {
+            return "☕️"
+        } else if name.contains("juice") || name.contains("drink") {
+            return "🥤"
+        } else if name.contains("cake") || name.contains("dessert") {
+            return "🍰"
+        } else if name.contains("vegetable") {
+            return "🥦"
+        } else if name.contains("soup") {
+            return "🍲"
+        } else {
+            return "🍽️" // Default
         }
     }
 }
