@@ -2717,7 +2717,7 @@ struct TermsOfServiceView: View {
                 .font(.system(size: 16))
                 .foregroundColor(.black)
             
-            Text("📧 By email: helpthrifty@gmail.com")
+            Text(NSLocalizedString("📧 By email: helpthrifty@gmail.com", comment: ""))
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.blue)
         }
@@ -3063,7 +3063,7 @@ struct PrivacyPolicyView: View {
                 .font(.system(size: 16))
                 .foregroundColor(.black)
             
-            Text("📧 By email: helpthrifty@gmail.com")
+            Text(NSLocalizedString("📧 By email: helpthrifty@gmail.com", comment: ""))
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.blue)
         }
@@ -5052,7 +5052,7 @@ struct ProgressGraphView: View {
             NavigationLink(isActive: $navigateToNext) {
                 CompletionView()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -5092,9 +5092,9 @@ struct UltimateGoalView: View {
     @State private var navigateToNext = false
     
     let goals = [
-        "I want to lose weight",
-        "I want to build muscle",
-        "I want to maintain my weight"
+        "ultimate_goal_lose_weight",
+        "ultimate_goal_build_muscle",
+        "ultimate_goal_maintain_weight"
     ]
     
     var body: some View {
@@ -5128,9 +5128,9 @@ struct UltimateGoalView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("What is your ultimate\ngoal?")
+                Text("what_is_ultimate_goal")
                     .font(.system(size: 32, weight: .bold))
-                Text("This will be used to calibrate your custom nutrition plan.")
+                Text("calibrate_custom_plan")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -5146,7 +5146,7 @@ struct UltimateGoalView: View {
                         // Track question-specific answer
                         coordinator.trackQuestionAnswered(answer: goal)
                     }) {
-                        Text(goal)
+                        Text(LocalizedStringKey(goal))
                             .font(.system(size: 17))
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
@@ -5167,7 +5167,7 @@ struct UltimateGoalView: View {
             NavigationLink(isActive: $navigateToNext) {
                 ProgressGraphView()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -5204,10 +5204,10 @@ struct ObstaclesView: View {
     @State private var navigateToNext = false
     
     let obstacles = [
-        ("I try, but don't see results", "chart.bar"),
-        ("Don't know what to eat", "brain"),
-        ("Unsure about portion sizes", "hand.raised"),
-        ("Can't stay consistent", "calendar"),
+        ("obstacle_no_results", "chart.bar"),
+        ("obstacle_dont_know_what_to_eat", "brain"),
+        ("obstacle_portion_sizes", "hand.raised"),
+        ("obstacle_cant_stay_consistent", "calendar"),
     ]
     
     var body: some View {
@@ -5258,7 +5258,7 @@ struct ObstaclesView: View {
                             Image(systemName: icon)
                                 .font(.system(size: 20))
                                 .frame(width: 24)
-                            Text(obstacle)
+                            Text(LocalizedStringKey(obstacle))
                                 .font(.system(size: 17))
                             Spacer()
                         }
@@ -5282,7 +5282,7 @@ struct ObstaclesView: View {
             NavigationLink(isActive: $navigateToNext) {
                 UltimateGoalView()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -5449,7 +5449,7 @@ struct ThriftingTransitionView: View {
             NavigationLink(isActive: $navigateToNext) {
                 ObstaclesView()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -5556,7 +5556,7 @@ struct GoalSpeedView: View {
             NavigationLink(isActive: $navigateToNext) {
                 ThriftingTransitionView()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -5665,7 +5665,7 @@ struct GoalConfirmationView: View {
             NavigationLink(isActive: $navigateToSpeed) {
                 GoalSpeedView(selectedGoal: selectedGoal)
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -5778,7 +5778,7 @@ struct ThriftingGoalSelectionView: View {
                     GoalConfirmationView(selectedGoal: goal)
                 }
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -5898,7 +5898,7 @@ struct WritingStyleView: View {
             NavigationLink(isActive: $navigateToGoal) {
                 ThriftingGoalSelectionView()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -5988,7 +5988,7 @@ struct MusicGenreView: View {
             NavigationLink(isActive: $navigateToStyle) {
                 WritingStyleView()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
@@ -6196,7 +6196,7 @@ struct LongTermResultsView: View {
                 HeightWeightView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -6393,7 +6393,7 @@ struct HeightWeightView: View {
                 BirthdateView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -6468,9 +6468,9 @@ struct BirthdateView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("When were you born?")
+                Text("when_were_you_born")
                     .font(.system(size: 32, weight: .bold))
-                Text("This will be used to calibrate your custom plan.")
+                Text("gender_help_text")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -6524,7 +6524,7 @@ struct BirthdateView: View {
                 PersonalCoachView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -6590,7 +6590,7 @@ struct PersonalCoachView: View {
             
             // Title
             VStack(alignment: .leading, spacing: 8) {
-                Text("Do you currently work with a personal coach or nutritionist?")
+                Text("work_with_coach_question")
                     .font(.system(size: 32, weight: .bold))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -6609,7 +6609,7 @@ struct PersonalCoachView: View {
                     HStack(spacing: 12) {
                         Image(systemName: selectedAnswer == "Yes" ? "checkmark.circle.fill" : "circle")
                             .font(.system(size: 24))
-                        Text("Yes")
+                        Text("yes")
                             .font(.system(size: 17, weight: .medium))
                         Spacer()
                     }
@@ -6650,7 +6650,7 @@ struct PersonalCoachView: View {
                 GoalSelectionView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -6684,7 +6684,7 @@ struct GoalSelectionView: View {
     @State private var selectedGoal: String?
     @State private var navigateToWeight = false
     
-    let goals = ["Lose weight", "Maintain", "Gain weight"]
+    let goals = ["lose_weight", "maintain", "gain_weight"]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -6717,9 +6717,9 @@ struct GoalSelectionView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("What is your goal?")
+                Text("what_is_your_goal")
                     .font(.system(size: 32, weight: .bold))
-                Text("This helps us generate a plan for your calorie intake.")
+                Text("goal_help_text")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -6736,7 +6736,7 @@ struct GoalSelectionView: View {
                         selectedGoal = goal
                         coordinator.trackQuestionAnswered(answer: goal)
                     }) {
-                        Text(goal)
+                        Text(LocalizedStringKey(goal))
                             .font(.system(size: 17, weight: .medium))
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
@@ -6755,7 +6755,7 @@ struct GoalSelectionView: View {
                 DesiredWeightView(currentWeight: 148, selectedGoal: selectedGoal ?? "Lose weight")
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -6798,7 +6798,7 @@ struct DesiredWeightView: View {
         self.currentWeight = currentWeight
         self.selectedGoal = selectedGoal
         // Initialize desired weight based on goal
-        if selectedGoal == "Lose weight" {
+        if selectedGoal == "lose_weight" || selectedGoal == "Lose weight" {
             _desiredWeight = State(initialValue: Double(currentWeight) - 12.4)
         } else {
             _desiredWeight = State(initialValue: Double(currentWeight))
@@ -6836,7 +6836,7 @@ struct DesiredWeightView: View {
             
             // Title
             VStack(alignment: .leading, spacing: 8) {
-                Text("What is your desired weight?")
+                Text("what_is_desired_weight")
                     .font(.system(size: 32, weight: .bold))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -6847,7 +6847,7 @@ struct DesiredWeightView: View {
             
             // Goal and weight display
             VStack(spacing: 24) {
-                Text(selectedGoal)
+                Text(LocalizedStringKey(selectedGoal))
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
                 
@@ -6889,7 +6889,7 @@ struct DesiredWeightView: View {
                 )
                 .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -6994,7 +6994,7 @@ struct WeightTargetResultView: View {
                 WeightLossSpeedView(desiredWeight: desiredWeight, currentWeight: currentWeight)
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -7095,7 +7095,7 @@ struct WeightLossSpeedView: View {
             
             // Title
             VStack(alignment: .leading, spacing: 8) {
-                Text("How fast do you want to reach your goal?")
+                Text("how_fast_reach_goal")
                     .font(.system(size: 32, weight: .bold))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -7106,7 +7106,7 @@ struct WeightLossSpeedView: View {
             
             // Weight loss speed display
             VStack(spacing: 16) {
-                Text("Weight loss speed per week")
+                Text("weight_loss_speed")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
                 
@@ -7118,7 +7118,7 @@ struct WeightLossSpeedView: View {
                     VStack(spacing: 8) {
                         Text("🐢")
                             .font(.system(size: 40))
-                        Text("Slow")
+                        Text("slow")
                             .font(.system(size: 15))
                             .foregroundColor(.gray)
                     }
@@ -7126,7 +7126,7 @@ struct WeightLossSpeedView: View {
                     VStack(spacing: 8) {
                         Text("🐟")
                             .font(.system(size: 40))
-                        Text("Recommended")
+                        Text("recommended")
                             .font(.system(size: 15))
                             .foregroundColor(Color(red: 0.83, green: 0.69, blue: 0.52))
                     }
@@ -7134,7 +7134,7 @@ struct WeightLossSpeedView: View {
                     VStack(spacing: 8) {
                         Text("🐆")
                             .font(.system(size: 40))
-                        Text("Fast")
+                        Text("fast")
                             .font(.system(size: 15))
                             .foregroundColor(.gray)
                     }
@@ -7178,7 +7178,7 @@ struct WeightLossSpeedView: View {
                 ThriftingTransitionView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -7326,7 +7326,7 @@ struct CalAIComparisonView: View {
                 ReachingGoalsObstaclesView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -7357,11 +7357,11 @@ struct ReachingGoalsObstaclesView: View {
     @State private var navigateToDiet = false
     
     let obstacles = [
-        ("Lack of consistency", "chart.bar"),
-        ("Unhealthy eating habits", "fork.knife"),
-        ("Lack of support", "diamond"),
-        ("Busy schedule", "calendar"),
-        ("Lack of meal inspiration", "lightbulb")
+        ("obstacle_lack_consistency", "chart.bar"),
+        ("obstacle_unhealthy_eating", "fork.knife"),
+        ("obstacle_lack_support", "diamond"),
+        ("obstacle_busy_schedule", "calendar"),
+        ("obstacle_lack_meal_inspiration", "lightbulb")
     ]
     
     var body: some View {
@@ -7417,7 +7417,7 @@ struct ReachingGoalsObstaclesView: View {
                             Image(systemName: icon)
                                 .font(.system(size: 20))
                                 .frame(width: 24)
-                            Text(obstacle)
+                            Text(LocalizedStringKey(obstacle))
                                 .font(.system(size: 17))
                             Spacer()
                         }
@@ -7440,7 +7440,7 @@ struct ReachingGoalsObstaclesView: View {
                 SpecificDietView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -7552,7 +7552,7 @@ struct SpecificDietView: View {
                 AccomplishmentView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -7665,7 +7665,7 @@ struct AccomplishmentView: View {
                 ProgressGraphView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -8023,7 +8023,7 @@ struct GenderSelectionView: View {
     @State private var selectedGender: String?
     @State private var navigateToFrequency = false
     
-    let genders = ["Male", "Female", "Other"]
+    let genders = ["male", "female", "other"]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -8056,9 +8056,9 @@ struct GenderSelectionView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("Choose your Gender")
+                Text("choose_gender")
                     .font(.system(size: 32, weight: .bold))
-                Text("This will be used to calibrate your custom plan.")
+                Text("gender_help_text")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -8093,7 +8093,7 @@ struct GenderSelectionView: View {
                 SongFrequencyView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -8126,9 +8126,9 @@ struct SongFrequencyView: View {
     @State private var navigateToResults = false
     
     let frequencies = [
-        ("0-2", "Rarely eat out", "house.fill"),
-        ("3-5", "A few times per week", "fork.knife"),
-        ("6+", "Eat out often", "star.fill")
+        ("0-2", "rarely_eat_out", "house.fill"),
+        ("3-5", "few_times_per_week", "fork.knife"),
+        ("6+", "eat_out_often", "star.fill")
     ]
     
     var body: some View {
@@ -8164,7 +8164,7 @@ struct SongFrequencyView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("How many meals do you eat out per week?")
                     .font(.system(size: 32, weight: .bold))
-                Text("This will be used to calibrate your custom plan.")
+                Text("calibrate_custom_plan")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -8174,7 +8174,7 @@ struct SongFrequencyView: View {
             
             // Frequency options
             VStack(spacing: 16) {
-                ForEach(frequencies, id: \.0) { frequency, description, icon in
+                ForEach(frequencies, id: \.0) { frequency, descriptionKey, icon in
                     Button(action: { 
                         selectedFrequency = frequency
                         // Track question-specific answer
@@ -8187,9 +8187,9 @@ struct SongFrequencyView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(frequency)
                                     .font(.system(size: 17))
-                                Text(description)
+                                Text(LocalizedStringKey(descriptionKey))
                                     .font(.system(size: 15))
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(selectedFrequency == frequency ? .white.opacity(0.7) : .gray)
                             }
                             Spacer()
                         }
@@ -8214,7 +8214,7 @@ struct SongFrequencyView: View {
                 TriedOtherAppsView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -8300,7 +8300,7 @@ struct TriedOtherAppsView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "hand.thumbsup.fill")
                             .font(.system(size: 24))
-                        Text("Yes")
+                        Text("yes")
                             .font(.system(size: 17, weight: .medium))
                         Spacer()
                     }
@@ -8345,7 +8345,7 @@ struct TriedOtherAppsView: View {
                 LongTermResultsView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -8522,7 +8522,7 @@ struct CustomPlanView: View {
                 LoadingView()
                     .horizontalSlideTransition()
             } label: {
-                Text("Continue")
+                Text("continue")
                     .font(.system(size: 17, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -9698,7 +9698,7 @@ struct LoadingView: View {
                 .padding(.bottom, 32)
             
             // Status text
-            Text("Setting up your plan")
+            Text("setting_up_plan")
                 .font(.system(size: 24, weight: .medium))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
@@ -9737,7 +9737,7 @@ struct LoadingView: View {
             
             // Recommendations checklist
             VStack(alignment: .leading, spacing: 0) {
-                Text("Custom profile analysis:")
+                Text("custom_profile_analysis")
                     .font(.system(size: 18, weight: .medium))
                     .foregroundColor(.white)
                     .padding(.leading, 20)
@@ -9958,7 +9958,7 @@ struct FinalCongratulationsView: View {
                 .padding(.bottom, 48)
                 
                 // Congratulations text
-                Text("Congratulations")
+                Text("congratulations")
                     .font(.system(size: 36, weight: .bold))
                     .padding(.bottom, 16)
                     .opacity(showContent ? 1 : 0)
@@ -10070,7 +10070,7 @@ struct CustomPlanSummaryView: View {
                         .animation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.3), value: showContent)
                         
                         VStack(spacing: 4) {
-                            Text("Congratulations")
+                            Text("congratulations")
                                 .font(.system(size: 24, weight: .bold))
                         }
                         .multilineTextAlignment(.center)
@@ -10092,7 +10092,7 @@ struct CustomPlanSummaryView: View {
                             // Nutrition clarity
                             RecommendationCircle(
                                 icon: "eye.fill",
-                                title: "Nutrition clarity",
+                                title: NSLocalizedString("nutrition_clarity", comment: ""),
                                 value: "79%",
                                 color: Color.purple,
                                 delay: 1.2
@@ -10101,7 +10101,7 @@ struct CustomPlanSummaryView: View {
                             // Goal achievement
                             RecommendationCircle(
                                 icon: "chart.line.uptrend.xyaxis",
-                                title: "Goal achievement",
+                                title: NSLocalizedString("goal_achievement", comment: ""),
                                 value: "71%",
                                 color: Color.green,
                                 delay: 1.4
@@ -10110,7 +10110,7 @@ struct CustomPlanSummaryView: View {
                             // Time saved tracking
                             RecommendationCircle(
                                 icon: "clock.fill",
-                                title: "Time saved tracking",
+                                title: NSLocalizedString("time_saved_tracking", comment: ""),
                                 value: "2.5h",
                                 color: Color.blue,
                                 delay: 1.6
@@ -10119,7 +10119,7 @@ struct CustomPlanSummaryView: View {
                             // Wellness boost
                             RecommendationCircle(
                                 icon: "heart.fill",
-                                title: "Wellness boost",
+                                title: NSLocalizedString("wellness_boost", comment: ""),
                                 value: "85%",
                                 color: Color.orange,
                                 delay: 1.8
@@ -10136,7 +10136,7 @@ struct CustomPlanSummaryView: View {
                             .font(.system(size: 18, weight: .semibold))
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Text("Based on your profile, you'll see significant improvement in your nutrition habits and progress toward your goals within the next 3 days.")
+                        Text("custom_prediction_text")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -10156,7 +10156,7 @@ struct CustomPlanSummaryView: View {
             NavigationLink(isActive: $navigateToSubscription) {
                 TryForFreeView()
             } label: {
-                Text("Let's get started!")
+                Text("lets_get_started")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
@@ -13023,17 +13023,17 @@ struct MainAppView: View {
                         
                         HStack(spacing: 0) {
                             // Home Tab
-                            TabButton(icon: "house.fill", label: "Home", isSelected: selectedTab == 0) {
+                            TabButton(icon: "house.fill", label: NSLocalizedString("Home", comment: ""), isSelected: selectedTab == 0) {
                                 selectedTab = 0
                             }
                             
                             // Progress Tab
-                            TabButton(icon: "chart.bar.fill", label: "Progress", isSelected: selectedTab == 1) {
+                            TabButton(icon: "chart.bar.fill", label: NSLocalizedString("Progress", comment: ""), isSelected: selectedTab == 1) {
                                 selectedTab = 1
                             }
                             
                             // Profile Tab
-                            TabButton(icon: "person.fill", label: "Profile", isSelected: selectedTab == 2) {
+                            TabButton(icon: "person.fill", label: NSLocalizedString("Profile", comment: ""), isSelected: selectedTab == 2) {
                                 selectedTab = 2
                             }
                             
@@ -13091,7 +13091,7 @@ struct MainAppView: View {
                                             .font(.system(size: 48, weight: .regular))
                                             .foregroundColor(.black)
                                         
-                                        Text("Food Database")
+                                        Text("food_database")
                                             .font(.system(size: 20, weight: .semibold))
                                             .foregroundColor(.black)
                                     }
@@ -13116,7 +13116,7 @@ struct MainAppView: View {
                                             .font(.system(size: 48, weight: .regular))
                                             .foregroundColor(.black)
                                         
-                                        Text("Scan food")
+                                        Text("scan_food")
                                             .font(.system(size: 20, weight: .semibold))
                                             .foregroundColor(.black)
                                     }
@@ -13467,7 +13467,7 @@ struct HomeView: View {
                             
                             MacroCard(
                                 amount: "\(remainingNutrition.protein)g",
-                                label: "Protein left",
+                                label: NSLocalizedString("Protein", comment: "") + " " + NSLocalizedString("left", comment: ""),
                                 icon: "🍗",
                                 circleColor: Color(red: 0.85, green: 0.75, blue: 0.92).opacity(0.6),
                                 value: remainingNutrition.protein,
@@ -13478,7 +13478,7 @@ struct HomeView: View {
                             
                             MacroCard(
                                 amount: "\(remainingNutrition.carbs)g",
-                                label: "Carbs left",
+                                label: NSLocalizedString("Carbs", comment: "") + " " + NSLocalizedString("left", comment: ""),
                                 icon: "🌾",
                                 circleColor: Color(red: 0.98, green: 0.85, blue: 0.88).opacity(0.6),
                                 value: remainingNutrition.carbs,
@@ -13489,7 +13489,7 @@ struct HomeView: View {
                             
                             MacroCard(
                                 amount: "\(remainingNutrition.fats)g",
-                                label: "Fat left",
+                                label: NSLocalizedString("Fats", comment: "") + " " + NSLocalizedString("left", comment: ""),
                                 icon: "💧",
                                 circleColor: Color(red: 0.92, green: 0.85, blue: 0.95).opacity(0.6),
                                 value: remainingNutrition.fats,
@@ -13509,7 +13509,7 @@ struct HomeView: View {
                             
                             MacroCard(
                                 amount: "\(dailyTotals.fiber)g",
-                                label: "Fiber eaten",
+                                label: NSLocalizedString("Fiber", comment: "") + " " + NSLocalizedString("eaten", comment: ""),
                                 icon: "🌾",
                                 circleColor: Color(red: 0.88, green: 0.82, blue: 0.92).opacity(0.6),
                                 value: dailyTotals.fiber,
@@ -13521,7 +13521,7 @@ struct HomeView: View {
                             
                             MacroCard(
                                 amount: "\(dailyTotals.sugar)g",
-                                label: "Sugar eaten",
+                                label: NSLocalizedString("Sugar", comment: "") + " " + NSLocalizedString("eaten", comment: ""),
                                 icon: "🍬",
                                 circleColor: Color(red: 0.98, green: 0.82, blue: 0.88).opacity(0.6),
                                 value: dailyTotals.sugar,
@@ -13533,7 +13533,7 @@ struct HomeView: View {
                             
                             MacroCard(
                                 amount: "\(dailyTotals.sodium)mg",
-                                label: "Sodium eaten",
+                                label: NSLocalizedString("Sodium", comment: "") + " " + NSLocalizedString("eaten", comment: ""),
                                 icon: "🧂",
                                 circleColor: Color(red: 0.90, green: 0.85, blue: 0.95).opacity(0.6),
                                 value: dailyTotals.sodium,
@@ -13645,7 +13645,7 @@ struct ProgressTabView: View {
     // Calculate BMI from user data
     var currentBMI: Double {
         let heightInches = onboardingData.getHeightInInches()
-        let weightLbs = onboardingData.getCurrentWeightLbs()
+        let weightLbs = foodDataManager.nutritionGoals.currentWeight
         let heightMeters = heightInches * 0.0254
         let weightKg = weightLbs / 2.20462
         let bmi = weightKg / (heightMeters * heightMeters)
@@ -13694,7 +13694,7 @@ struct ProgressTabView: View {
     var weightProgressPercentage: Int {
         let startWeight = foodDataManager.nutritionGoals.currentWeight
         let targetWeight = foodDataManager.nutritionGoals.targetWeight
-        let currentWeight = onboardingData.getCurrentWeightLbs()
+        let currentWeight = foodDataManager.nutritionGoals.currentWeight
         
         let totalWeightToLose = abs(startWeight - targetWeight)
         let weightLost = abs(startWeight - currentWeight)
@@ -13708,25 +13708,28 @@ struct ProgressTabView: View {
     }
     
     var body: some View {
-        ZStack {
-            // Soft gradient background
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.98, green: 0.94, blue: 0.96),
-                    Color(red: 0.96, green: 0.93, blue: 0.98)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 16) {
-                // Progress Header
-                Text("Progress")
+        GeometryReader { geometry in
+            ZStack {
+                // Soft gradient background
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(red: 0.98, green: 0.94, blue: 0.96),
+                        Color(red: 0.96, green: 0.93, blue: 0.98)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+                
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 16) {
+                    // Progress Header
+                    Text("Progress")
                     .font(.system(size: 34, weight: .bold))
                     .foregroundColor(.black)
-                    .padding(.horizontal, 20)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .padding(.horizontal, 10)
                     .padding(.top, 60)
                     .padding(.bottom, 8)
                 
@@ -13736,6 +13739,7 @@ struct ProgressTabView: View {
                         RoundedRectangle(cornerRadius: 24)
                             .fill(Color.white)
                             .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 4)
+                            .frame(maxWidth: .infinity)
                         
                         VStack(spacing: 12) {
                             ZStack {
@@ -13769,7 +13773,7 @@ struct ProgressTabView: View {
                             }
                             .frame(height: 100)
                             
-                            Text("Day Streak")
+                            Text("day_streak")
                                 .font(.system(size: 17, weight: .medium))
                                 .foregroundColor(Color.black.opacity(0.6))
                         }
@@ -13777,22 +13781,24 @@ struct ProgressTabView: View {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, 20)
+                .clipped()
+                .padding(.horizontal, 10)
                 
                 // Current Weight Card
                 ZStack {
                     RoundedRectangle(cornerRadius: 24)
                         .fill(Color.white)
                         .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 4)
+                        .frame(maxWidth: .infinity)
                     
                     VStack(alignment: .leading, spacing: 16) {
                         HStack(alignment: .top) {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Current Weight")
+                                Text("current_weight")
                                     .font(.system(size: 15, weight: .regular))
                                     .foregroundColor(Color.black.opacity(0.5))
                                 
-                                Text(String(format: "%.1f lbs", onboardingData.getCurrentWeightLbs()))
+                                Text(String(format: "%.1f lbs", foodDataManager.nutritionGoals.currentWeight))
                                     .font(.system(size: 48, weight: .bold))
                                     .foregroundColor(.black)
                                     .fixedSize()
@@ -13817,56 +13823,77 @@ struct ProgressTabView: View {
                         }
                         .frame(height: 4)
                         
-                        HStack {
-                            Text(String(format: "Start: %.1f lbs", foodDataManager.nutritionGoals.currentWeight))
-                                .font(.system(size: 15, weight: .regular))
+                        HStack(alignment: .top, spacing: 0) {
+                            Text(LocalizedStringKey(String(format: NSLocalizedString("start_weight_label", comment: ""), foodDataManager.nutritionGoals.currentWeight)))
+                                .font(.system(size: 10, weight: .regular))
                                 .foregroundColor(Color.black.opacity(0.5))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.4)
+                                .layoutPriority(1)
                             
-                            Spacer()
+                            Spacer(minLength: 2)
                             
-                            Text(String(format: "Goal: %.1f lbs", foodDataManager.nutritionGoals.targetWeight))
-                                .font(.system(size: 15, weight: .regular))
+                            Text(LocalizedStringKey(String(format: NSLocalizedString("goal_weight_label", comment: ""), foodDataManager.nutritionGoals.targetWeight)))
+                                .font(.system(size: 10, weight: .regular))
                                 .foregroundColor(Color.black.opacity(0.5))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.4)
+                                .multilineTextAlignment(.trailing)
+                                .layoutPriority(1)
                         }
                         
-                        Text("At your goal by \(goalDate).")
-                            .font(.system(size: 15, weight: .regular))
+                        Text(LocalizedStringKey(String(format: NSLocalizedString("At your goal by %@.", comment: ""), goalDate)))
+                            .font(.system(size: 10, weight: .regular))
                             .foregroundColor(Color.black.opacity(0.5))
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.4)
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .padding(24)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 18)
                 }
-                .padding(.horizontal, 20)
+                .clipped()
+                .padding(.horizontal, 10)
                 
                 // Weight Progress Chart
                 ZStack {
                     RoundedRectangle(cornerRadius: 24)
                         .fill(Color.white)
                         .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 4)
+                        .frame(maxWidth: .infinity)
                     
                     VStack(alignment: .leading, spacing: 20) {
-                        HStack {
-                            Text("Weight Progress")
-                                .font(.system(size: 22, weight: .bold))
+                        HStack(alignment: .center, spacing: 0) {
+                            Text("weight_progress")
+                                .font(.system(size: 16, weight: .bold))
                                 .foregroundColor(.black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.4)
+                                .layoutPriority(1)
                             
-                            Spacer()
+                            Spacer(minLength: 2)
                             
-                            HStack(spacing: 4) {
+                            HStack(spacing: 1) {
                                 Image(systemName: "flag.fill")
-                                    .font(.system(size: 12))
+                                    .font(.system(size: 8))
                                     .foregroundColor(Color.black.opacity(0.4))
                                 
-                            Text("\(weightProgressPercentage)% of goal")
-                                .font(.system(size: 15, weight: .regular))
-                                .foregroundColor(Color.black.opacity(0.5))
+                                Text(LocalizedStringKey(String(format: NSLocalizedString("percent_of_goal", comment: ""), weightProgressPercentage)))
+                                    .font(.system(size: 10, weight: .regular))
+                                    .foregroundColor(Color.black.opacity(0.5))
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.4)
+                                    .multilineTextAlignment(.trailing)
                             }
+                            .layoutPriority(1)
                         }
                         
                         // Chart
                         GeometryReader { geometry in
                             let startWeight = foodDataManager.nutritionGoals.currentWeight
                             let targetWeight = foodDataManager.nutritionGoals.targetWeight
-                            let currentWeight = onboardingData.getCurrentWeightLbs()
+                            let currentWeight = foodDataManager.nutritionGoals.currentWeight
                             
                             let maxWeight = max(startWeight, targetWeight) + 4
                             let minWeight = min(startWeight, targetWeight) - 4
@@ -13919,44 +13946,53 @@ struct ProgressTabView: View {
                             }
                         }
                         .frame(height: 200)
+                        .padding(.bottom, 8)
                     }
-                    .padding(24)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 18)
                 }
-                .padding(.horizontal, 20)
+                .clipped()
+                .padding(.horizontal, 10)
+                .padding(.bottom, 8)
                 
                 // BMI Card
                 ZStack {
                     RoundedRectangle(cornerRadius: 24)
                         .fill(Color.white)
                         .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 4)
+                        .frame(maxWidth: .infinity)
                     
                     VStack(alignment: .leading, spacing: 20) {
                         HStack {
-                            Text("Your BMI")
-                                .font(.system(size: 22, weight: .bold))
+                            Text("your_bmi")
+                                .font(.system(size: 18, weight: .bold))
                                 .foregroundColor(.black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
                             
                             Spacer()
                             
                             Button(action: {}) {
                                 Image(systemName: "questionmark.circle")
-                                    .font(.system(size: 20))
+                                    .font(.system(size: 18))
                                     .foregroundColor(Color.black.opacity(0.3))
                             }
                         }
                         
-                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        HStack(alignment: .firstTextBaseline, spacing: 6) {
                             Text(String(format: "%.1f", currentBMI))
-                                .font(.system(size: 52, weight: .bold))
+                                .font(.system(size: 48, weight: .bold))
                                 .foregroundColor(.black)
+                                .fixedSize()
                             
-                            Text("Your weight is")
-                                .font(.system(size: 17, weight: .regular))
+                            (Text("Your weight is ")
+                                .font(.system(size: 14, weight: .regular))
                                 .foregroundColor(Color.black.opacity(0.5))
-                            
-                            Text(bmiCategory.name)
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(bmiCategory.color)
+                            + Text(bmiCategory.name)
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(bmiCategory.color))
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.5)
                         }
                         
                         // BMI Scale Bar
@@ -13997,89 +14033,106 @@ struct ProgressTabView: View {
                         .frame(height: 24)
                         
                         // BMI Categories
-                        HStack(spacing: 4) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(spacing: 4) {
+                        HStack(spacing: 2) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack(spacing: 3) {
                                     Circle()
                                         .fill(Color(red: 0.40, green: 0.60, blue: 0.85))
-                                        .frame(width: 8, height: 8)
+                                        .frame(width: 7, height: 7)
                                     
-                                    Text("Underweight")
-                                        .font(.system(size: 11, weight: .medium))
+                                    Text("underweight")
+                                        .font(.system(size: 9, weight: .medium))
                                         .foregroundColor(Color.black.opacity(0.6))
-                                        .fixedSize()
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.4)
                                 }
                                 
-                                Text("<18.5")
-                                    .font(.system(size: 11, weight: .regular))
+                                Text("bmi_underweight")
+                                    .font(.system(size: 9, weight: .regular))
                                     .foregroundColor(Color.black.opacity(0.4))
-                                    .padding(.leading, 12)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.4)
+                                    .padding(.leading, 10)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(spacing: 4) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack(spacing: 3) {
                                     Circle()
                                         .fill(Color(red: 0.45, green: 0.75, blue: 0.55))
-                                        .frame(width: 8, height: 8)
+                                        .frame(width: 7, height: 7)
                                     
-                                    Text("Healthy")
-                                        .font(.system(size: 11, weight: .medium))
+                                    Text("healthy")
+                                        .font(.system(size: 9, weight: .medium))
                                         .foregroundColor(Color.black.opacity(0.6))
-                                        .fixedSize()
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.4)
                                 }
                                 
-                                Text("18.5–24.9")
-                                    .font(.system(size: 11, weight: .regular))
+                                Text("bmi_healthy")
+                                    .font(.system(size: 9, weight: .regular))
                                     .foregroundColor(Color.black.opacity(0.4))
-                                    .padding(.leading, 12)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.4)
+                                    .padding(.leading, 10)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(spacing: 4) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack(spacing: 3) {
                                     Circle()
                                         .fill(Color(red: 0.85, green: 0.68, blue: 0.45))
-                                        .frame(width: 8, height: 8)
+                                        .frame(width: 7, height: 7)
                                     
-                                    Text("Overweight")
-                                        .font(.system(size: 11, weight: .medium))
+                                    Text("overweight")
+                                        .font(.system(size: 9, weight: .medium))
                                         .foregroundColor(Color.black.opacity(0.6))
-                                        .fixedSize()
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.4)
                                 }
                                 
-                                Text("25.0–29.9")
-                                    .font(.system(size: 11, weight: .regular))
+                                Text("bmi_overweight")
+                                    .font(.system(size: 9, weight: .regular))
                                     .foregroundColor(Color.black.opacity(0.4))
-                                    .padding(.leading, 12)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.4)
+                                    .padding(.leading, 10)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(spacing: 4) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack(spacing: 3) {
                                     Circle()
                                         .fill(Color(red: 0.80, green: 0.50, blue: 0.50))
-                                        .frame(width: 8, height: 8)
+                                        .frame(width: 7, height: 7)
                                     
-                                    Text("Obese")
-                                        .font(.system(size: 11, weight: .medium))
+                                    Text("obese")
+                                        .font(.system(size: 9, weight: .medium))
                                         .foregroundColor(Color.black.opacity(0.6))
-                                        .fixedSize()
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.4)
                                 }
                                 
-                                Text(">30.0")
-                                    .font(.system(size: 11, weight: .regular))
+                                Text("bmi_obese")
+                                    .font(.system(size: 9, weight: .regular))
                                     .foregroundColor(Color.black.opacity(0.4))
-                                    .padding(.leading, 12)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.4)
+                                    .padding(.leading, 10)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
-                    .padding(24)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 18)
                 }
-                .padding(.horizontal, 20)
+                .clipped()
+                .padding(.horizontal, 10)
                 .padding(.bottom, 120)
             }
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(width: geometry.size.width)
+        }
         }
         }
         .opacity(showFoodDatabase ? 0 : 1)
@@ -14093,7 +14146,6 @@ struct ProfileView: View {
     @State private var showLogoutAlert = false
     @State private var showDeleteAlert = false
     @State private var showPersonalDetailsSheet = false
-    @State private var showLanguageSheet = false
     
     // Debug function to reset app state
     private func resetAppState() {
@@ -14208,21 +14260,17 @@ struct ProfileView: View {
                 .padding(.horizontal, 20)
                 
                 // Preferences Header
-                Text("Preferences")
+                Text("preferences")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(Color.black.opacity(0.5))
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
                 
-                // Language
+                // Language Picker
                 VStack(spacing: 0) {
-                    ProfileButton(
-                        icon: "character.textbox",
-                        title: "Language",
-                        action: {
-                            showLanguageSheet = true
-                        }
-                    )
+                    LanguagePickerView()
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 16)
                 }
                 .background(Color.white)
                 .cornerRadius(16)
@@ -14230,7 +14278,7 @@ struct ProfileView: View {
                 .padding(.horizontal, 20)
                 
                 // Support Header
-                Text("Support")
+                Text("support")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(Color.black.opacity(0.5))
                     .padding(.horizontal, 20)
@@ -14252,7 +14300,7 @@ struct ProfileView: View {
                 .padding(.horizontal, 20)
                 
                 // Legal Header
-                Text("Legal")
+                Text("legal")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(Color.black.opacity(0.5))
                     .padding(.horizontal, 20)
@@ -14262,7 +14310,7 @@ struct ProfileView: View {
                 VStack(spacing: 0) {
                     ProfileButton(
                         icon: "doc.text",
-                        title: "Terms and Conditions",
+                        title: NSLocalizedString("Terms of Service", comment: ""),
                         action: {}
                     )
                     
@@ -14271,7 +14319,7 @@ struct ProfileView: View {
                     
                     ProfileButton(
                         icon: "checkmark.shield",
-                        title: "Privacy Policy",
+                        title: NSLocalizedString("Privacy Policy", comment: ""),
                         action: {}
                     )
                 }
@@ -14281,7 +14329,7 @@ struct ProfileView: View {
                 .padding(.horizontal, 20)
                 
                 // Account Actions Header
-                Text("Account Actions")
+                Text("account_actions")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(Color.black.opacity(0.5))
                     .padding(.horizontal, 20)
@@ -14291,7 +14339,7 @@ struct ProfileView: View {
                 VStack(spacing: 0) {
                     ProfileButton(
                         icon: "rectangle.portrait.and.arrow.right",
-                        title: "Logout",
+                        title: NSLocalizedString("Logout", comment: ""),
                         action: {
                             showLogoutAlert = true
                         }
@@ -14302,7 +14350,7 @@ struct ProfileView: View {
                     
                     ProfileButton(
                         icon: "person.crop.circle.badge.minus",
-                        title: "Delete Account",
+                        title: NSLocalizedString("Delete Account", comment: ""),
                         action: {
                             showDeleteAlert = true
                         }
@@ -14315,7 +14363,7 @@ struct ProfileView: View {
                 
                 // Debug Section
                 #if DEBUG
-                Text("Debug")
+                Text("debug")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(Color.orange.opacity(0.8))
                     .padding(.horizontal, 20)
@@ -14348,7 +14396,7 @@ struct ProfileView: View {
                 authManager.logOut()
             }
         } message: {
-            Text("Are you sure you want to logout?")
+            Text("confirm_logout")
         }
         .alert("Delete Account", isPresented: $showDeleteAlert) {
             Button("Cancel", role: .cancel) { }
@@ -14362,14 +14410,11 @@ struct ProfileView: View {
                 }
             }
         } message: {
-            Text("Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently deleted.")
+            Text("confirm_delete")
         }
         .sheet(isPresented: $showPersonalDetailsSheet) {
             PersonalDetailsView()
                 .environmentObject(authManager)
-        }
-        .sheet(isPresented: $showLanguageSheet) {
-            LanguageSelectionView()
         }
         }
     }
@@ -14388,13 +14433,13 @@ struct PersonalDetailsView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     // User Info Section
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Account")
+                        Text("account")
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(.black)
                         
                         VStack(spacing: 12) {
                             HStack {
-                                Text("Email")
+                                Text("email")
                                     .foregroundColor(.gray)
                                 Spacer()
                                 Text(authManager.currentUser?.email ?? "Not available")
@@ -14404,7 +14449,7 @@ struct PersonalDetailsView: View {
                             Divider()
                             
                             HStack {
-                                Text("Name")
+                                Text("name")
                                     .foregroundColor(.gray)
                                 Spacer()
                                 Text(authManager.currentUser?.name ?? "Not available")
@@ -14419,13 +14464,13 @@ struct PersonalDetailsView: View {
                     
                     // Physical Info Section
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Physical Information")
+                        Text("physical_information")
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(.black)
                         
                         VStack(spacing: 12) {
                             HStack {
-                                Text("Gender")
+                                Text("gender")
                                     .foregroundColor(.gray)
                                 Spacer()
                                 Text(onboardingData.gender)
@@ -14435,7 +14480,7 @@ struct PersonalDetailsView: View {
                             Divider()
                             
                             HStack {
-                                Text("Height")
+                                Text("height")
                                     .foregroundColor(.gray)
                                 Spacer()
                                 if onboardingData.isImperial {
@@ -14450,7 +14495,7 @@ struct PersonalDetailsView: View {
                             Divider()
                             
                             HStack {
-                                Text("Current Weight")
+                                Text("current_weight")
                                     .foregroundColor(.gray)
                                 Spacer()
                                 if onboardingData.isImperial {
@@ -14465,7 +14510,7 @@ struct PersonalDetailsView: View {
                             Divider()
                             
                             HStack {
-                                Text("Age")
+                                Text("age")
                                     .foregroundColor(.gray)
                                 Spacer()
                                 Text("\(onboardingData.calculateAge()) years")
@@ -14480,13 +14525,13 @@ struct PersonalDetailsView: View {
                     
                     // Goals Section
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Goals")
+                        Text("goals")
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(.black)
                         
                         VStack(spacing: 12) {
                             HStack {
-                                Text("Fitness Goal")
+                                Text("fitness_goal")
                                     .foregroundColor(.gray)
                                 Spacer()
                                 Text(onboardingData.fitnessGoal)
@@ -14526,7 +14571,7 @@ struct PersonalDetailsView: View {
                     
                     // Nutrition Goals Section
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Daily Nutrition Goals")
+                        Text("daily_nutrition_goals")
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(.black)
                         
@@ -14553,7 +14598,7 @@ struct PersonalDetailsView: View {
                             Divider()
                             
                             HStack {
-                                Text("Carbs")
+                                Text("carbs")
                                     .foregroundColor(.gray)
                                 Spacer()
                                 Text("\(foodDataManager.nutritionGoals.carbs)g")
@@ -14563,7 +14608,7 @@ struct PersonalDetailsView: View {
                             Divider()
                             
                             HStack {
-                                Text("Fats")
+                                Text("fats")
                                     .foregroundColor(.gray)
                                 Spacer()
                                 Text("\(foodDataManager.nutritionGoals.fats)g")
@@ -14593,54 +14638,7 @@ struct PersonalDetailsView: View {
 }
 
 // MARK: - Language Selection View
-struct LanguageSelectionView: View {
-    @Environment(\.dismiss) var dismiss
-    @AppStorage("selectedLanguage") private var selectedLanguage = "English"
-    
-    let languages = [
-        "English",
-        "Spanish",
-        "French",
-        "German",
-        "Italian",
-        "Portuguese",
-        "Chinese",
-        "Japanese",
-        "Korean"
-    ]
-    
-    var body: some View {
-        NavigationView {
-            List {
-                ForEach(languages, id: \.self) { language in
-                    Button(action: {
-                        selectedLanguage = language
-                        dismiss()
-                    }) {
-                        HStack {
-                            Text(language)
-                                .foregroundColor(.black)
-                            Spacer()
-                            if selectedLanguage == language {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.blue)
-                            }
-                        }
-                    }
-                }
-            }
-            .navigationTitle("Language")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
+// Removed - Now using LanguagePickerView with proper English/Spanish/Russian support
 
 // MARK: - Profile Button
 struct ProfileButton: View {
@@ -14739,7 +14737,6 @@ struct FoodDetailView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var foodDataManager = FoodDataManager.shared
     let meal: ScannedFood
-    @State private var showDeleteAlert = false
     @State private var showMenu = false
     
     var body: some View {
@@ -14756,7 +14753,7 @@ struct FoodDetailView: View {
                     
                     Spacer()
                     
-                    Text("Nutrition")
+                    Text("nutrition")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.black)
                     
@@ -14802,7 +14799,7 @@ struct FoodDetailView: View {
                         
                         // Servings
                         HStack {
-                            Text("Number of Servings")
+                            Text("number_of_servings")
                                 .font(.system(size: 17, weight: .regular))
                                 .foregroundColor(.black)
                             
@@ -14921,7 +14918,7 @@ struct FoodDetailView: View {
                 Button(action: {
                     dismiss()
                 }) {
-                    Text("Done")
+                        Text("done")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -14935,20 +14932,14 @@ struct FoodDetailView: View {
             .background(Color(red: 0.97, green: 0.97, blue: 0.98))
             .navigationBarHidden(true)
         }
-        .confirmationDialog("", isPresented: $showMenu) {
-            Button("Delete", role: .destructive) {
-                showDeleteAlert = true
-            }
-            Button("Cancel", role: .cancel) {}
-        }
-        .alert("Delete Food", isPresented: $showDeleteAlert) {
-            Button("Cancel", role: .cancel) {}
+        .confirmationDialog("Delete this food item?", isPresented: $showMenu, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
                 foodDataManager.deleteMeal(meal)
                 dismiss()
             }
+            Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Are you sure you want to delete \(meal.name)?")
+            Text("This will remove \(meal.name) from your daily nutrition tracking.")
         }
     }
 }
@@ -15182,7 +15173,7 @@ struct OnboardingStep1: View {
             }
             
             VStack(spacing: 20) {
-                Text("Get the best scan:")
+                Text("get_best_scan")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.black)
                 
@@ -15192,7 +15183,7 @@ struct OnboardingStep1: View {
                             .font(.system(size: 20))
                             .foregroundColor(.black)
                             .frame(width: 24)
-                        Text("Hold still")
+                        Text("hold_still")
                             .font(.system(size: 17, weight: .regular))
                             .foregroundColor(.black)
                     }
@@ -15202,7 +15193,7 @@ struct OnboardingStep1: View {
                             .font(.system(size: 20))
                             .foregroundColor(.black)
                             .frame(width: 24)
-                        Text("Use lots of light")
+                        Text("use_lots_light")
                             .font(.system(size: 17, weight: .regular))
                             .foregroundColor(.black)
                     }
@@ -15212,7 +15203,7 @@ struct OnboardingStep1: View {
                             .font(.system(size: 20))
                             .foregroundColor(.black)
                             .frame(width: 24)
-                        Text("Ensure all ingredients are visible")
+                        Text("ingredients_visible")
                             .font(.system(size: 17, weight: .regular))
                             .foregroundColor(.black)
                     }
@@ -16891,7 +16882,7 @@ struct OFFProductDetailView: View {
                     
                     Spacer()
                     
-                    Text("Nutrition")
+                    Text("nutrition")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.black)
                     

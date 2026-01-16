@@ -15,6 +15,9 @@
 		3421BC3F2F1604C8002594DF /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = F817012D2EC4308500570816 /* StripeApplePay */; };
 		3421BC402F1604C8002594DF /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = F817012F2EC4308500570816 /* StripePaymentSheet */; };
 		3421BC522F176060002594DF /* TransactionUsageTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3421BC512F176060002594DF /* TransactionUsageTracker.swift */; };
+		3421BC562F1A8EDC002594DF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 3421BC552F1A8EDC002594DF /* Localizable.xcstrings */; };
+		3421BC592F1A91A9002594DF /* LanguagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3421BC582F1A91A9002594DF /* LanguagePickerView.swift */; };
+		3421BC5A2F1A91A9002594DF /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3421BC572F1A91A9002594DF /* LanguageManager.swift */; };
 		5E3796BBEF284349845E6CB22F3AC65A /* Yacht Parties.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5E3796BBEF284349845E6CB22F3AC659 /* Yacht Parties.mp3 */; };
 		9B31141A2E283071006BF7E6 /* InvoiceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B3114192E283071006BF7E6 /* InvoiceApp.swift */; };
 		9B31141C2E283071006BF7E6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B31141B2E283071006BF7E6 /* ContentView.swift */; };
@@ -80,6 +83,9 @@
 		1ABB18876684410BB4745E37B4F97AAC /* Run It Up.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Run It Up.mp3"; path = "Audio/Run It Up.mp3"; sourceTree = "<group>"; };
 		313EA2470939424FB17E3EF1CBCA079E /* Better Mornings.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Better Mornings.mp3"; path = "Audio/Better Mornings.mp3"; sourceTree = "<group>"; };
 		3421BC512F176060002594DF /* TransactionUsageTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionUsageTracker.swift; sourceTree = "<group>"; };
+		3421BC552F1A8EDC002594DF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		3421BC572F1A91A9002594DF /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
+		3421BC582F1A91A9002594DF /* LanguagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePickerView.swift; sourceTree = "<group>"; };
 		5E3796BBEF284349845E6CB22F3AC659 /* Yacht Parties.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Yacht Parties.mp3"; path = "Audio/Yacht Parties.mp3"; sourceTree = "<group>"; };
 		9B3114162E283071006BF7E6 /* calai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = calai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B3114192E283071006BF7E6 /* InvoiceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceApp.swift; sourceTree = "<group>"; };
@@ -187,6 +193,9 @@
 		9B3114182E283071006BF7E6 /* Invoice */ = {
 			isa = PBXGroup;
 			children = (
+				3421BC572F1A91A9002594DF /* LanguageManager.swift */,
+				3421BC582F1A91A9002594DF /* LanguagePickerView.swift */,
+				3421BC552F1A8EDC002594DF /* Localizable.xcstrings */,
 				3421BC512F176060002594DF /* TransactionUsageTracker.swift */,
 				F896B5472E8D8C6F001C63D8 /* RefundRequestService.swift */,
 				F8B4ABCB2E79BFFA00906F4B /* FirebaseMessagingDelegate.swift */,
@@ -360,6 +369,8 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
+				"es-419",
 			);
 			mainGroup = 9B31140D2E283071006BF7E6;
 			packageReferences = (
@@ -393,6 +404,7 @@
 				E964A22E3D7C4C25BE6D53920A85FD8A /* 10AM In The South.mp3 in Resources */,
 				313EA2470939424FB17E3EF1CBCA079F /* Better Mornings.mp3 in Resources */,
 				F8FE61142E75E42000014042 /* Subscriptions.storekit in Resources */,
+				3421BC562F1A8EDC002594DF /* Localizable.xcstrings in Resources */,
 				F8FE61152E75E42000014042 /* APIKeys.swift.template in Resources */,
 				B442D08FCB4A4DFC92A6DD51009C7AE6 /* Pleasent Poetry.mp3 in Resources */,
 				F8F691E92E7678250073C7F7 /* main.mp4 in Resources */,
@@ -434,6 +446,8 @@
 				9B31141A2E283071006BF7E6 /* InvoiceApp.swift in Sources */,
 				9B77E8DD2E2CBA9A0025E339 /* Config.swift in Sources */,
 				F8B4ABCC2E79BFFA00906F4B /* FirebaseMessagingDelegate.swift in Sources */,
+				3421BC592F1A91A9002594DF /* LanguagePickerView.swift in Sources */,
+				3421BC5A2F1A91A9002594DF /* LanguageManager.swift in Sources */,
 				9B77E8DE2E2CBA9A0025E339 /* ToolPromptService.swift in Sources */,
 				F8FE61162E75E42000014042 /* StaticVideoPlayer.swift in Sources */,
 				F8FE61172E75E42000014042 /* FirebaseStorageService.swift in Sources */,
