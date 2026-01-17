@@ -14,6 +14,7 @@ import GoogleSignIn
 struct InvoiceApp: App {
     @StateObject private var authManager = AuthenticationManager.shared
     @StateObject private var languageManager = LanguageManager.shared
+    @State private var appRefreshID = UUID()
     
     init() {
         // Configure Firebase when app launches
@@ -49,11 +50,17 @@ struct InvoiceApp: App {
                 // Otherwise show welcome/onboarding/subscription flow
                 if authManager.isLoggedIn && authManager.hasCompletedSubscription {
                     MainAppView()
+                        .id(appRefreshID)
                 } else {
                     ContentView()
+                        .id(appRefreshID)
                 }
             }
             .environment(\.locale, languageManager.currentLocale)
+            .onReceive(NotificationCenter.default.publisher(for: .languageChanged)) { _ in
+                // Force complete app refresh when language changes
+                appRefreshID = UUID()
+            }
             .onOpenURL { url in
                 // Handle Google Sign In URL callback
                 GIDSignIn.sharedInstance.handle(url)

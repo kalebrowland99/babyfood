@@ -10630,6 +10630,29 @@
         }
       }
     },
+    "select_language" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Language"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleccionar idioma"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выбрать язык"
+          }
+        }
+      }
+    },
     "welcome" : {
       "comment" : "Welcome message shown on app launch",
       "extractionState" : "manual",

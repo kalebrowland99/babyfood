@@ -78,6 +78,12 @@ class LanguageManager: ObservableObject {
         
         print("🌍 Language applied: \(currentLanguage.name) (\(currentLanguage.code))")
         
+        // Force immediate update
+        DispatchQueue.main.async {
+            // Trigger objectWillChange to refresh all views
+            self.objectWillChange.send()
+        }
+        
         // Notify that language changed
         NotificationCenter.default.post(name: .languageChanged, object: nil)
     }

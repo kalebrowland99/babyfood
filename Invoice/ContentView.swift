@@ -9361,10 +9361,12 @@ class RecentFindsManager: ObservableObject {
 
 struct ContentView: View {
     @StateObject private var authManager = AuthenticationManager.shared
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var showingSignIn = false
     @State private var showingOnboarding = false
     @State private var navigateToTryForFree = false
-
+    @State private var showLanguagePicker = false
+    @State private var refreshID = UUID()
     
     var body: some View {
         NavigationView {
@@ -9392,12 +9394,22 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        // Language Toggle (right side)
-                        HStack(spacing: 4) {
-                            Text("🇺🇸")
-                                .font(.system(size: 14))
-                            Text("EN")
-                                .font(.system(size: 14, weight: .medium))
+                        // Language Picker Button (right side)
+                        Button(action: {
+                            showLanguagePicker = true
+                        }) {
+                            HStack(spacing: 6) {
+                                Text(languageManager.currentLanguage.flag)
+                                    .font(.system(size: 20))
+                                Text(languageManager.currentLanguage.code.uppercased())
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.black)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Color.white.opacity(0.9))
+                            .cornerRadius(20)
+                            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -9473,8 +9485,16 @@ struct ContentView: View {
                 .navigationViewStyle(StackNavigationViewStyle())
                 .preferredColorScheme(.light)
             }
+            .sheet(isPresented: $showLanguagePicker) {
+                LanguagePickerSheet()
+            }
 
         
+            .onChange(of: languageManager.currentLanguage) { _ in
+                // Force view refresh when language changes
+                refreshID = UUID()
+            }
+            .id(refreshID)
             .onChange(of: authManager.isLoggedIn) { isLoggedIn in
                 if isLoggedIn {
                     // User became authenticated, dismiss any open sheets
@@ -12976,6 +12996,7 @@ class ProfileManager: ObservableObject {
 
 struct MainAppView: View {
     @StateObject private var authManager = AuthenticationManager.shared
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var selectedDay = 5 // Tuesday is selected (index 5 in the week)
     @State private var selectedTab = 0 // Start with Home tab
     @State private var streakCount = 0
@@ -12983,6 +13004,7 @@ struct MainAppView: View {
     @State private var showScanFlow = false
     @State private var showFoodDatabase = false
     @State private var confettiTrigger = 0
+    @State private var refreshID = UUID()
     @AppStorage("hasSeenMainAppConfetti") private var hasSeenMainAppConfetti = false
     
     var body: some View {
@@ -13151,6 +13173,11 @@ struct MainAppView: View {
             confettiSize: 10,
             radius: 400
         )
+        .id(refreshID)
+        .onChange(of: languageManager.currentLanguage) { _ in
+            // Force complete view refresh when language changes
+            refreshID = UUID()
+        }
         .onAppear {
             // Show confetti only on first time entering main app
             if !hasSeenMainAppConfetti {
@@ -17928,6 +17955,85 @@ struct DetailCard: View {
         .padding(12)
         .background(Color(.systemGray6))
         .cornerRadius(12)
+    }
+}
+
+// MARK: - Language Picker Sheet
+struct LanguagePickerSheet: View {
+    @ObservedObject private var languageManager = LanguageManager.shared
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                // Header
+                HStack {
+                    Text("select_language")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(.black)
+                    
+                    Spacer()
+                    
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 28))
+                            .foregroundColor(.gray)
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 24)
+                .padding(.bottom, 32)
+                
+                // Language options
+                VStack(spacing: 12) {
+                    ForEach(AppLanguage.allCases) { language in
+                        Button(action: {
+                            languageManager.changeLanguage(to: language)
+                            
+                            // Small delay then dismiss to show selection
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                dismiss()
+                            }
+                        }) {
+                            HStack(spacing: 16) {
+                                Text(language.flag)
+                                    .font(.system(size: 32))
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(language.name)
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .foregroundColor(.black)
+                                    
+                                    Text(language.englishName)
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                Spacer()
+                                
+                                if languageManager.currentLanguage == language {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.system(size: 24))
+                                        .foregroundColor(.green)
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(languageManager.currentLanguage == language ? Color.green.opacity(0.1) : Color(.systemGray6))
+                            )
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding(.horizontal, 24)
+                
+                Spacer()
+            }
+            .background(Color.white)
+            .navigationBarHidden(true)
+        }
     }
 }
 
