@@ -708,9 +708,6 @@
         }
       }
     },
-    "🇺🇸" : {
-
-    },
     "✨" : {
 
     },
@@ -3740,6 +3737,7 @@
       }
     },
     "EN" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -10626,29 +10624,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Целевой результат по весу"
-          }
-        }
-      }
-    },
-    "select_language" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select Language"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleccionar idioma"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Выбрать язык"
           }
         }
       }

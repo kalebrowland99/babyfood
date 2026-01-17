@@ -9370,71 +9370,72 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            ZStack(alignment: .topLeading) {
             VStack(spacing: 0) {
-                // Main Content
-                VStack(spacing: 0) {
-                    // Language Toggle
-                    HStack {
-                        // DEBUG: Skip button (top-left)
-                        Button(action: {
-                            // Skip authentication for debugging
-                            authManager.isLoggedIn = true
-                            authManager.hasCompletedSubscription = true
-                            print("🐛 DEBUG: Skipped auth - jumping to main app")
-                        }) {
-                            Text("SKIP")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(Color.red)
-                                .cornerRadius(8)
-                        }
-                        
-                        Spacer()
-                        
-                        // Language Picker Button (right side)
-                        Button(action: {
-                            showLanguagePicker = true
-                        }) {
-                            HStack(spacing: 6) {
-                                Text(languageManager.currentLanguage.flag)
-                                    .font(.system(size: 20))
-                                Text(languageManager.currentLanguage.code.uppercased())
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(.black)
-                            }
+                // Language Toggle - Fixed at top
+                HStack {
+                    // DEBUG: Skip button (top-left)
+                    Button(action: {
+                        // Skip authentication for debugging
+                        authManager.isLoggedIn = true
+                        authManager.hasCompletedSubscription = true
+                        print("🐛 DEBUG: Skipped auth - jumping to main app")
+                    }) {
+                        Text("SKIP")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.white)
                             .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Color.white.opacity(0.9))
-                            .cornerRadius(20)
-                            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                        }
+                            .padding(.vertical, 6)
+                            .background(Color.red)
+                            .cornerRadius(8)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
+                    
+                    Spacer()
+                    
+                    // Language Picker Button (right side)
+                    Button(action: {
+                        showLanguagePicker = true
+                    }) {
+                        HStack(spacing: 6) {
+                            Text(languageManager.currentLanguage.flag)
+                                .font(.system(size: 20))
+                            Text(languageManager.currentLanguage.code.uppercased())
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.black)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color.white.opacity(0.9))
+                        .cornerRadius(20)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 60)
+                .padding(.bottom, 32)
+                .background(Color.white)
+                .zIndex(100)
+                
+                // Main Video
+                MainVideoPlayer(videoName: "main")
+                    .frame(maxWidth: .infinity)
+                    .clipped()
+                    .padding(.bottom, 30)
+                
+                // Title Text
+                Text("Tracking\nmade easy")
+                    .font(.system(size: 42, weight: .bold))
+                    .multilineTextAlignment(.center)
                     .padding(.bottom, 40)
+                
+                Spacer()
+                
+                // Bottom Buttons
+                VStack(spacing: 16) {
+                    // Get Started - Static button
+                    GetStartedButton(showingOnboarding: $showingOnboarding)
                     
-                    // Main Video
-                    MainVideoPlayer(videoName: "main")
-                        .frame(maxWidth: .infinity)
-                        .clipped()
-                        .padding(.bottom, 30)
-                    
-                    // Title Text
-                    Text("Tracking\nmade easy")
-                        .font(.system(size: 42, weight: .bold))
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 40)
-                    
-                    // Bottom Buttons
-                    VStack(spacing: 16) {
-                        // Get Started - Static button
-                        GetStartedButton(showingOnboarding: $showingOnboarding)
-                        
-                        // Only show sign in option if user is not logged in
-                        if !authManager.isLoggedIn {
+                    // Only show sign in option if user is not logged in
+                    if !authManager.isLoggedIn {
                         HStack(spacing: 4) {
                             Text("Already have an account?")
                                 .font(.system(size: 15))
@@ -9442,60 +9443,52 @@ struct ContentView: View {
                                 Text("Sign In")
                                     .font(.system(size: 15, weight: .semibold))
                                     .foregroundColor(.black)
-                                }
                             }
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 40)
-                }
             }
             .background(Color.white)
-            .preferredColorScheme(.light)
-
+            .ignoresSafeArea(.all, edges: .top)
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: Binding(
+            get: { showingSignIn && !authManager.isLoggedIn },
+            set: { showingSignIn = $0 }
+        )) {
+            SignInView()
+                .presentationDetents([.height(UIScreen.main.bounds.height * 0.52)])
+                .presentationDragIndicator(.hidden)
         }
-            .sheet(isPresented: Binding(
-                get: { showingSignIn && !authManager.isLoggedIn },
-                set: { showingSignIn = $0 }
-            )) {
-                SignInView()
-                    .presentationDetents([.height(UIScreen.main.bounds.height * 0.52)])
-                    .presentationDragIndicator(.hidden)
-            }
-            .fullScreenCover(isPresented: $showingOnboarding) {
-                NavigationView {
-                    // Show complete onboarding from start for logged-in users
-                    // or from SongFrequencyView for anonymous users
-                    if authManager.isLoggedIn {
-                        GenderSelectionView()
-                            .horizontalSlideTransition()
-                            .onDisappear {
-                                // Mark onboarding as completed when dismissed
-                                if authManager.isLoggedIn {
-                                    authManager.markOnboardingCompleted()
-                                }
+        .fullScreenCover(isPresented: $showingOnboarding) {
+            NavigationView {
+                // Show complete onboarding from start for logged-in users
+                // or from SongFrequencyView for anonymous users
+                if authManager.isLoggedIn {
+                    GenderSelectionView()
+                        .horizontalSlideTransition()
+                        .onDisappear {
+                            // Mark onboarding as completed when dismissed
+                            if authManager.isLoggedIn {
+                                authManager.markOnboardingCompleted()
                             }
-                    } else {
-                        SongFrequencyView()
-                            .horizontalSlideTransition()
-                    }
+                        }
+                } else {
+                    SongFrequencyView()
+                        .horizontalSlideTransition()
                 }
-                .navigationViewStyle(StackNavigationViewStyle())
-                .preferredColorScheme(.light)
             }
-            .sheet(isPresented: $showLanguagePicker) {
-                LanguagePickerSheet()
-            }
-
-        
-            .onChange(of: languageManager.currentLanguage) { _ in
-                // Force view refresh when language changes
-                refreshID = UUID()
-            }
-            .id(refreshID)
-            .onChange(of: authManager.isLoggedIn) { isLoggedIn in
+            .navigationViewStyle(StackNavigationViewStyle())
+            .preferredColorScheme(.light)
+        }
+        .sheet(isPresented: $showLanguagePicker) {
+            LanguagePickerSheet()
+        }
+        .onChange(of: languageManager.currentLanguage) { _ in
+            // Force view refresh when language changes
+            refreshID = UUID()
+        }
+        .id(refreshID)
+        .onChange(of: authManager.isLoggedIn) { isLoggedIn in
                 if isLoggedIn {
                     // User became authenticated, dismiss any open sheets
                     showingSignIn = false
