@@ -6752,7 +6752,7 @@ struct GoalSelectionView: View {
             
             // Continue button
             NavigationLink(isActive: $navigateToWeight) {
-                DesiredWeightView(currentWeight: 148, selectedGoal: selectedGoal ?? "Lose weight")
+                DesiredWeightView(currentWeight: Int(onboardingData.weightLbs), selectedGoal: selectedGoal ?? "Lose weight")
                     .horizontalSlideTransition()
             } label: {
                 Text("continue")
@@ -6800,7 +6800,10 @@ struct DesiredWeightView: View {
         // Initialize desired weight based on goal
         if selectedGoal == "lose_weight" || selectedGoal == "Lose weight" {
             _desiredWeight = State(initialValue: Double(currentWeight) - 12.4)
+        } else if selectedGoal == "gain_weight" || selectedGoal == "Gain weight" {
+            _desiredWeight = State(initialValue: Double(currentWeight) + 12.4)
         } else {
+            // Maintain goal - same weight
             _desiredWeight = State(initialValue: Double(currentWeight))
         }
     }
@@ -6964,9 +6967,10 @@ struct WeightTargetResultView: View {
             
             Spacer()
             
-            // Result text
+            // Result text - adapts based on goal (Losing/Gaining)
             VStack(spacing: 16) {
-                (Text("Losing ")
+                let actionText = (selectedGoal == "gain_weight" || selectedGoal == "Gain weight") ? "Gaining " : "Losing "
+                (Text(actionText)
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.black)
                 + Text(formattedDifference)
@@ -7040,13 +7044,31 @@ struct WeightLossSpeedView: View {
     }
     
     var dailyCalories: Int {
-        // Simplified calorie calculation based on speed
-        if weightLossSpeed <= 0.5 {
-            return 1800
-        } else if weightLossSpeed <= 1.0 {
-            return 1387
+        // Calorie calculation adapts based on fitness goal
+        let isGaining = onboardingData.fitnessGoal == "Gain weight" || onboardingData.fitnessGoal == "gain_weight"
+        let isMaintaining = onboardingData.fitnessGoal == "Maintain" || onboardingData.fitnessGoal == "maintain"
+        
+        if isMaintaining {
+            // Maintenance calories
+            return 2000
+        } else if isGaining {
+            // Weight gain requires calorie surplus
+            if weightLossSpeed <= 0.5 {
+                return 2200  // Slow gain
+            } else if weightLossSpeed <= 1.0 {
+                return 2500  // Moderate gain
+            } else {
+                return 2800  // Fast gain
+            }
         } else {
-            return 1200
+            // Weight loss requires calorie deficit
+            if weightLossSpeed <= 0.5 {
+                return 1800  // Slow loss
+            } else if weightLossSpeed <= 1.0 {
+                return 1387  // Moderate loss
+            } else {
+                return 1200  // Fast loss
+            }
         }
     }
     
@@ -7104,9 +7126,19 @@ struct WeightLossSpeedView: View {
             
             Spacer()
             
-            // Weight loss speed display
+            // Weight change speed display - adapts based on goal
             VStack(spacing: 16) {
-                Text("weight_loss_speed")
+                let speedLabel: LocalizedStringKey = {
+                    if onboardingData.fitnessGoal == "Gain weight" || onboardingData.fitnessGoal == "gain_weight" {
+                        return "weight_gain_speed"
+                    } else if onboardingData.fitnessGoal == "Maintain" || onboardingData.fitnessGoal == "maintain" {
+                        return "weight_maintenance"
+                    } else {
+                        return "weight_loss_speed"
+                    }
+                }()
+                
+                Text(speedLabel)
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
                 
@@ -7924,14 +7956,15 @@ class OnboardingDataManager: ObservableObject {
         let tdee = calculateTDEE()
         var calorieAdjustment = 0.0
         
+        // Handle both localized keys and English strings for backwards compatibility
         switch fitnessGoal {
-        case "Lose weight":
+        case "Lose weight", "lose_weight":
             // 500 calorie deficit per day = 1 lb per week
             calorieAdjustment = -500.0 * weightLossSpeed
-        case "Gain weight":
+        case "Gain weight", "gain_weight":
             // 500 calorie surplus per day = 1 lb per week
             calorieAdjustment = 500.0 * weightLossSpeed
-        case "Maintain":
+        case "Maintain", "maintain":
             calorieAdjustment = 0.0
         default:
             calorieAdjustment = 0.0
@@ -9446,6 +9479,9 @@ struct ContentView: View {
                             }
                         }
                     }
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
             }
             .background(Color.white)
             .ignoresSafeArea(.all, edges: .top)
@@ -11363,7 +11399,31 @@ struct SubscriptionView: View {
     
     private var headerView: some View {
         HStack {
+            // Skip button on the left
+            Button(action: {
+                // Skip paywall and let user into the app
+                // Onboarding data is preserved in OnboardingDataManager.shared
+                print("🚀 User skipped paywall - preserving onboarding data")
+                
+                // Mark subscription as completed to allow app access
+                authManager.markSubscriptionCompleted()
+                
+                // If user is not logged in, navigate to account creation
+                // This preserves the onboarding flow
+                if !authManager.isLoggedIn {
+                    navigateToCreateAccount = true
+                } else {
+                    // User is logged in, dismiss to main app
+                    dismiss()
+                }
+            }) {
+                Text("Skip")
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundColor(.blue)
+            }
+            
             Spacer()
+            
             Button(action: {
                 Task {
                     do {
@@ -13029,10 +13089,9 @@ struct MainAppView: View {
                     Spacer()
                     
                     ZStack {
-                        // Tab Bar Background
+                        // Tab Bar Background - solid white for consistency
                         RoundedRectangle(cornerRadius: 30)
-                            .fill(Color.white.opacity(0.97))
-                            .background(.ultraThinMaterial)
+                            .fill(Color.white)
                             .shadow(color: Color.black.opacity(0.08), radius: 20, x: 0, y: -4)
                             .frame(height: 82 + geometry.safeAreaInsets.bottom)
                         
@@ -13157,7 +13216,7 @@ struct MainAppView: View {
             }
         }
         .fullScreenCover(isPresented: $showFoodDatabase) {
-            FoodDatabaseView(isPresented: $showFoodDatabase)
+            LegacyFoodDatabaseView(isPresented: $showFoodDatabase)
         }
         .confettiCannon(
             trigger: $confettiTrigger,
@@ -13418,6 +13477,7 @@ struct HomeView: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 28)
                             .fill(Color.white)
+                            .opacity(1.0) // Ensure fully opaque
                             .shadow(color: Color.black.opacity(0.04), radius: 20, x: 0, y: 6)
                         
                         HStack(spacing: 0) {
@@ -13595,6 +13655,7 @@ struct HomeView: View {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 24)
                                     .fill(Color.white)
+                                    .opacity(1.0) // Ensure fully opaque
                                     .shadow(color: Color.black.opacity(0.03), radius: 12, x: 0, y: 2)
                                 
                                 VStack(spacing: 0) {
@@ -13649,7 +13710,9 @@ struct HomeView: View {
                     
                     Spacer(minLength: 100)
                 }
+                .background(Color.clear) // Ensure no translucent effects
             }
+            .background(Color.clear) // Prevent gradient bleed-through
         }
         }
     }
@@ -13662,10 +13725,35 @@ struct ProgressTabView: View {
     @StateObject private var foodDataManager = FoodDataManager.shared
     @ObservedObject var onboardingData = OnboardingDataManager.shared
     
+    // Helper properties to use OnboardingDataManager as fallback when Firebase hasn't loaded
+    var currentWeight: Double {
+        // If nutrition goals show default values (148 lbs), use onboarding data instead
+        if abs(foodDataManager.nutritionGoals.currentWeight - 148.0) < 0.1 {
+            return onboardingData.getCurrentWeightLbs()
+        }
+        return foodDataManager.nutritionGoals.currentWeight
+    }
+    
+    var targetWeight: Double {
+        // If nutrition goals show default values (135.6 lbs), use onboarding data instead
+        if abs(foodDataManager.nutritionGoals.targetWeight - 135.6) < 0.1 {
+            return onboardingData.getTargetWeightLbs()
+        }
+        return foodDataManager.nutritionGoals.targetWeight
+    }
+    
+    var weightChangeSpeed: Double {
+        // If nutrition goals show default value (1.0), use onboarding data instead
+        if abs(foodDataManager.nutritionGoals.weightLossSpeed - 1.0) < 0.1 {
+            return onboardingData.weightLossSpeed
+        }
+        return foodDataManager.nutritionGoals.weightLossSpeed
+    }
+    
     // Calculate BMI from user data
     var currentBMI: Double {
         let heightInches = onboardingData.getHeightInInches()
-        let weightLbs = foodDataManager.nutritionGoals.currentWeight
+        let weightLbs = currentWeight  // Use computed property
         let heightMeters = heightInches * 0.0254
         let weightKg = weightLbs / 2.20462
         let bmi = weightKg / (heightMeters * heightMeters)
@@ -13696,12 +13784,8 @@ struct ProgressTabView: View {
     
     // Calculate goal date
     var goalDate: String {
-        let currentWeight = foodDataManager.nutritionGoals.currentWeight
-        let targetWeight = foodDataManager.nutritionGoals.targetWeight
-        let weightLossSpeed = foodDataManager.nutritionGoals.weightLossSpeed
-        
         let weightDifference = abs(currentWeight - targetWeight)
-        let weeksToGoal = weightDifference / max(0.1, weightLossSpeed)
+        let weeksToGoal = weightDifference / max(0.1, weightChangeSpeed)
         let daysToGoal = weeksToGoal * 7
         
         let goalDate = Calendar.current.date(byAdding: .day, value: Int(daysToGoal), to: Date()) ?? Date()
@@ -13712,12 +13796,9 @@ struct ProgressTabView: View {
     
     // Calculate weight progress percentage
     var weightProgressPercentage: Int {
-        let startWeight = foodDataManager.nutritionGoals.currentWeight
-        let targetWeight = foodDataManager.nutritionGoals.targetWeight
-        let currentWeight = foodDataManager.nutritionGoals.currentWeight
-        
+        let startWeight = currentWeight  // For now, use current as start (will update as user logs weight)
         let totalWeightToLose = abs(startWeight - targetWeight)
-        let weightLost = abs(startWeight - currentWeight)
+        let weightLost = 0.0  // Will be non-zero once user starts logging weight updates
         
         if totalWeightToLose == 0 {
             return 0
@@ -13818,7 +13899,7 @@ struct ProgressTabView: View {
                                     .font(.system(size: 15, weight: .regular))
                                     .foregroundColor(Color.black.opacity(0.5))
                                 
-                                Text(String(format: "%.1f lbs", foodDataManager.nutritionGoals.currentWeight))
+                                Text(String(format: "%.1f lbs", currentWeight))
                                     .font(.system(size: 48, weight: .bold))
                                     .foregroundColor(.black)
                                     .fixedSize()
@@ -13844,7 +13925,7 @@ struct ProgressTabView: View {
                         .frame(height: 4)
                         
                         HStack(alignment: .top, spacing: 0) {
-                            Text(LocalizedStringKey(String(format: NSLocalizedString("start_weight_label", comment: ""), foodDataManager.nutritionGoals.currentWeight)))
+                            Text(LocalizedStringKey(String(format: NSLocalizedString("start_weight_label", comment: ""), currentWeight)))
                                 .font(.system(size: 10, weight: .regular))
                                 .foregroundColor(Color.black.opacity(0.5))
                                 .lineLimit(1)
@@ -13853,7 +13934,7 @@ struct ProgressTabView: View {
                             
                             Spacer(minLength: 2)
                             
-                            Text(LocalizedStringKey(String(format: NSLocalizedString("goal_weight_label", comment: ""), foodDataManager.nutritionGoals.targetWeight)))
+                            Text(LocalizedStringKey(String(format: NSLocalizedString("goal_weight_label", comment: ""), targetWeight)))
                                 .font(.system(size: 10, weight: .regular))
                                 .foregroundColor(Color.black.opacity(0.5))
                                 .lineLimit(1)
@@ -13911,12 +13992,12 @@ struct ProgressTabView: View {
                         
                         // Chart
                         GeometryReader { geometry in
-                            let startWeight = foodDataManager.nutritionGoals.currentWeight
-                            let targetWeight = foodDataManager.nutritionGoals.targetWeight
-                            let currentWeight = foodDataManager.nutritionGoals.currentWeight
+                            let startWeight = currentWeight
+                            let target = targetWeight
+                            let current = currentWeight
                             
-                            let maxWeight = max(startWeight, targetWeight) + 4
-                            let minWeight = min(startWeight, targetWeight) - 4
+                            let maxWeight = max(startWeight, target) + 4
+                            let minWeight = min(startWeight, target) - 4
                             let weightRange = maxWeight - minWeight
                             
                             let weightValues = stride(from: Int(maxWeight), through: Int(minWeight), by: -2).map { $0 }
@@ -13951,7 +14032,7 @@ struct ProgressTabView: View {
                                         .fill(Color.black)
                                         .frame(height: 2)
                                 }
-                                .offset(y: geometry.size.height * CGFloat((maxWeight - currentWeight) / weightRange))
+                                .offset(y: geometry.size.height * CGFloat((maxWeight - current) / weightRange))
                                 
                                 // Target weight line (dotted)
                                 HStack(spacing: 8) {
@@ -13962,7 +14043,7 @@ struct ProgressTabView: View {
                                         .fill(Color(red: 0.92, green: 0.58, blue: 0.65))
                                         .frame(height: 1)
                                 }
-                                .offset(y: geometry.size.height * CGFloat((maxWeight - targetWeight) / weightRange))
+                                .offset(y: geometry.size.height * CGFloat((maxWeight - target) / weightRange))
                             }
                         }
                         .frame(height: 200)
@@ -14289,8 +14370,6 @@ struct ProfileView: View {
                 // Language Picker
                 VStack(spacing: 0) {
                     LanguagePickerView()
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 16)
                 }
                 .background(Color.white)
                 .cornerRadius(16)
@@ -14653,6 +14732,7 @@ struct PersonalDetailsView: View {
                     }
                 }
             }
+            .preferredColorScheme(.light)  // Force light mode - white background
         }
     }
 }
@@ -14991,8 +15071,10 @@ struct MacroCard: View {
         let progress = min(1.0, Double(consumed) / Double(max(1, goal)))
         
         ZStack {
+            // Solid white background to prevent translucency
             RoundedRectangle(cornerRadius: 24)
                 .fill(Color.white)
+                .opacity(1.0) // Ensure fully opaque
                 .shadow(color: Color.black.opacity(0.03), radius: 10, x: 0, y: 2)
             
             VStack(spacing: 8) {
@@ -15098,7 +15180,7 @@ struct FoodScanFlow: View {
             if currentStep < 4 {
                 ScanOnboardingView(currentStep: $currentStep, isPresented: $isPresented)
             } else if currentStep == 4 {
-                CameraScanView(currentStep: $currentStep, scannedFood: $scannedFood)
+                CameraScanView(currentStep: $currentStep, scannedFood: $scannedFood, isPresented: $isPresented)
             } else if currentStep == 5 {
                 if let food = scannedFood {
                     FoodDetailView(meal: food)
@@ -15356,6 +15438,7 @@ struct OnboardingStep3: View {
 struct CameraScanView: View {
     @Binding var currentStep: Int
     @Binding var scannedFood: ScannedFood?
+    @Binding var isPresented: Bool
     @State private var flashOn = false
     @State private var showingImagePicker = false
     @State private var selectedImage: UIImage?
@@ -15374,7 +15457,8 @@ struct CameraScanView: View {
                     Button(action: {
                         let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                         impactFeedback.impactOccurred()
-                        currentStep = 2
+                        // Dismiss the entire scan flow to return to previous tab
+                        isPresented = false
                     }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 20, weight: .medium))
@@ -16326,45 +16410,136 @@ class FoodAnalysisService {
     }
 }
 
-// MARK: - OpenFoodFacts Service
-class OpenFoodFactsService {
+// MARK: - Food Database (OLD CODE REMOVED - Using clean architecture in /Invoice/Views/FoodDatabaseView.swift)
+
+// Old embedded OpenFoodFacts code removed - now using:
+// - Invoice/Models/FoodModels.swift
+// - Invoice/Services/OpenFoodFactsService.swift  
+// - Invoice/ViewModels/FoodSearchViewModel.swift
+// - Invoice/Views/FoodDatabaseView.swift
+
+// NOTE: Old OpenFoodFacts code removed - using clean architecture:
+// - /Invoice/Models/FoodModels.swift
+// - /Invoice/Services/OpenFoodFactsService.swift  
+// - /Invoice/ViewModels/FoodSearchViewModel.swift
+// - /Invoice/Views/FoodDatabaseView.swift
+
+// MARK: - Legacy Support Structures (Keep for backward compatibility with existing UI)
+
+// REMOVED: typealias OFFProduct = LegacyOFFProduct
+// This was causing ambiguity with the NEW OFFProduct in FoodModels.swift
+// Now using LegacyOFFProduct explicitly in this file for old UI
+
+// Legacy OFFProduct for compatibility with old FoodDatabaseView in ContentView
+struct LegacyOFFProduct: Codable, Identifiable {
+    let code: String?
+    let product_name: String?
+    let brands: String?
+    let image_url: String?
+    let nutriments: LegacyOFFNutriments?
+    let serving_size: String?
+    
+    init(code: String? = nil, product_name: String? = nil, brands: String? = nil, image_url: String? = nil, nutriments: LegacyOFFNutriments? = nil, serving_size: String? = nil) {
+        self.code = code
+        self.product_name = product_name
+        self.brands = brands
+        self.image_url = image_url
+        self.nutriments = nutriments
+        self.serving_size = serving_size
+    }
+    
+    var id: String { code ?? UUID().uuidString }
+    
+    var displayName: String {
+        product_name ?? "Unknown Product"
+    }
+    
+    var displayBrand: String {
+        brands ?? ""
+    }
+}
+
+struct LegacyOFFNutriments: Codable {
+    let energy_kcal_100g: Double?
+    let proteins_100g: Double?
+    let carbohydrates_100g: Double?
+    let fat_100g: Double?
+    let fiber_100g: Double?
+    let sugars_100g: Double?
+    let sodium_100g: Double?
+    
+    init(energy_kcal_100g: Double? = nil, proteins_100g: Double? = nil, carbohydrates_100g: Double? = nil, fat_100g: Double? = nil, fiber_100g: Double? = nil, sugars_100g: Double? = nil, sodium_100g: Double? = nil) {
+        self.energy_kcal_100g = energy_kcal_100g
+        self.proteins_100g = proteins_100g
+        self.carbohydrates_100g = carbohydrates_100g
+        self.fat_100g = fat_100g
+        self.fiber_100g = fiber_100g
+        self.sugars_100g = sugars_100g
+        self.sodium_100g = sodium_100g
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case energy_kcal_100g = "energy-kcal_100g"
+        case proteins_100g
+        case carbohydrates_100g
+        case fat_100g
+        case fiber_100g
+        case sugars_100g
+        case sodium_100g
+    }
+}
+
+// MARK: - Old Embedded OpenFoodFacts Service (REMOVED - see line 17012 for new service usage)
+/*
+actor OpenFoodFactsService {
     static let shared = OpenFoodFactsService()
     private let baseURL = "https://world.openfoodfacts.org"
     
-    // Simple cache with 5-minute expiration
+    // Simple cache with 5-minute expiration (now thread-safe via actor)
     private var searchCache: [String: (results: [OFFProduct], timestamp: Date)] = [:]
     private let cacheExpirationSeconds: TimeInterval = 300 // 5 minutes
     
-    // Search for products by name
+    // Search for products by name with cancellation support
     func searchProducts(query: String) async throws -> [OFFProduct] {
-        // Check cache first
+        // Check for cancellation before starting
+        try Task.checkCancellation()
+        
+        // Get current language code from LanguageManager
+        let languageCode = LanguageManager.shared.currentLanguage.code
+        
+        // Check cache first (include language in cache key)
         let lowercaseQuery = query.lowercased().trimmingCharacters(in: .whitespaces)
-        if let cached = searchCache[lowercaseQuery] {
+        let cacheKey = "\(lowercaseQuery)_\(languageCode)"
+        if let cached = searchCache[cacheKey] {
             let age = Date().timeIntervalSince(cached.timestamp)
             if age < cacheExpirationSeconds {
-                print("✅ Returning cached results for: \(query) (age: \(Int(age))s)")
+                print("✅ Returning cached results for: \(query) [\(languageCode)] (age: \(Int(age))s)")
                 return cached.results
             } else {
                 // Remove expired cache entry
-                searchCache.removeValue(forKey: lowercaseQuery)
+                searchCache.removeValue(forKey: cacheKey)
             }
         }
         
         let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
         // Reduced page_size from 25 to 12 for faster loading
-        let urlString = "\(baseURL)/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1&page_size=12"
+        // Added lc (language code) parameter for language-specific results
+        let urlString = "\(baseURL)/cgi/search.pl?search_terms=\(encodedQuery)&search_simple=1&action=process&json=1&page_size=12&lc=\(languageCode)"
         
         guard let url = URL(string: urlString) else {
             throw URLError(.badURL)
         }
         
-        print("🔍 Searching OpenFoodFacts for: \(query)")
+        print("🔍 Searching OpenFoodFacts for: \(query) [Language: \(languageCode)]")
         
         // Add 10-second timeout for faster failure
         var request = URLRequest(url: url)
         request.timeoutInterval = 10.0
         
         let (data, _) = try await URLSession.shared.data(for: request)
+        
+        // Check for cancellation after network request completes
+        try Task.checkCancellation()
         
         // Parse JSON manually to handle missing fields gracefully
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -16413,8 +16588,8 @@ class OpenFoodFactsService {
             validProducts.append(product)
         }
         
-        // Cache the results
-        searchCache[lowercaseQuery] = (results: validProducts, timestamp: Date())
+        // Cache the results with language-specific key
+        searchCache[cacheKey] = (results: validProducts, timestamp: Date())
         
         // Clean up old cache entries (keep only last 20 searches)
         if searchCache.count > 20 {
@@ -16429,12 +16604,17 @@ class OpenFoodFactsService {
     }
     
     // Get product by barcode
-    func getProduct(barcode: String) async throws -> OFFProduct {
-        let urlString = "\(baseURL)/api/v2/product/\(barcode).json"
+    func getProduct(barcode: String) async throws -> LegacyOFFProduct {
+        // Get current language code from LanguageManager
+        let languageCode = LanguageManager.shared.currentLanguage.code
+        
+        let urlString = "\(baseURL)/api/v2/product/\(barcode).json?lc=\(languageCode)"
         
         guard let url = URL(string: urlString) else {
             throw URLError(.badURL)
         }
+        
+        print("🔍 Fetching product by barcode: \(barcode) [Language: \(languageCode)]")
         
         let (data, _) = try await URLSession.shared.data(from: url)
         let response = try JSONDecoder().decode(OFFProductResponse.self, from: data)
@@ -16446,96 +16626,19 @@ class OpenFoodFactsService {
         return product
     }
 }
+*/
+// End of old embedded OpenFoodFacts service (now in /Invoice/Services/OpenFoodFactsService.swift)
 
-// MARK: - OpenFoodFacts Models
-struct OFFSearchResponse: Codable {
-    let products: [OFFProduct]
-}
-
-struct OFFProductResponse: Codable {
-    let product: OFFProduct?
-}
-
-struct OFFProduct: Codable, Identifiable {
-    let code: String?
-    let product_name: String?
-    let brands: String?
-    let image_url: String?
-    let nutriments: OFFNutriments?
-    let serving_size: String?
-    
-    init(code: String? = nil, product_name: String? = nil, brands: String? = nil, image_url: String? = nil, nutriments: OFFNutriments? = nil, serving_size: String? = nil) {
-        self.code = code
-        self.product_name = product_name
-        self.brands = brands
-        self.image_url = image_url
-        self.nutriments = nutriments
-        self.serving_size = serving_size
-    }
-    
-    var id: String { code ?? UUID().uuidString }
-    
-    var displayName: String {
-        product_name ?? "Unknown Product"
-    }
-    
-    var displayBrand: String {
-        brands ?? ""
-    }
-}
-
-struct OFFNutriments: Codable {
-    let energy_kcal_100g: Double?
-    let proteins_100g: Double?
-    let carbohydrates_100g: Double?
-    let fat_100g: Double?
-    let fiber_100g: Double?
-    let sugars_100g: Double?
-    let sodium_100g: Double?
-    
-    // Per serving
-    let energy_kcal_serving: Double?
-    let proteins_serving: Double?
-    let carbohydrates_serving: Double?
-    let fat_serving: Double?
-    
-    init(energy_kcal_100g: Double? = nil, proteins_100g: Double? = nil, carbohydrates_100g: Double? = nil, fat_100g: Double? = nil, fiber_100g: Double? = nil, sugars_100g: Double? = nil, sodium_100g: Double? = nil, energy_kcal_serving: Double? = nil, proteins_serving: Double? = nil, carbohydrates_serving: Double? = nil, fat_serving: Double? = nil) {
-        self.energy_kcal_100g = energy_kcal_100g
-        self.proteins_100g = proteins_100g
-        self.carbohydrates_100g = carbohydrates_100g
-        self.fat_100g = fat_100g
-        self.fiber_100g = fiber_100g
-        self.sugars_100g = sugars_100g
-        self.sodium_100g = sodium_100g
-        self.energy_kcal_serving = energy_kcal_serving
-        self.proteins_serving = proteins_serving
-        self.carbohydrates_serving = carbohydrates_serving
-        self.fat_serving = fat_serving
-    }
-    
-    enum CodingKeys: String, CodingKey {
-        case energy_kcal_100g = "energy-kcal_100g"
-        case proteins_100g
-        case carbohydrates_100g
-        case fat_100g
-        case fiber_100g
-        case sugars_100g
-        case sodium_100g
-        case energy_kcal_serving = "energy-kcal_serving"
-        case proteins_serving
-        case carbohydrates_serving
-        case fat_serving
-    }
-}
-
-// MARK: - Food Database View
-struct FoodDatabaseView: View {
+// MARK: - Legacy Food Database View (RENAMED to avoid conflict with new /Invoice/Views/FoodDatabaseView.swift)
+struct LegacyFoodDatabaseView: View {
     @Binding var isPresented: Bool
     @State private var searchText = ""
-    @State private var searchResults: [OFFProduct] = []
+    @State private var searchResults: [LegacyOFFProduct] = []
     @State private var isLoading = false
-    @State private var selectedProduct: OFFProduct?
+    @State private var selectedProduct: LegacyOFFProduct?
     @State private var searchTask: Task<Void, Never>?
+    @State private var currentSearchTask: Task<Void, Never>?
+    @State private var errorMessage: String?
     
     // Quick action categories
     let quickActions = [
@@ -16595,12 +16698,14 @@ struct FoodDatabaseView: View {
                                 performSearch()
                             }
                             .onChange(of: searchText) { newValue in
-                                // Cancel previous search task
+                                // Cancel previous search AND debounce tasks
                                 searchTask?.cancel()
+                                currentSearchTask?.cancel() // ✅ FIX: Cancel in-progress search too!
                                 
                                 if newValue.isEmpty {
                                     searchResults = []
                                     isLoading = false
+                                    errorMessage = nil
                                     return
                                 }
                                 
@@ -16608,12 +16713,13 @@ struct FoodDatabaseView: View {
                                 if newValue.count < 2 {
                                     searchResults = []
                                     isLoading = false
+                                    errorMessage = nil
                                     return
                                 }
                                 
-                                // Debounce search - wait 0.4 seconds after user stops typing (reduced from 0.5s)
+                                // Debounce search - wait 0.3 seconds after user stops typing for better responsiveness
                                 searchTask = Task {
-                                    try? await Task.sleep(nanoseconds: 400_000_000) // 0.4 second delay
+                                    try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 second delay
                                     
                                     if !Task.isCancelled {
                                         await MainActor.run {
@@ -16636,6 +16742,46 @@ struct FoodDatabaseView: View {
                         Color.white // Ensure solid background during transitions
                         
                         VStack(alignment: .leading, spacing: 12) {
+                            // Error banner
+                            if let errorMessage = errorMessage {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(.white)
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Search Failed")
+                                            .font(.system(size: 15, weight: .semibold))
+                                            .foregroundColor(.white)
+                                        
+                                        Text(errorMessage)
+                                            .font(.system(size: 13, weight: .regular))
+                                            .foregroundColor(.white.opacity(0.9))
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Button(action: {
+                                        self.errorMessage = nil
+                                        performSearch()
+                                    }) {
+                                        Text("Retry")
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
+                                            .background(Color.white.opacity(0.2))
+                                            .cornerRadius(8)
+                                    }
+                                }
+                                .padding(16)
+                                .background(Color.red)
+                                .cornerRadius(12)
+                                .padding(.horizontal, 20)
+                                .padding(.bottom, 12)
+                                .transition(.move(edge: .top).combined(with: .opacity))
+                            }
+                            
                             if isLoading {
                                 // Enhanced Loading Screen
                                 VStack(spacing: 24) {
@@ -16778,10 +16924,19 @@ struct FoodDatabaseView: View {
             }
         }
         .sheet(item: $selectedProduct) { product in
-            OFFProductDetailView(product: product, isPresented: Binding(
-                get: { selectedProduct != nil },
-                set: { if !$0 { selectedProduct = nil } }
-            ))
+            OFFProductDetailView(
+                product: product,
+                isPresented: Binding<Bool>(
+                    get: { selectedProduct != nil },
+                    set: { if !$0 { selectedProduct = nil } }
+                )
+            )
+        }
+        .onDisappear {
+            // Cancel all pending tasks when view is dismissed
+            searchTask?.cancel()
+            currentSearchTask?.cancel()
+            print("🧹 Cancelled pending search tasks on view dismissal")
         }
     }
     
@@ -16789,34 +16944,117 @@ struct FoodDatabaseView: View {
         guard !searchText.isEmpty && searchText.count >= 2 else {
             searchResults = []
             isLoading = false
+            errorMessage = nil
             return
         }
+        
+        // Cancel previous search task to prevent race conditions
+        currentSearchTask?.cancel()
+        
+        // Clear previous error
+        errorMessage = nil
         
         // Set loading state immediately
         isLoading = true
         
-        Task {
+        // Capture the current search text to detect if it changed
+        let queryText = searchText
+        
+        currentSearchTask = Task {
             do {
-                let results = try await OpenFoodFactsService.shared.searchProducts(query: searchText)
+                // Use the NEW clean architecture service with language filtering
+                let language = LanguageManager.shared.currentLanguage
+                // Call the new OpenFoodFactsService from /Invoice/Services/OpenFoodFactsService.swift
+                // The old embedded actor is commented out at line 16484
+                let foodProducts = try await OpenFoodFactsService.shared.searchProducts(query: queryText, language: language)
+                
+                // Convert new FoodProduct models back to legacy LegacyOFFProduct for compatibility
+                let results = foodProducts.map { foodProduct -> LegacyOFFProduct in
+                    LegacyOFFProduct(
+                        code: foodProduct.id,
+                        product_name: foodProduct.name,
+                        brands: foodProduct.brand,
+                        image_url: foodProduct.imageURL?.absoluteString,
+                        nutriments: foodProduct.nutritionalInfo.map { info in
+                            LegacyOFFNutriments(
+                                energy_kcal_100g: info.caloriesPer100g,
+                                proteins_100g: info.proteinPer100g,
+                                carbohydrates_100g: info.carbsPer100g,
+                                fat_100g: info.fatPer100g,
+                                fiber_100g: info.fiberPer100g,
+                                sugars_100g: info.sugarsPer100g,
+                                sodium_100g: info.sodiumPer100g
+                            )
+                        },
+                        serving_size: foodProduct.servingSize
+                    )
+                }
+                
+                // Check if task was cancelled
+                guard !Task.isCancelled else {
+                    print("🚫 Search task cancelled for: \(queryText)")
+                    await MainActor.run {
+                        self.isLoading = false
+                    }
+                    return
+                }
+                
                 await MainActor.run {
+                    // Only update if we're still searching for the same text
+                    guard queryText == self.searchText else {
+                        print("⏭️ Search text changed, ignoring stale results for: \(queryText)")
+                        return
+                    }
+                    
                     // Update both states in a single transaction without animation
                     var transaction = Transaction()
                     transaction.disablesAnimations = true
                     withTransaction(transaction) {
                         self.searchResults = results
                         self.isLoading = false
+                        self.errorMessage = nil
                     }
-                    print("✅ Found \(results.count) results for: \(searchText)")
+                    print("✅ Found \(results.count) results for: \(queryText)")
+                }
+            } catch is CancellationError {
+                // Task was cancelled, don't show error but reset loading state
+                print("🚫 Search cancelled for: \(queryText)")
+                await MainActor.run {
+                    self.isLoading = false
                 }
             } catch {
+                // Check if task was cancelled after error
+                guard !Task.isCancelled else {
+                    return
+                }
+                
                 await MainActor.run {
+                    // Only update if we're still searching for the same text
+                    guard queryText == self.searchText else {
+                        return
+                    }
+                    
                     var transaction = Transaction()
                     transaction.disablesAnimations = true
                     withTransaction(transaction) {
                         self.searchResults = []
                         self.isLoading = false
+                        
+                        // Set user-friendly error message with localization
+                        if let urlError = error as? URLError {
+                            switch urlError.code {
+                            case .notConnectedToInternet, .networkConnectionLost:
+                                self.errorMessage = NSLocalizedString("no_internet_connection", comment: "")
+                            case .timedOut:
+                                self.errorMessage = NSLocalizedString("search_timed_out", comment: "")
+                            default:
+                                self.errorMessage = NSLocalizedString("unable_to_reach_database", comment: "")
+                            }
+                        } else {
+                            self.errorMessage = NSLocalizedString("search_failed", comment: "")
+                        }
                     }
-                    print("❌ Search error: \(error.localizedDescription)")
+                    print("❌ Search error for '\(queryText)': \(error.localizedDescription)")
                 }
             }
         }
@@ -16878,7 +17116,7 @@ struct FoodSuggestionRow: View {
 
 // MARK: - OpenFoodFacts Product Detail View
 struct OFFProductDetailView: View {
-    let product: OFFProduct
+    let product: LegacyOFFProduct
     @Binding var isPresented: Bool
     @State private var servingAmount: Double = 1.0
     @State private var isSaving = false
@@ -17172,7 +17410,7 @@ struct OFFProductDetailView: View {
         }
     }
     
-    private func convertToScannedFood(product: OFFProduct) -> ScannedFood {
+    private func convertToScannedFood(product: LegacyOFFProduct) -> ScannedFood {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
         let timestamp = formatter.string(from: Date())
@@ -17240,7 +17478,7 @@ struct OFFProductDetailView: View {
         return max(0, min(10, score))
     }
     
-    private func determineFoodIcon(for product: OFFProduct) -> String {
+    private func determineFoodIcon(for product: LegacyOFFProduct) -> String {
         let name = product.displayName.lowercased()
         
         // Check for common food categories

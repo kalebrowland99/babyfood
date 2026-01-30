@@ -16,9 +16,10 @@ struct LanguagePickerView: View {
         Button(action: {
             showLanguageSheet = true
         }) {
-            HStack {
+            HStack(spacing: 16) {
                 Text("language")
-                    .foregroundColor(.primary)
+                    .font(.system(size: 17, weight: .regular))
+                    .foregroundColor(.black)
                 
                 Spacer()
                 
@@ -27,14 +28,19 @@ struct LanguagePickerView: View {
                         .font(.title3)
                     
                     Text(languageManager.currentLanguage.name)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 15))
+                        .foregroundColor(Color.black.opacity(0.5))
                 }
                 
                 Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(Color.black.opacity(0.3))
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
         .sheet(isPresented: $showLanguageSheet) {
             LanguageSelectionSheet()
         }

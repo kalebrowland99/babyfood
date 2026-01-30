@@ -48,6 +48,9 @@
         }
       }
     },
+    "--" : {
+
+    },
     ".5" : {
 
     },
@@ -2019,6 +2022,9 @@
         }
       }
     },
+    "cal" : {
+
+    },
     "Cal AI" : {
       "localizations" : {
         "en" : {
@@ -2516,6 +2522,9 @@
           }
         }
       }
+    },
+    "Close" : {
+
     },
     "Collecting and Using Your Personal Data" : {
       "localizations" : {
@@ -4149,7 +4158,6 @@
       }
     },
     "Food Database" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5321,6 +5329,28 @@
         }
       }
     },
+    "invalid_search_query" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid search query."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta de búsqueda no válida."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Неверный поисковый запрос."
+          }
+        }
+      }
+    },
     "invoice" : {
       "comment" : "Invoice label",
       "extractionState" : "manual",
@@ -5845,6 +5875,7 @@
       }
     },
     "Losing " : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6293,6 +6324,28 @@
         }
       }
     },
+    "no_internet_connection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No internet connection. Please check your network."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin conexión a Internet. Por favor, verifica tu red."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нет подключения к Интернету. Проверьте сеть."
+          }
+        }
+      }
+    },
     "no_payment_now" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6312,6 +6365,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Платеж не подлежит оплате сейчас"
+          }
+        }
+      }
+    },
+    "no_results_found" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No results found."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontraron resultados."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Результаты не найдены."
           }
         }
       }
@@ -6452,6 +6527,9 @@
           }
         }
       }
+    },
+    "Nutritional Information (per 100g)" : {
+
     },
     "obese" : {
       "extractionState" : "manual",
@@ -7334,6 +7412,28 @@
         }
       }
     },
+    "product_not_found" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Product not found."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Producto no encontrado."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Товар не найден."
+          }
+        }
+      }
+    },
     "Profile" : {
       "localizations" : {
         "en" : {
@@ -8008,6 +8108,9 @@
         }
       }
     },
+    "Retry" : {
+
+    },
     "Retry Loading Products" : {
       "localizations" : {
         "en" : {
@@ -8145,6 +8248,12 @@
         }
       }
     },
+    "Search Failed" : {
+
+    },
+    "Search foods..." : {
+
+    },
     "Search for any food" : {
       "localizations" : {
         "en" : {
@@ -8163,6 +8272,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ищите любую еду"
+          }
+        }
+      }
+    },
+    "Search for food" : {
+
+    },
+    "search_failed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search failed. Please try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Búsqueda fallida. Por favor, inténtalo de nuevo."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поиск не удался. Попробуйте еще раз."
+          }
+        }
+      }
+    },
+    "search_timed_out" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search timed out. Please try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se agotó el tiempo de búsqueda. Por favor, inténtalo de nuevo."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Время поиска истекло. Попробуйте еще раз."
           }
         }
       }
@@ -8502,6 +8658,9 @@
           }
         }
       }
+    },
+    "Skip" : {
+
     },
     "SKIP" : {
       "localizations" : {
@@ -9841,6 +10000,9 @@
         }
       }
     },
+    "Type to search our extensive database" : {
+
+    },
     "Types of Data Collected" : {
       "localizations" : {
         "en" : {
@@ -9951,6 +10113,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Я хочу поддерживать свой вес"
+          }
+        }
+      }
+    },
+    "unable_to_reach_database" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to reach food database. Please try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede acceder a la base de datos de alimentos. Por favor, inténtalo de nuevo."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удается подключиться к базе данных продуктов. Попробуйте еще раз."
           }
         }
       }
@@ -10559,6 +10743,29 @@
         }
       }
     },
+    "weight_gain_speed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight gain speed per week"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velocidad de aumento de peso por semana"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скорость набора веса за неделю"
+          }
+        }
+      }
+    },
     "weight_loss_speed" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -10578,6 +10785,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Скорость снижения веса за неделю"
+          }
+        }
+      }
+    },
+    "weight_maintenance" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weight maintenance per week"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantenimiento de peso por semana"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поддержание веса за неделю"
           }
         }
       }

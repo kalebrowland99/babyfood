@@ -18,6 +18,10 @@
 		3421BC562F1A8EDC002594DF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 3421BC552F1A8EDC002594DF /* Localizable.xcstrings */; };
 		3421BC592F1A91A9002594DF /* LanguagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3421BC582F1A91A9002594DF /* LanguagePickerView.swift */; };
 		3421BC5A2F1A91A9002594DF /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3421BC572F1A91A9002594DF /* LanguageManager.swift */; };
+		349394A42F2D100200FECB9D /* OpenFoodFactsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349394A22F2D100200FECB9D /* OpenFoodFactsService.swift */; };
+		349394A72F2D102700FECB9D /* FoodModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349394A52F2D102700FECB9D /* FoodModels.swift */; };
+		349394AA2F2D103700FECB9D /* FoodSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349394A82F2D103700FECB9D /* FoodSearchViewModel.swift */; };
+		349394AD2F2D104500FECB9D /* FoodDatabaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349394AB2F2D104500FECB9D /* FoodDatabaseView.swift */; };
 		5E3796BBEF284349845E6CB22F3AC65A /* Yacht Parties.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5E3796BBEF284349845E6CB22F3AC659 /* Yacht Parties.mp3 */; };
 		9B31141A2E283071006BF7E6 /* InvoiceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B3114192E283071006BF7E6 /* InvoiceApp.swift */; };
 		9B31141C2E283071006BF7E6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B31141B2E283071006BF7E6 /* ContentView.swift */; };
@@ -86,6 +90,10 @@
 		3421BC552F1A8EDC002594DF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		3421BC572F1A91A9002594DF /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
 		3421BC582F1A91A9002594DF /* LanguagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePickerView.swift; sourceTree = "<group>"; };
+		349394A22F2D100200FECB9D /* OpenFoodFactsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenFoodFactsService.swift; sourceTree = "<group>"; };
+		349394A52F2D102700FECB9D /* FoodModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodModels.swift; sourceTree = "<group>"; };
+		349394A82F2D103700FECB9D /* FoodSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodSearchViewModel.swift; sourceTree = "<group>"; };
+		349394AB2F2D104500FECB9D /* FoodDatabaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodDatabaseView.swift; sourceTree = "<group>"; };
 		5E3796BBEF284349845E6CB22F3AC659 /* Yacht Parties.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Yacht Parties.mp3"; path = "Audio/Yacht Parties.mp3"; sourceTree = "<group>"; };
 		9B3114162E283071006BF7E6 /* calai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = calai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B3114192E283071006BF7E6 /* InvoiceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceApp.swift; sourceTree = "<group>"; };
@@ -168,6 +176,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		349394A32F2D100200FECB9D /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				349394A22F2D100200FECB9D /* OpenFoodFactsService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		349394A62F2D102700FECB9D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				349394A52F2D102700FECB9D /* FoodModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		349394A92F2D103700FECB9D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				349394A82F2D103700FECB9D /* FoodSearchViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		349394AC2F2D104500FECB9D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				349394AB2F2D104500FECB9D /* FoodDatabaseView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		9B31140D2E283071006BF7E6 = {
 			isa = PBXGroup;
 			children = (
@@ -193,6 +233,10 @@
 		9B3114182E283071006BF7E6 /* Invoice */ = {
 			isa = PBXGroup;
 			children = (
+				349394AC2F2D104500FECB9D /* Views */,
+				349394A92F2D103700FECB9D /* ViewModels */,
+				349394A62F2D102700FECB9D /* Models */,
+				349394A32F2D100200FECB9D /* Services */,
 				3421BC572F1A91A9002594DF /* LanguageManager.swift */,
 				3421BC582F1A91A9002594DF /* LanguagePickerView.swift */,
 				3421BC552F1A8EDC002594DF /* Localizable.xcstrings */,
@@ -444,15 +488,19 @@
 				F8FE60F32E75DD8100014042 /* MixpanelService.swift in Sources */,
 				9B77E8DF2E2CBA9A0025E339 /* LyricServices.swift in Sources */,
 				9B31141A2E283071006BF7E6 /* InvoiceApp.swift in Sources */,
+				349394AD2F2D104500FECB9D /* FoodDatabaseView.swift in Sources */,
 				9B77E8DD2E2CBA9A0025E339 /* Config.swift in Sources */,
 				F8B4ABCC2E79BFFA00906F4B /* FirebaseMessagingDelegate.swift in Sources */,
 				3421BC592F1A91A9002594DF /* LanguagePickerView.swift in Sources */,
 				3421BC5A2F1A91A9002594DF /* LanguageManager.swift in Sources */,
+				349394AA2F2D103700FECB9D /* FoodSearchViewModel.swift in Sources */,
+				349394A72F2D102700FECB9D /* FoodModels.swift in Sources */,
 				9B77E8DE2E2CBA9A0025E339 /* ToolPromptService.swift in Sources */,
 				F8FE61162E75E42000014042 /* StaticVideoPlayer.swift in Sources */,
 				F8FE61172E75E42000014042 /* FirebaseStorageService.swift in Sources */,
 				F8FE61182E75E42000014042 /* SerpAPIConfig.swift in Sources */,
 				9B77E8E22E2CBA9A0025E339 /* ToolPrompts.swift in Sources */,
+				349394A42F2D100200FECB9D /* OpenFoodFactsService.swift in Sources */,
 				F8FE60FB2E75E16600014042 /* AppUsageTracker.swift in Sources */,
 				F896B5482E8D8C6F001C63D8 /* RefundRequestService.swift in Sources */,
 			);
@@ -615,7 +663,7 @@
 				CODE_SIGN_ENTITLEMENTS = Invoice/Invoice.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Invoice/Preview Content\"";
 				DEVELOPMENT_TEAM = W3WCKHSXJ5;
@@ -643,7 +691,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
-				MARKETING_VERSION = 1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = calai.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -665,7 +713,7 @@
 				CODE_SIGN_ENTITLEMENTS = Invoice/Invoice.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Invoice/Preview Content\"";
 				DEVELOPMENT_TEAM = W3WCKHSXJ5;
@@ -693,7 +741,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
-				MARKETING_VERSION = 1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = calai.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
