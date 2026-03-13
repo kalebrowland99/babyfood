@@ -48,6 +48,9 @@
         }
       }
     },
+    " this month is a perfect pace!" : {
+
+    },
     "--" : {
 
     },
@@ -58,6 +61,7 @@
 
     },
     "\"Cal AI takes the guesswork out of nutrition. I can finally reach my fitness goals without spending hours tracking every meal. It's a game changer!\"" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -80,6 +84,7 @@
       }
     },
     "\"I used to get overwhelmed by calorie counting. Cal AI makes it simple—I know exactly what to eat and what to avoid. It makes healthy eating fun again!\"" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -100,6 +105,12 @@
           }
         }
       }
+    },
+    "\"I was terrified about introducing allergenic foods. This app guided me step by step and my son now eats everything. No more picky eating anxiety!\"" : {
+
+    },
+    "\"This app took all the guesswork out of starting solids. My daughter is 7 months and has already tried 15 new foods! I feel so much more confident as a mom.\"" : {
+
     },
     "/ 100g" : {
       "localizations" : {
@@ -211,6 +222,9 @@
         }
       }
     },
+    "%lld foods" : {
+
+    },
     "%lld ft" : {
       "localizations" : {
         "en" : {
@@ -298,6 +312,9 @@
           }
         }
       }
+    },
+    "%lld new foods" : {
+
     },
     "%lld years" : {
       "localizations" : {
@@ -622,6 +639,7 @@
       }
     },
     "+ 1000 Cal AI users" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -642,6 +660,9 @@
           }
         }
       }
+    },
+    "+ 1000 happy moms" : {
+
     },
     "+%lld" : {
       "localizations" : {
@@ -723,19 +744,22 @@
     "🍬" : {
 
     },
+    "🍽️" : {
+
+    },
+    "🍽️ Meal Plans" : {
+
+    },
     "🎁" : {
 
     },
     "🎉" : {
 
     },
-    "🐆" : {
-
-    },
-    "🐟" : {
-
-    },
     "🐢" : {
+
+    },
+    "👶" : {
 
     },
     "💧" : {
@@ -769,6 +793,9 @@
     "🥗" : {
 
     },
+    "🥣" : {
+
+    },
     "🥦" : {
 
     },
@@ -778,7 +805,13 @@
     "😊" : {
 
     },
+    "🚀" : {
+
+    },
     "🛒" : {
+
+    },
+    "🛒 Shopping List" : {
 
     },
     "$79.99 /yearly" : {
@@ -853,6 +886,9 @@
         }
       }
     },
+    "5 foods" : {
+
+    },
     "7 Days" : {
       "localizations" : {
         "en" : {
@@ -899,6 +935,9 @@
       }
     },
     "20%" : {
+
+    },
+    "20+" : {
 
     },
     "25.0–29.9" : {
@@ -990,7 +1029,11 @@
         }
       }
     },
+    "90% of parents say their baby accepts new foods more willingly when introduced gradually with a plan." : {
+
+    },
     "90% of users say that the change is obvious after using Cal AI and it is not easy to rebound." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1033,6 +1076,9 @@
           }
         }
       }
+    },
+    "About your baby" : {
+
     },
     "account" : {
       "extractionState" : "manual",
@@ -1395,6 +1441,9 @@
         }
       }
     },
+    "AI-generated, age-appropriate weekly plans" : {
+
+    },
     "All creative data is processed on the device and is not stored on our servers. You may delete your lyric data at any time." : {
       "localizations" : {
         "en" : {
@@ -1551,6 +1600,9 @@
         }
       }
     },
+    "Amanda K." : {
+
+    },
     "Analysis Failed" : {
       "localizations" : {
         "en" : {
@@ -1573,7 +1625,11 @@
         }
       }
     },
+    "Analyzing baby food..." : {
+
+    },
     "Analyzing food..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1594,6 +1650,9 @@
           }
         }
       }
+    },
+    "Analyzing leftovers..." : {
+
     },
     "Annual subscription" : {
       "localizations" : {
@@ -1708,6 +1767,12 @@
         }
       }
     },
+    "Ask about baby food..." : {
+
+    },
+    "Ask me anything about\nbaby food & nutrition" : {
+
+    },
     "At your goal by %@." : {
       "localizations" : {
         "en" : {
@@ -1751,6 +1816,18 @@
           }
         }
       }
+    },
+    "Babies introduced to more\nfoods early are far less\npicky eaters" : {
+
+    },
+    "Baby Food" : {
+
+    },
+    "Baby Food AI" : {
+
+    },
+    "Baby's age stage" : {
+
     },
     "balanced_pace_text" : {
       "extractionState" : "manual",
@@ -1796,6 +1873,9 @@
           }
         }
       }
+    },
+    "Based on your answers, your baby is on track to try 50+ nutritious foods in their first year. Early exposure to diverse flavors and textures reduces picky eating by up to 3x and supports lifelong healthy habits." : {
+
     },
     "Based on your profile, you'll see significant improvement in your nutrition habits and progress toward your goals within the next 3 days." : {
       "extractionState" : "stale",
@@ -1956,6 +2036,12 @@
         }
       }
     },
+    "Build healthy\neating habits early" : {
+
+    },
+    "Building shopping list..." : {
+
+    },
     "Business Transactions" : {
       "localizations" : {
         "en" : {
@@ -2026,6 +2112,7 @@
 
     },
     "Cal AI" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2048,6 +2135,7 @@
       }
     },
     "Cal AI creates\nlong-term results" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2092,6 +2180,7 @@
       }
     },
     "Cal AI was made for\npeople like you" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2522,6 +2611,9 @@
           }
         }
       }
+    },
+    "Clear" : {
+
     },
     "Close" : {
 
@@ -3092,6 +3184,7 @@
       }
     },
     "Daily calorie goal: %lld cal" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3229,7 +3322,6 @@
       }
     },
     "Debug" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3429,6 +3521,9 @@
         }
       }
     },
+    "Dietary needs" : {
+
+    },
     "Disclaimer" : {
       "localizations" : {
         "en" : {
@@ -3584,6 +3679,9 @@
           }
         }
       }
+    },
+    "Do you work with a\npediatrician for\nnutrition advice?" : {
+
     },
     "done" : {
       "comment" : "Done button",
@@ -3880,6 +3978,9 @@
           }
         }
       }
+    },
+    "Estimating what your baby ate" : {
+
     },
     "fast" : {
       "extractionState" : "manual",
@@ -4449,6 +4550,15 @@
         }
       }
     },
+    "Generate Week Plan" : {
+
+    },
+    "Generating your plan..." : {
+
+    },
+    "Get Shopping List" : {
+
+    },
     "Get Started" : {
       "localizations" : {
         "en" : {
@@ -4768,7 +4878,11 @@
         }
       }
     },
+    "Has your baby started\nsolid foods yet?" : {
+
+    },
     "Have you tried other calorie tracking apps?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4860,6 +4974,7 @@
       }
     },
     "Height" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4882,6 +4997,7 @@
       }
     },
     "Height & weight" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5018,6 +5134,7 @@
       }
     },
     "How many meals do you eat out per week?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5038,6 +5155,15 @@
           }
         }
       }
+    },
+    "How many new foods\nthis month?" : {
+
+    },
+    "How old is your baby?" : {
+
+    },
+    "How quickly do you\nwant to introduce\nnew foods?" : {
+
     },
     "how_fast_reach_goal" : {
       "extractionState" : "manual",
@@ -5107,6 +5233,9 @@
           }
         }
       }
+    },
+    "I'll help you introduce foods safely\nand confidently at every stage." : {
+
     },
     "If you have any questions about these Terms of Service, please contact us:" : {
       "localizations" : {
@@ -5329,6 +5458,9 @@
         }
       }
     },
+    "Introducing " : {
+
+    },
     "invalid_search_query" : {
       "localizations" : {
         "en" : {
@@ -5374,6 +5506,12 @@
           }
         }
       }
+    },
+    "Is this your first time\nintroducing solids?" : {
+
+    },
+    "Jessica M." : {
+
     },
     "Just $12 per month (billed yearly)" : {
       "localizations" : {
@@ -5559,6 +5697,9 @@
         }
       }
     },
+    "Leftovers" : {
+
+    },
     "legal" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5604,6 +5745,9 @@
           }
         }
       }
+    },
+    "Length" : {
+
     },
     "Let's get started!" : {
       "localizations" : {
@@ -5693,6 +5837,9 @@
           }
         }
       }
+    },
+    "Little Bites" : {
+
     },
     "loading" : {
       "comment" : "Loading indicator text",
@@ -5965,6 +6112,9 @@
         }
       }
     },
+    "Made for\nmoms like you" : {
+
+    },
     "maintain" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -6012,6 +6162,7 @@
       }
     },
     "Mariah Roland" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6034,6 +6185,7 @@
       }
     },
     "Marley Bryle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6189,6 +6341,9 @@
           }
         }
       }
+    },
+    "New foods per week" : {
+
     },
     "Next" : {
       "localizations" : {
@@ -6412,6 +6567,9 @@
           }
         }
       }
+    },
+    "Not yet, getting ready" : {
+
     },
     "Number of Servings" : {
       "extractionState" : "stale",
@@ -7119,6 +7277,9 @@
         }
       }
     },
+    "Pediatricians recommend introducing one new food every 3–5 days to watch for reactions." : {
+
+    },
     "percent_of_goal" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7591,6 +7752,7 @@
       }
     },
     "Reach your goals twice as fast with\nCal AI vs on your own" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7881,6 +8043,9 @@
           }
         }
       }
+    },
+    "Regenerate Plan" : {
+
     },
     "Request Refund" : {
       "localizations" : {
@@ -8663,6 +8828,7 @@
 
     },
     "SKIP" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9335,6 +9501,7 @@
       }
     },
     "This is the most balanced pace, motivating and ideal for most users." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9445,6 +9612,7 @@
       }
     },
     "This will be used to calibrate your custom plan." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9911,6 +10079,9 @@
           }
         }
       }
+    },
+    "Try asking:" : {
+
     },
     "Try for $0.00" : {
       "localizations" : {
@@ -10409,6 +10580,9 @@
         }
       }
     },
+    "View Shopping List (%lld)" : {
+
+    },
     "Water Log" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -10608,6 +10782,15 @@
         }
       }
     },
+    "We'll build your baby's personalized food plan." : {
+
+    },
+    "We'll customize your baby's food plan accordingly." : {
+
+    },
+    "We'll personalize your baby's feeding journey." : {
+
+    },
     "We'll send you a reminder\nbefore your free trial ends" : {
       "localizations" : {
         "en" : {
@@ -10629,6 +10812,15 @@
           }
         }
       }
+    },
+    "We'll tailor food recommendations to your baby's stage." : {
+
+    },
+    "We'll track milestones alongside new foods." : {
+
+    },
+    "We'll use this to recommend age-appropriate portions." : {
+
     },
     "Weight" : {
       "localizations" : {
@@ -10949,6 +11141,9 @@
         }
       }
     },
+    "What are your biggest\nworries about\nstarting solids?" : {
+
+    },
     "What is your desired weight?" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -10995,6 +11190,9 @@
         }
       }
     },
+    "What is your main\ngoal?" : {
+
+    },
     "What is your ultimate\ngoal?" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -11017,6 +11215,9 @@
           }
         }
       }
+    },
+    "What would you like\nto achieve?" : {
+
     },
     "What would you like to accomplish?" : {
       "localizations" : {
@@ -11156,6 +11357,7 @@
       }
     },
     "What's stopping you\nfrom reaching your\ngoals?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11221,6 +11423,9 @@
           }
         }
       }
+    },
+    "When was your\nbaby born?" : {
+
     },
     "When were you born?" : {
       "extractionState" : "stale",
@@ -11379,6 +11584,9 @@
         }
       }
     },
+    "With\nour plan" : {
+
+    },
     "with_calai" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11401,6 +11609,9 @@
           }
         }
       }
+    },
+    "Without\na plan" : {
+
     },
     "Without\nCal AI" : {
       "localizations" : {
@@ -11583,6 +11794,9 @@
         }
       }
     },
+    "Yes, we've started" : {
+
+    },
     "You agree to use our Service responsibly and in accordance with these terms:" : {
       "localizations" : {
         "en" : {
@@ -11694,6 +11908,7 @@
       }
     },
     "You will reach your goal in " : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11759,6 +11974,12 @@
         }
       }
     },
+    "Your baby will try " : {
+
+    },
+    "Your baby's food journey" : {
+
+    },
     "Your BMI" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -11805,6 +12026,7 @@
       }
     },
     "Your custom prediction" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11869,6 +12091,9 @@
           }
         }
       }
+    },
+    "Your personal nutrition guide" : {
+
     },
     "Your refund request has been submitted successfully. You'll receive an email from Apple with updates." : {
       "localizations" : {

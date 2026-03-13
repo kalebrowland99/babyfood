@@ -89,8 +89,9 @@ fastlane/test_output
 iOSInjectionProject/ data-processing/spotify_dataset.csv
 data-processing/spotify_dataset.csv
 
-# API Keys
+# API Keys (never commit — keep keys local only)
 LyricServices/Sources/LyricServices/APIKeys.swift
+Invoice/APIKeys.swift
 
 # Large media files
 *.mp4
