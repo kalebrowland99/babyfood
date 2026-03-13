@@ -9419,12 +9419,6 @@ struct ContentView: View {
                 .background(Color.white)
                 .zIndex(100)
                 
-                // Main Video (commented out — main.mp4 not in bundle yet)
-                // MainVideoPlayer(videoName: "main")
-                //     .frame(maxWidth: .infinity)
-                //     .clipped()
-                //     .padding(.bottom, 30)
-                
                 // Title Text
                 Text("Tracking\nmade easy")
                     .font(.system(size: 42, weight: .bold))
@@ -10262,88 +10256,6 @@ struct RecommendationCircle: View {
     }
 }
 
-// Simple and reliable video player for main.mp4
-struct MainVideoPlayer: UIViewRepresentable {
-    let videoName: String
-    
-    func makeUIView(context: Context) -> UIView {
-        let containerView = UIView()
-        containerView.backgroundColor = UIColor.white
-        
-        // Try to find video in main bundle
-        var videoURL: URL?
-        
-        if let url = Bundle.main.url(forResource: videoName, withExtension: "mp4") {
-            print("✅ Found video in main bundle: \(url)")
-            videoURL = url
-        } else if let path = Bundle.main.path(forResource: videoName, ofType: "mp4") {
-            videoURL = URL(fileURLWithPath: path)
-            print("✅ Found video at path: \(path)")
-        } else {
-            print("❌ \(videoName).mp4 not found in project bundle")
-            return containerView
-        }
-        
-        guard let url = videoURL else { return containerView }
-        
-        // Create AVPlayer and AVPlayerLayer
-        let player = AVPlayer(url: url)
-        player.isMuted = true
-        
-        let playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspect // Maintain aspect ratio without cropping
-        playerLayer.backgroundColor = UIColor.white.cgColor
-        
-        // Add player layer to container
-        containerView.layer.addSublayer(playerLayer)
-        
-        // Set initial frame - important for immediate visibility
-        playerLayer.frame = CGRect(x: 0, y: 0, width: 100, height: 100) // Temporary size
-        
-        // Store references for later access
-        containerView.layer.setValue(player, forKey: "player")
-        containerView.layer.setValue(playerLayer, forKey: "playerLayer")
-        
-        // Update frame after a short delay when container has proper bounds
-        DispatchQueue.main.async {
-            if containerView.bounds != .zero {
-                playerLayer.frame = containerView.bounds
-                print("🔧 Set initial player layer frame to: \(containerView.bounds)")
-            }
-        }
-        
-        // Start playing
-                        player.play()
-        print("🎬 MainVideoPlayer started playing: \(videoName)")
-        
-        // Set up looping
-        NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: player.currentItem,
-            queue: .main
-        ) { _ in
-                            player.seek(to: .zero)
-                            player.play()
-                        }
-        
-        return containerView
-    }
-    
-    func updateUIView(_ uiView: UIView, context: Context) {
-        print("🔄 updateUIView called with bounds: \(uiView.bounds)")
-        
-        if let playerLayer = uiView.layer.value(forKey: "playerLayer") as? AVPlayerLayer {
-            // Always update the frame, even if bounds are the same
-            playerLayer.frame = uiView.bounds
-            print("🔧 Updated player layer frame to: \(uiView.bounds)")
-            
-            // Force a redraw
-            playerLayer.setNeedsDisplay()
-        } else {
-            print("❌ Could not find playerLayer in updateUIView")
-        }
-    }
-}
 
 struct VideoPlayerView: UIViewRepresentable {
     let videoName: String
@@ -10803,13 +10715,6 @@ struct TryForFreeView: View {
                     .opacity(showContent ? 1 : 0)
                     .animation(.easeOut(duration: 0.6).delay(0.3), value: showContent)
                 
-                // Main Video (commented out — main.mp4 not in bundle yet)
-                // MainVideoPlayer(videoName: "main")
-                //     .frame(maxWidth: .infinity, maxHeight: 500)
-                //     .clipped()
-                //     .padding(.bottom, 30)
-                //     .opacity(showContent ? 1 : 0)
-                //     .animation(.easeOut(duration: 0.6).delay(0.6), value: showContent)
             }
             
             // Bottom section with button and payment text
