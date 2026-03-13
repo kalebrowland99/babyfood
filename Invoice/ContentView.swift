@@ -14817,7 +14817,6 @@ struct ProfileView: View {
     @State private var showLogoutAlert = false
     @State private var showDeleteAlert = false
     @State private var showPersonalDetailsSheet = false
-    @State private var showAPIKeySheet = false
     
     // Debug function to reset app state
     private func resetAppState() {
@@ -14947,25 +14946,6 @@ struct ProfileView: View {
                 .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 4)
                 .padding(.horizontal, 20)
                 
-                // AI Settings Header
-                Text("AI Settings")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(Color.black.opacity(0.5))
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
-
-                VStack(spacing: 0) {
-                    ProfileButton(
-                        icon: "key.fill",
-                        title: "OpenAI API Key",
-                        action: { showAPIKeySheet = true }
-                    )
-                }
-                .background(Color.white)
-                .cornerRadius(16)
-                .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 4)
-                .padding(.horizontal, 20)
-
                 // Support Header
                 Text("support")
                     .font(.system(size: 17, weight: .semibold))
@@ -15105,87 +15085,6 @@ struct ProfileView: View {
             PersonalDetailsView()
                 .environmentObject(authManager)
         }
-        .sheet(isPresented: $showAPIKeySheet) {
-            APIKeySettingsView()
-        }
-        }
-    }
-}
-
-struct APIKeySettingsView: View {
-    @AppStorage("openai_api_key") private var apiKey = ""
-    @State private var draftKey = ""
-    @State private var showKey = false
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationView {
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Get your key at platform.openai.com → API Keys")
-                        .font(.system(size: 13))
-                        .foregroundColor(.gray)
-
-                    HStack(spacing: 10) {
-                        Group {
-                            if showKey {
-                                TextField("sk-...", text: $draftKey)
-                            } else {
-                                SecureField("sk-...", text: $draftKey)
-                            }
-                        }
-                        .font(.system(size: 14, design: .monospaced))
-                        .padding(12)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(10)
-
-                        Button(action: { showKey.toggle() }) {
-                            Image(systemName: showKey ? "eye.slash" : "eye")
-                                .foregroundColor(.gray)
-                        }
-                    }
-
-                    if !apiKey.isEmpty {
-                        HStack(spacing: 6) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                                .font(.system(size: 13))
-                            Text("API key saved")
-                                .font(.system(size: 13))
-                                .foregroundColor(.green)
-                        }
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
-
-                Button(action: {
-                    let trimmed = draftKey.trimmingCharacters(in: .whitespacesAndNewlines)
-                    if !trimmed.isEmpty {
-                        apiKey = trimmed
-                    }
-                    dismiss()
-                }) {
-                    Text("Save Key")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Color(red: 0.15, green: 0.15, blue: 0.20))
-                        .cornerRadius(14)
-                }
-                .padding(.horizontal, 20)
-
-                Spacer()
-            }
-            .navigationTitle("OpenAI API Key")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
-                }
-            }
-            .onAppear { draftKey = apiKey }
         }
     }
 }
