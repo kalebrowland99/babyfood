@@ -4499,7 +4499,7 @@ struct RatingView: View {
                 
                 // Social proof section
                 VStack(spacing: 12) { // Reduced from 16
-                    Text("Cal AI was made for\npeople like you")
+                    Text("Made for\nmoms like you")
                         .font(.system(size: 20, weight: .medium))
                         .multilineTextAlignment(.center)
                         .padding(.top, 24) // Reduced from 32
@@ -4538,7 +4538,7 @@ struct RatingView: View {
                     }
                     .padding(.top, 8)
                     
-                    Text("+ 1000 Cal AI users")
+                    Text("+ 1000 happy moms")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(.gray)
                         .padding(.top, 4)
@@ -4561,7 +4561,7 @@ struct RatingView: View {
                         
                         VStack(alignment: .leading, spacing: 6) {
                             HStack(spacing: 8) {
-                                Text("Marley Bryle")
+                                Text("Jessica M.")
                                     .font(.system(size: 15, weight: .semibold))
                                     .foregroundColor(.white)
                                 
@@ -4574,7 +4574,7 @@ struct RatingView: View {
                                 }
                             }
                             
-                            Text("\"Cal AI takes the guesswork out of nutrition. I can finally reach my fitness goals without spending hours tracking every meal. It's a game changer!\"")
+                            Text("\"This app took all the guesswork out of starting solids. My daughter is 7 months and has already tried 15 new foods! I feel so much more confident as a mom.\"")
                                 .font(.system(size: 13)) // Reduced from 14
                                 .foregroundColor(.white.opacity(0.95))
                                 .lineLimit(nil)
@@ -4605,7 +4605,7 @@ struct RatingView: View {
                         
                         VStack(alignment: .leading, spacing: 6) {
                             HStack(spacing: 8) {
-                                Text("Mariah Roland")
+                                Text("Amanda K.")
                                     .font(.system(size: 15, weight: .semibold))
                                     .foregroundColor(.white)
                                 
@@ -4618,7 +4618,7 @@ struct RatingView: View {
                                 }
                             }
                             
-                            Text("\"I used to get overwhelmed by calorie counting. Cal AI makes it simple—I know exactly what to eat and what to avoid. It makes healthy eating fun again!\"")
+                            Text("\"I was terrified about introducing allergenic foods. This app guided me step by step and my son now eats everything. No more picky eating anxiety!\"")
                                 .font(.system(size: 13)) // Reduced from 14
                                 .foregroundColor(.white.opacity(0.95))
                                 .lineLimit(nil)
@@ -5092,9 +5092,9 @@ struct UltimateGoalView: View {
     @State private var navigateToNext = false
     
     let goals = [
-        "ultimate_goal_lose_weight",
-        "ultimate_goal_build_muscle",
-        "ultimate_goal_maintain_weight"
+        "Raise an adventurous eater",
+        "Ensure balanced nutrition",
+        "Build lifelong healthy habits"
     ]
     
     var body: some View {
@@ -5128,9 +5128,9 @@ struct UltimateGoalView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("what_is_ultimate_goal")
+                Text("What would you like\nto achieve?")
                     .font(.system(size: 32, weight: .bold))
-                Text("calibrate_custom_plan")
+                Text("We'll build your baby's personalized food plan.")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -5146,7 +5146,7 @@ struct UltimateGoalView: View {
                         // Track question-specific answer
                         coordinator.trackQuestionAnswered(answer: goal)
                     }) {
-                        Text(LocalizedStringKey(goal))
+                        Text(goal)
                             .font(.system(size: 17))
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
@@ -5204,10 +5204,10 @@ struct ObstaclesView: View {
     @State private var navigateToNext = false
     
     let obstacles = [
-        ("obstacle_no_results", "chart.bar"),
-        ("obstacle_dont_know_what_to_eat", "brain"),
-        ("obstacle_portion_sizes", "hand.raised"),
-        ("obstacle_cant_stay_consistent", "calendar"),
+        ("Worried about allergies", "exclamationmark.shield"),
+        ("Don't know which foods to start with", "questionmark.circle"),
+        ("Concerned about choking hazards", "hand.raised"),
+        ("Unsure about textures and purees", "fork.knife"),
     ]
     
     var body: some View {
@@ -5240,7 +5240,7 @@ struct ObstaclesView: View {
             .padding(.top, 8)
             
             // Title
-            Text("What's stopping you\nfrom reaching your\ngoals?")
+            Text("What are your biggest\nworries about\nstarting solids?")
                 .font(.system(size: 32, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
@@ -5258,7 +5258,7 @@ struct ObstaclesView: View {
                             Image(systemName: icon)
                                 .font(.system(size: 20))
                                 .frame(width: 24)
-                            Text(LocalizedStringKey(obstacle))
+                            Text(obstacle)
                                 .font(.system(size: 17))
                             Spacer()
                         }
@@ -5349,7 +5349,7 @@ struct ThriftingTransitionView: View {
             .padding(.top, 8)
             
             // Title
-            Text("Reach your goals twice as fast with\nCal AI vs on your own")
+            Text("Babies introduced to more\nfoods early are far less\npicky eaters")
                 .font(.system(size: 32, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
@@ -5358,9 +5358,9 @@ struct ThriftingTransitionView: View {
             // Comparison chart
             VStack {
                 HStack(alignment: .top, spacing: 16) {
-                    // Without Cal AI column
+                    // Without plan column
                     VStack(spacing: 0) {
-                        Text("Without\nCal AI")
+                        Text("Without\na plan")
                             .font(.system(size: 17))
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity)
@@ -5377,7 +5377,7 @@ struct ThriftingTransitionView: View {
                                 .frame(width: 80, height: showChart ? 40 : 0)
                                 .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.3), value: showChart)
                             
-                            Text("20%")
+                            Text("5 foods")
                                 .font(.system(size: 17))
                                 .foregroundColor(.black)
                                 .opacity(showChart ? 1 : 0)
@@ -5387,9 +5387,9 @@ struct ThriftingTransitionView: View {
                     }
                     .frame(maxWidth: .infinity)
                     
-                    // With Cal AI column
+                    // With plan column
                     VStack(spacing: 0) {
-                        Text("With\nCal AI")
+                        Text("With\nour plan")
                             .font(.system(size: 17))
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity)
@@ -5413,7 +5413,7 @@ struct ThriftingTransitionView: View {
                                 .frame(width: 80, height: showChart ? 120 : 0)
                                 .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.4), value: showChart)
                             
-                            Text("2X")
+                            Text("20+")
                                 .font(.system(size: 17))
                                 .foregroundColor(.white)
                                 .opacity(showChart ? 1 : 0)
@@ -6178,7 +6178,7 @@ struct LongTermResultsView: View {
             .padding(.top, 8)
             
             // Title
-            Text("Cal AI creates\nlong-term results")
+            Text("Build healthy\neating habits early")
                 .font(.system(size: 32, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
@@ -6270,9 +6270,9 @@ struct HeightWeightView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("Height & weight")
+                Text("About your baby")
                     .font(.system(size: 32, weight: .bold))
-                Text("This will be used to calibrate your custom plan.")
+                Text("We'll use this to recommend age-appropriate portions.")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -6316,7 +6316,7 @@ struct HeightWeightView: View {
             HStack(spacing: 40) {
                 // Height Section
                 VStack(spacing: 16) {
-                    Text("Height")
+                    Text("Length")
                         .font(.system(size: 17, weight: .semibold))
                     
                     if isImperial {
@@ -6468,9 +6468,9 @@ struct BirthdateView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("when_were_you_born")
+                Text("When was your\nbaby born?")
                     .font(.system(size: 32, weight: .bold))
-                Text("gender_help_text")
+                Text("We'll track milestones alongside new foods.")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -6506,8 +6506,8 @@ struct BirthdateView: View {
                 
                 // Year picker
                 Picker("", selection: $selectedYear) {
-                    ForEach(0..<50, id: \.self) { offset in
-                        Text(verbatim: "\(1974 + offset)")
+                    ForEach(0..<3, id: \.self) { offset in
+                        Text(verbatim: "\(2023 + offset)")
                             .tag(offset)
                     }
                 }
@@ -6590,7 +6590,7 @@ struct PersonalCoachView: View {
             
             // Title
             VStack(alignment: .leading, spacing: 8) {
-                Text("work_with_coach_question")
+                Text("Do you work with a\npediatrician for\nnutrition advice?")
                     .font(.system(size: 32, weight: .bold))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -6684,7 +6684,7 @@ struct GoalSelectionView: View {
     @State private var selectedGoal: String?
     @State private var navigateToWeight = false
     
-    let goals = ["lose_weight", "maintain", "gain_weight"]
+    let goals = ["Introduce new foods", "Ensure balanced nutrition", "Handle picky eating"]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -6717,9 +6717,9 @@ struct GoalSelectionView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("what_is_your_goal")
+                Text("What is your main\ngoal?")
                     .font(.system(size: 32, weight: .bold))
-                Text("goal_help_text")
+                Text("We'll customize your baby's food plan accordingly.")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -6736,7 +6736,7 @@ struct GoalSelectionView: View {
                         selectedGoal = goal
                         coordinator.trackQuestionAnswered(answer: goal)
                     }) {
-                        Text(LocalizedStringKey(goal))
+                        Text(goal)
                             .font(.system(size: 17, weight: .medium))
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
@@ -6752,7 +6752,7 @@ struct GoalSelectionView: View {
             
             // Continue button
             NavigationLink(isActive: $navigateToWeight) {
-                DesiredWeightView(currentWeight: Int(onboardingData.weightLbs), selectedGoal: selectedGoal ?? "Lose weight")
+                DesiredWeightView(currentWeight: Int(onboardingData.weightLbs), selectedGoal: selectedGoal ?? "Introduce new foods")
                     .horizontalSlideTransition()
             } label: {
                 Text("continue")
@@ -6797,15 +6797,7 @@ struct DesiredWeightView: View {
     init(currentWeight: Int, selectedGoal: String) {
         self.currentWeight = currentWeight
         self.selectedGoal = selectedGoal
-        // Initialize desired weight based on goal
-        if selectedGoal == "lose_weight" || selectedGoal == "Lose weight" {
-            _desiredWeight = State(initialValue: Double(currentWeight) - 12.4)
-        } else if selectedGoal == "gain_weight" || selectedGoal == "Gain weight" {
-            _desiredWeight = State(initialValue: Double(currentWeight) + 12.4)
-        } else {
-            // Maintain goal - same weight
-            _desiredWeight = State(initialValue: Double(currentWeight))
-        }
+        _desiredWeight = State(initialValue: 10.0)
     }
     
     var body: some View {
@@ -6839,7 +6831,7 @@ struct DesiredWeightView: View {
             
             // Title
             VStack(alignment: .leading, spacing: 8) {
-                Text("what_is_desired_weight")
+                Text("How many new foods\nthis month?")
                     .font(.system(size: 32, weight: .bold))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -6848,19 +6840,19 @@ struct DesiredWeightView: View {
             
             Spacer()
             
-            // Goal and weight display
+            // Goal and food count display
             VStack(spacing: 24) {
-                Text(LocalizedStringKey(selectedGoal))
+                Text(selectedGoal)
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
                 
-                Text(String(format: "%.1f lbs", desiredWeight))
+                Text("\(Int(desiredWeight)) foods")
                     .font(.system(size: 48, weight: .bold))
                 
                 // Visual slider representation
                 GeometryReader { geometry in
                     let totalBars = 40
-                    let filledBars = Int((desiredWeight - 100.0) / 200.0 * Double(totalBars))
+                    let filledBars = Int((desiredWeight - 5.0) / 25.0 * Double(totalBars))
                     
                     HStack(spacing: 2) {
                         ForEach(0..<totalBars, id: \.self) { index in
@@ -6876,7 +6868,7 @@ struct DesiredWeightView: View {
             .padding(.horizontal, 24)
             
             // Slider
-            Slider(value: $desiredWeight, in: 100.0...300.0, step: 0.1)
+            Slider(value: $desiredWeight, in: 5.0...30.0, step: 1.0)
                 .accentColor(.gray)
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
@@ -6928,14 +6920,6 @@ struct WeightTargetResultView: View {
     let selectedGoal: String
     @State private var navigateToNext = false
     
-    var weightDifference: Double {
-        abs(currentWeight - desiredWeight)
-    }
-    
-    var formattedDifference: String {
-        String(format: "%.1f lbs", weightDifference)
-    }
-    
     var body: some View {
         VStack(spacing: 0) {
             // Header with back button and progress
@@ -6967,16 +6951,15 @@ struct WeightTargetResultView: View {
             
             Spacer()
             
-            // Result text - adapts based on goal (Losing/Gaining)
+            // Result text
             VStack(spacing: 16) {
-                let actionText = (selectedGoal == "gain_weight" || selectedGoal == "Gain weight") ? "Gaining " : "Losing "
-                (Text(actionText)
+                (Text("Introducing ")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.black)
-                + Text(formattedDifference)
+                + Text("\(Int(desiredWeight)) new foods")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(Color(red: 0.83, green: 0.69, blue: 0.52))
-                + Text(" is a realistic target. It's not hard at all!")
+                + Text(" this month is a perfect pace!")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.black))
                 .multilineTextAlignment(.center)
@@ -6984,7 +6967,7 @@ struct WeightTargetResultView: View {
             }
             
             // Subtitle
-            Text("90% of users say that the change is obvious after using Cal AI and it is not easy to rebound.")
+            Text("90% of parents say their baby accepts new foods more willingly when introduced gradually with a plan.")
                 .font(.system(size: 17))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
@@ -7032,15 +7015,8 @@ struct WeightLossSpeedView: View {
     @State private var navigateToComparison = false
     
     var timeToGoal: String {
-        let totalWeightLoss = abs(currentWeight - desiredWeight)
-        let weeksNeeded = totalWeightLoss / weightLossSpeed
-        let monthsNeeded = weeksNeeded / 4.0
-        
-        if monthsNeeded < 1 {
-            return "\(Int(weeksNeeded)) weeks"
-        } else {
-            return "\(Int(monthsNeeded)) months"
-        }
+        let newFoodsPerMonth = weightLossSpeed * 4.0
+        return "\(Int(desiredWeight)) new foods in \(Int(ceil(desiredWeight / newFoodsPerMonth))) months"
     }
     
     var dailyCalories: Int {
@@ -7117,7 +7093,7 @@ struct WeightLossSpeedView: View {
             
             // Title
             VStack(alignment: .leading, spacing: 8) {
-                Text("how_fast_reach_goal")
+                Text("How quickly do you\nwant to introduce\nnew foods?")
                     .font(.system(size: 32, weight: .bold))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -7126,23 +7102,13 @@ struct WeightLossSpeedView: View {
             
             Spacer()
             
-            // Weight change speed display - adapts based on goal
+            // Introduction pace display
             VStack(spacing: 16) {
-                let speedLabel: LocalizedStringKey = {
-                    if onboardingData.fitnessGoal == "Gain weight" || onboardingData.fitnessGoal == "gain_weight" {
-                        return "weight_gain_speed"
-                    } else if onboardingData.fitnessGoal == "Maintain" || onboardingData.fitnessGoal == "maintain" {
-                        return "weight_maintenance"
-                    } else {
-                        return "weight_loss_speed"
-                    }
-                }()
-                
-                Text(speedLabel)
+                Text("New foods per week")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
                 
-                Text(String(format: "%.1f lbs", weightLossSpeed))
+                Text(String(format: "%.1f foods", weightLossSpeed))
                     .font(.system(size: 48, weight: .bold))
                 
                 // Speed indicators
@@ -7156,7 +7122,7 @@ struct WeightLossSpeedView: View {
                     }
                     
                     VStack(spacing: 8) {
-                        Text("🐟")
+                        Text("👶")
                             .font(.system(size: 40))
                         Text("recommended")
                             .font(.system(size: 15))
@@ -7164,7 +7130,7 @@ struct WeightLossSpeedView: View {
                     }
                     
                     VStack(spacing: 8) {
-                        Text("🐆")
+                        Text("🚀")
                             .font(.system(size: 40))
                         Text("fast")
                             .font(.system(size: 15))
@@ -7183,21 +7149,17 @@ struct WeightLossSpeedView: View {
             
             // Goal info
             VStack(spacing: 8) {
-                Text("You will reach your goal in ")
+                Text("Your baby will try ")
                     .font(.system(size: 17))
                     .foregroundColor(.black)
                 + Text(timeToGoal)
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundColor(Color(red: 0.83, green: 0.69, blue: 0.52))
                 
-                Text("This is the most balanced pace, motivating and ideal for most users.")
+                Text("Pediatricians recommend introducing one new food every 3–5 days to watch for reactions.")
                     .font(.system(size: 15))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
-                
-                Text("Daily calorie goal: \(dailyCalories) cal")
-                    .font(.system(size: 15))
-                    .foregroundColor(.gray)
             }
             .multilineTextAlignment(.center)
             .padding(.horizontal, 24)
@@ -8056,7 +8018,7 @@ struct GenderSelectionView: View {
     @State private var selectedGender: String?
     @State private var navigateToFrequency = false
     
-    let genders = ["male", "female", "other"]
+    let genders = ["First-time parent", "Second child", "Third child or more"]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -8089,9 +8051,9 @@ struct GenderSelectionView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("choose_gender")
+                Text("Is this your first time\nintroducing solids?")
                     .font(.system(size: 32, weight: .bold))
-                Text("gender_help_text")
+                Text("We'll personalize your baby's feeding journey.")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -8159,9 +8121,9 @@ struct SongFrequencyView: View {
     @State private var navigateToResults = false
     
     let frequencies = [
-        ("0-2", "rarely_eat_out", "house.fill"),
-        ("3-5", "few_times_per_week", "fork.knife"),
-        ("6+", "eat_out_often", "star.fill")
+        ("4–6 months", "Just starting to explore solids", "leaf.fill"),
+        ("6–9 months", "Learning to eat purees & soft foods", "fork.knife"),
+        ("9–12 months", "Ready for more textures & finger foods", "star.fill")
     ]
     
     var body: some View {
@@ -8195,9 +8157,9 @@ struct SongFrequencyView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("How many meals do you eat out per week?")
+                Text("How old is your baby?")
                     .font(.system(size: 32, weight: .bold))
-                Text("calibrate_custom_plan")
+                Text("We'll tailor food recommendations to your baby's stage.")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
             }
@@ -8314,7 +8276,7 @@ struct TriedOtherAppsView: View {
             
             // Title
             VStack(alignment: .leading, spacing: 8) {
-                Text("Have you tried other calorie tracking apps?")
+                Text("Has your baby started\nsolid foods yet?")
                     .font(.system(size: 32, weight: .bold))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -8331,17 +8293,17 @@ struct TriedOtherAppsView: View {
                     coordinator.trackQuestionAnswered(answer: "Yes")
                 }) {
                     HStack(spacing: 12) {
-                        Image(systemName: "hand.thumbsup.fill")
+                        Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 24))
-                        Text("yes")
+                        Text("Yes, we've started")
                             .font(.system(size: 17, weight: .medium))
                         Spacer()
                     }
                     .padding(.horizontal, 20)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
-                    .background(selectedAnswer == "Yes" ? Color.white : Color(.systemGray6))
-                    .foregroundColor(.black)
+                    .background(selectedAnswer == "Yes" ? Color.black : Color(.systemGray6))
+                    .foregroundColor(selectedAnswer == "Yes" ? .white : .black)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.clear, lineWidth: 0)
@@ -8355,9 +8317,9 @@ struct TriedOtherAppsView: View {
                     coordinator.trackQuestionAnswered(answer: "No")
                 }) {
                     HStack(spacing: 12) {
-                        Image(systemName: "hand.thumbsdown.fill")
+                        Image(systemName: "clock.fill")
                             .font(.system(size: 24))
-                        Text("No")
+                        Text("Not yet, getting ready")
                             .font(.system(size: 17, weight: .medium))
                         Spacer()
                     }
@@ -9703,11 +9665,11 @@ struct LoadingView: View {
     @State private var navigateToFinal = false
     
     let checklistItems = [
-        "Calories",
-        "Carbs",
-        "Protein",
-        "Fats",
-        "Health Score"
+        "Food introduction schedule",
+        "Allergen tracking",
+        "Texture progression",
+        "Nutrient balance",
+        "Milestone plan"
     ]
     
     var body: some View {
@@ -9853,11 +9815,11 @@ struct LoadingView: View {
     private func countUp() {
         var currentCount = 0
         let freezePoints: [Int: (String, Int)] = [
-            18: ("Customizing health plan...", 0),
-            34: ("Calculating macronutrients...", 1), 
-            56: ("Analyzing protein intake...", 2),
-            78: ("Optimizing fat distribution...", 3),
-            92: ("Finalizing your health score...", 4)
+            18: ("Building introduction schedule...", 0),
+            34: ("Setting up allergen tracker...", 1),
+            56: ("Planning texture progression...", 2),
+            78: ("Balancing nutrients for baby...", 3),
+            92: ("Finalizing milestone plan...", 4)
         ]
         
         Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { timer in
@@ -10138,38 +10100,38 @@ struct CustomPlanSummaryView: View {
                             GridItem(.flexible())
                         ], spacing: 12) {
                             
-                            // Nutrition clarity
+                            // Foods to try
                             RecommendationCircle(
-                                icon: "eye.fill",
-                                title: NSLocalizedString("nutrition_clarity", comment: ""),
-                                value: "79%",
+                                icon: "fork.knife",
+                                title: "Foods to Try",
+                                value: "50+",
                                 color: Color.purple,
                                 delay: 1.2
                             )
                             
-                            // Goal achievement
+                            // Allergy safety
                             RecommendationCircle(
-                                icon: "chart.line.uptrend.xyaxis",
-                                title: NSLocalizedString("goal_achievement", comment: ""),
-                                value: "71%",
+                                icon: "shield.fill",
+                                title: "Allergy Safe",
+                                value: "100%",
                                 color: Color.green,
                                 delay: 1.4
                             )
                             
-                            // Time saved tracking
+                            // Time saved
                             RecommendationCircle(
                                 icon: "clock.fill",
-                                title: NSLocalizedString("time_saved_tracking", comment: ""),
-                                value: "2.5h",
+                                title: "Meals Planned",
+                                value: "30",
                                 color: Color.blue,
                                 delay: 1.6
                             )
                             
-                            // Wellness boost
+                            // Confidence boost
                             RecommendationCircle(
                                 icon: "heart.fill",
-                                title: NSLocalizedString("wellness_boost", comment: ""),
-                                value: "85%",
+                                title: "Mom Confidence",
+                                value: "95%",
                                 color: Color.orange,
                                 delay: 1.8
                             )
@@ -10181,11 +10143,11 @@ struct CustomPlanSummaryView: View {
                     
                     // Your custom prediction (moved to bottom)
                     VStack(spacing: 12) {
-                        Text("Your custom prediction")
+                        Text("Your baby's food journey")
                             .font(.system(size: 18, weight: .semibold))
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Text("custom_prediction_text")
+                        Text("Based on your answers, your baby is on track to try 50+ nutritious foods in their first year. Early exposure to diverse flavors and textures reduces picky eating by up to 3x and supports lifelong healthy habits.")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity, alignment: .leading)
