@@ -9419,11 +9419,11 @@ struct ContentView: View {
                 .background(Color.white)
                 .zIndex(100)
                 
-                // Main Video
-                MainVideoPlayer(videoName: "main")
-                    .frame(maxWidth: .infinity)
-                    .clipped()
-                    .padding(.bottom, 30)
+                // Main Video (commented out — main.mp4 not in bundle yet)
+                // MainVideoPlayer(videoName: "main")
+                //     .frame(maxWidth: .infinity)
+                //     .clipped()
+                //     .padding(.bottom, 30)
                 
                 // Title Text
                 Text("Tracking\nmade easy")
