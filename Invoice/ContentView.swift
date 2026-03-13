@@ -9368,21 +9368,30 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 // Language Toggle - Fixed at top
                 HStack {
-                    // DEBUG: Skip button (top-left)
+                    #if DEBUG
+                    // Debug button — bypasses auth, onboarding, and paywall
                     Button(action: {
-                        // Skip authentication for debugging
-                        authManager.isLoggedIn = true
+                        // Set onboarding first so the onChange(of: isLoggedIn)
+                        // handler doesn't re-trigger the onboarding flow
+                        authManager.hasCompletedOnboarding = true
                         authManager.hasCompletedSubscription = true
-                        print("🐛 DEBUG: Skipped auth - jumping to main app")
+                        authManager.isLoggedIn = true
+                        print("🐛 DEBUG: Jumped straight to main app")
                     }) {
-                        Text("SKIP")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.red)
-                            .cornerRadius(8)
+                        HStack(spacing: 5) {
+                            Image(systemName: "arrow.right.circle.fill")
+                                .font(.system(size: 13))
+                            Text("Debug")
+                                .font(.system(size: 13, weight: .bold))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Color(red: 0.2, green: 0.5, blue: 1.0))
+                        .clipShape(Capsule())
+                        .shadow(color: Color(red: 0.2, green: 0.5, blue: 1.0).opacity(0.4), radius: 6, x: 0, y: 3)
                     }
+                    #endif
                     
                     Spacer()
                     
