@@ -13409,7 +13409,10 @@ struct MealPlanView: View {
                         .disabled(service.isGeneratingList)
                         .padding(.horizontal, 20)
                         .onChange(of: service.shoppingList.count) { count in
-                            if count > 0 { showShoppingList = true }
+                            if count > 0 {
+                                checkedItems = []
+                                showShoppingList = true
+                            }
                         }
                     }
 
@@ -13794,13 +13797,14 @@ class BabyFoodChatService: ObservableObject {
 
     func sendMessage(_ content: String) async {
         let userMsg = ChatMessage(role: "user", content: content, timestamp: Date())
-        await MainActor.run {
+        let history: [ChatMessage] = await MainActor.run {
             messages.append(userMsg)
             isLoading = true
+            return messages
         }
 
         var apiMessages: [[String: String]] = [["role": "system", "content": systemPrompt]]
-        for msg in messages { apiMessages.append(["role": msg.role, "content": msg.content]) }
+        for msg in history { apiMessages.append(["role": msg.role, "content": msg.content]) }
 
         let requestBody: [String: Any] = [
             "model": "gpt-4o",
