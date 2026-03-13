@@ -10803,13 +10803,13 @@ struct TryForFreeView: View {
                     .opacity(showContent ? 1 : 0)
                     .animation(.easeOut(duration: 0.6).delay(0.3), value: showContent)
                 
-                // Main Video
-                MainVideoPlayer(videoName: "main")
-                    .frame(maxWidth: .infinity, maxHeight: 500)
-                    .clipped()
-                    .padding(.bottom, 30)
-                    .opacity(showContent ? 1 : 0)
-                    .animation(.easeOut(duration: 0.6).delay(0.6), value: showContent)
+                // Main Video (commented out — main.mp4 not in bundle yet)
+                // MainVideoPlayer(videoName: "main")
+                //     .frame(maxWidth: .infinity, maxHeight: 500)
+                //     .clipped()
+                //     .padding(.bottom, 30)
+                //     .opacity(showContent ? 1 : 0)
+                //     .animation(.easeOut(duration: 0.6).delay(0.6), value: showContent)
             }
             
             // Bottom section with button and payment text
