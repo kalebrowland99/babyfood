@@ -13042,6 +13042,8 @@ struct MainAppView: View {
                 } else if selectedTab == 1 {
                     ProgressTabView(showFoodDatabase: $showFoodDatabase)
                 } else if selectedTab == 2 {
+                    BabyFoodChatView()
+                } else if selectedTab == 3 {
                     ProfileView()
                         .environmentObject(authManager)
                 }
@@ -13068,9 +13070,14 @@ struct MainAppView: View {
                                 selectedTab = 1
                             }
                             
-                            // Profile Tab
-                            TabButton(icon: "person.fill", label: NSLocalizedString("Profile", comment: ""), isSelected: selectedTab == 2) {
+                            // Chat Tab
+                            TabButton(icon: "bubble.left.and.bubble.right.fill", label: "AI Chat", isSelected: selectedTab == 2) {
                                 selectedTab = 2
+                            }
+                            
+                            // Profile Tab
+                            TabButton(icon: "person.fill", label: NSLocalizedString("Profile", comment: ""), isSelected: selectedTab == 3) {
+                                selectedTab = 3
                             }
                             
                             // Add Button
@@ -13218,6 +13225,332 @@ struct MainAppView: View {
     }
 }
 
+// MARK: - Baby Food Chat
+
+struct ChatMessage: Identifiable {
+    let id = UUID()
+    let role: String
+    let content: String
+    let timestamp: Date
+    var isUser: Bool { role == "user" }
+}
+
+class BabyFoodChatService: ObservableObject {
+    static let shared = BabyFoodChatService()
+    @Published var messages: [ChatMessage] = []
+    @Published var isLoading = false
+
+    private let apiKey = FoodAnalysisService.openAIKey
+    private let endpoint = "https://api.openai.com/v1/chat/completions"
+
+    private let systemPrompt = """
+    You are a warm, knowledgeable baby nutrition expert and chef. You help mothers confidently introduce solid foods to their babies.
+
+    Your expertise includes:
+    - Age-appropriate food introductions:
+      • 4–6 months: smooth single-ingredient purees (sweet potato, peas, banana)
+      • 6–9 months: mashed/lumpy foods, soft combinations
+      • 9–12 months: soft finger foods, bite-sized pieces
+      • 12+ months: most family foods in appropriate textures
+    - Safe textures for each developmental stage
+    - Allergen introduction (eggs, peanuts, dairy, tree nuts, wheat, soy, fish, shellfish) — introduce one at a time, wait 3–5 days between new allergens
+    - Nutritional priorities: iron, zinc, vitamin D, B12, calcium, omega-3s
+    - Baby-led weaning vs spoon feeding approaches
+    - Foods to AVOID under 12 months: honey, added salt, added sugar, cow's milk as main drink, whole nuts, hard raw vegetables, popcorn, large chunks
+    - Batch cooking and leftover tips
+    - Signs of food allergies: hives, vomiting, swelling — always refer to pediatrician for concerns
+
+    Tone: warm, encouraging, and practical. Keep responses concise (2–4 short paragraphs or bullet points). Format recipes clearly with an ingredients list and numbered steps. Always end allergy/safety advice with "When in doubt, check with your pediatrician. 👨‍⚕️"
+    """
+
+    func sendMessage(_ content: String) async {
+        let userMsg = ChatMessage(role: "user", content: content, timestamp: Date())
+        await MainActor.run {
+            messages.append(userMsg)
+            isLoading = true
+        }
+
+        var apiMessages: [[String: String]] = [["role": "system", "content": systemPrompt]]
+        for msg in messages { apiMessages.append(["role": msg.role, "content": msg.content]) }
+
+        let requestBody: [String: Any] = [
+            "model": "gpt-4o",
+            "messages": apiMessages,
+            "max_tokens": 600,
+            "temperature": 0.7
+        ]
+
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: requestBody),
+              let url = URL(string: endpoint) else {
+            await MainActor.run { isLoading = false }
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jsonData
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let choices = json["choices"] as? [[String: Any]],
+                  let first = choices.first,
+                  let message = first["message"] as? [String: Any],
+                  let content = message["content"] as? String else {
+                await MainActor.run { isLoading = false }
+                return
+            }
+            let aiMsg = ChatMessage(role: "assistant", content: content.trimmingCharacters(in: .whitespacesAndNewlines), timestamp: Date())
+            await MainActor.run {
+                messages.append(aiMsg)
+                isLoading = false
+            }
+        } catch {
+            await MainActor.run { isLoading = false }
+        }
+    }
+
+    func reset() { messages = [] }
+}
+
+struct BabyFoodChatView: View {
+    @StateObject private var chatService = BabyFoodChatService.shared
+    @State private var inputText = ""
+    @FocusState private var isInputFocused: Bool
+
+    private let quickPrompts = [
+        "What can my 6-month-old eat?",
+        "Iron-rich foods for babies",
+        "How to introduce peanuts safely",
+        "Butternut squash puree recipe",
+        "Foods to avoid under 12 months",
+        "Baby-led weaning tips"
+    ]
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.98, green: 0.94, blue: 0.96),
+                    Color(red: 0.96, green: 0.93, blue: 0.98)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                // Header
+                HStack {
+                    HStack(spacing: 10) {
+                        Text("👶")
+                            .font(.system(size: 30))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Baby Food AI")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.black)
+                            Text("Your personal nutrition guide")
+                                .font(.system(size: 12))
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    Spacer()
+                    if !chatService.messages.isEmpty {
+                        Button(action: { withAnimation { chatService.reset() } }) {
+                            Image(systemName: "arrow.counterclockwise")
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundColor(.gray)
+                                .frame(width: 36, height: 36)
+                                .background(Color.white)
+                                .clipShape(Circle())
+                                .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 2)
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                .padding(.bottom, 12)
+
+                // Message area
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            if chatService.messages.isEmpty {
+                                // Empty state
+                                VStack(spacing: 28) {
+                                    Spacer(minLength: 20)
+                                    VStack(spacing: 12) {
+                                        Text("🥣")
+                                            .font(.system(size: 64))
+                                        Text("Ask me anything about\nbaby food & nutrition")
+                                            .font(.system(size: 18, weight: .semibold))
+                                            .multilineTextAlignment(.center)
+                                            .foregroundColor(.black)
+                                        Text("I'll help you introduce foods safely\nand confidently at every stage.")
+                                            .font(.system(size: 14))
+                                            .multilineTextAlignment(.center)
+                                            .foregroundColor(.gray)
+                                    }
+                                    // Quick prompts grid
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        Text("Try asking:")
+                                            .font(.system(size: 13, weight: .medium))
+                                            .foregroundColor(.gray)
+                                            .padding(.horizontal, 20)
+                                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                                            ForEach(quickPrompts, id: \.self) { prompt in
+                                                Button(action: {
+                                                    inputText = prompt
+                                                    sendMessage()
+                                                }) {
+                                                    Text(prompt)
+                                                        .font(.system(size: 13, weight: .medium))
+                                                        .multilineTextAlignment(.leading)
+                                                        .foregroundColor(.black)
+                                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                                        .padding(.horizontal, 14)
+                                                        .padding(.vertical, 12)
+                                                        .background(Color.white)
+                                                        .cornerRadius(14)
+                                                        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
+                                                }
+                                            }
+                                        }
+                                        .padding(.horizontal, 20)
+                                    }
+                                    Spacer(minLength: 120)
+                                }
+                            } else {
+                                ForEach(chatService.messages) { msg in
+                                    ChatBubbleView(message: msg)
+                                        .id(msg.id)
+                                }
+                                if chatService.isLoading {
+                                    TypingIndicatorView()
+                                        .id("typing")
+                                }
+                                Color.clear.frame(height: 20).id("bottom")
+                            }
+                        }
+                    }
+                    .onChange(of: chatService.messages.count) { _ in
+                        withAnimation { proxy.scrollTo("bottom", anchor: .bottom) }
+                    }
+                    .onChange(of: chatService.isLoading) { _ in
+                        withAnimation { proxy.scrollTo("bottom", anchor: .bottom) }
+                    }
+                }
+
+                // Input bar
+                VStack(spacing: 0) {
+                    Divider().opacity(0.3)
+                    HStack(spacing: 10) {
+                        TextField("Ask about baby food...", text: $inputText, axis: .vertical)
+                            .font(.system(size: 15))
+                            .lineLimit(1...4)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 11)
+                            .background(Color.white)
+                            .cornerRadius(22)
+                            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+                            .focused($isInputFocused)
+                            .onSubmit { sendMessage() }
+
+                        Button(action: sendMessage) {
+                            Image(systemName: "arrow.up")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                                .background(
+                                    inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || chatService.isLoading
+                                        ? Color.gray.opacity(0.35)
+                                        : Color(red: 0.15, green: 0.15, blue: 0.20)
+                                )
+                                .clipShape(Circle())
+                        }
+                        .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || chatService.isLoading)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color(red: 0.98, green: 0.94, blue: 0.96))
+                }
+            }
+        }
+        .preferredColorScheme(.light)
+    }
+
+    private func sendMessage() {
+        let text = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty, !chatService.isLoading else { return }
+        inputText = ""
+        isInputFocused = false
+        Task { await chatService.sendMessage(text) }
+    }
+}
+
+struct ChatBubbleView: View {
+    let message: ChatMessage
+
+    var body: some View {
+        HStack(alignment: .bottom) {
+            if message.isUser {
+                Spacer(minLength: 64)
+                Text(message.content)
+                    .font(.system(size: 15))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color(red: 0.15, green: 0.15, blue: 0.20))
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+            } else {
+                Text(message.content)
+                    .font(.system(size: 15))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
+                Spacer(minLength: 64)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 4)
+    }
+}
+
+struct TypingIndicatorView: View {
+    @State private var animating = false
+
+    var body: some View {
+        HStack(alignment: .bottom) {
+            HStack(spacing: 5) {
+                ForEach(0..<3, id: \.self) { i in
+                    Circle()
+                        .fill(Color.gray.opacity(0.5))
+                        .frame(width: 8, height: 8)
+                        .scaleEffect(animating ? 1.3 : 0.7)
+                        .animation(
+                            .easeInOut(duration: 0.5).repeatForever().delay(Double(i) * 0.15),
+                            value: animating
+                        )
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 18))
+            .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
+            Spacer(minLength: 64)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 4)
+        .onAppear { animating = true }
+    }
+}
+
 // MARK: - Home View
 struct HomeView: View {
     @Binding var selectedDay: Int
@@ -13318,11 +13651,10 @@ struct HomeView: View {
             // Top Header
             HStack {
                 HStack(spacing: 7) {
-                    Image(systemName: "apple.logo")
-                        .font(.system(size: 28, weight: .medium))
-                        .foregroundColor(.black)
-                    Text("Cal AI")
-                        .font(.system(size: 32, weight: .bold))
+                    Text("👶")
+                        .font(.system(size: 28))
+                    Text("Little Bites")
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.black)
                 }
                 
@@ -15406,6 +15738,7 @@ struct CameraScanView: View {
     @State private var selectedImage: UIImage?
     @State private var isAnalyzing = false
     @State private var analysisError: String?
+    @State private var isLeftoverMode = false
     
     var body: some View {
         ZStack {
@@ -15419,13 +15752,39 @@ struct CameraScanView: View {
                     Button(action: {
                         let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                         impactFeedback.impactOccurred()
-                        // Dismiss the entire scan flow to return to previous tab
                         isPresented = false
                     }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 20, weight: .medium))
                             .foregroundColor(.white)
                             .frame(width: 44, height: 44)
+                    }
+                    
+                    Spacer()
+                    
+                    // Leftovers / Food scan mode toggle
+                    Button(action: {
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                        impactFeedback.impactOccurred()
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            isLeftoverMode.toggle()
+                        }
+                    }) {
+                        HStack(spacing: 6) {
+                            Text(isLeftoverMode ? "🍽️" : "🥣")
+                                .font(.system(size: 16))
+                            Text(isLeftoverMode ? "Leftovers" : "Baby Food")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.white)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .background(
+                            isLeftoverMode
+                                ? Color(red: 0.83, green: 0.69, blue: 0.52).opacity(0.9)
+                                : Color.white.opacity(0.2)
+                        )
+                        .clipShape(Capsule())
                     }
                     
                     Spacer()
@@ -15495,16 +15854,16 @@ struct CameraScanView: View {
                 Color.black.opacity(0.8)
                     .ignoresSafeArea()
                 
-                VStack(spacing: 20) {
+                    VStack(spacing: 20) {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
                         .scaleEffect(1.5)
                     
-                    Text("Analyzing food...")
+                    Text(isLeftoverMode ? "Analyzing leftovers..." : "Analyzing baby food...")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.white)
                     
-                    Text("This may take a few seconds")
+                    Text(isLeftoverMode ? "Estimating what your baby ate" : "This may take a few seconds")
                         .font(.system(size: 15))
                         .foregroundColor(.white.opacity(0.7))
                 }
@@ -15586,18 +15945,15 @@ struct CameraScanView: View {
         
         Task {
             do {
-                let food = try await FoodAnalysisService.shared.analyzeFood(image: image)
+                let food = isLeftoverMode
+                    ? try await FoodAnalysisService.shared.analyzeLeftovers(image: image)
+                    : try await FoodAnalysisService.shared.analyzeFood(image: image)
                 
                 await MainActor.run {
                     scannedFood = food
                     isAnalyzing = false
                     currentStep = 5
-                    
-                    print("✅ Food analyzed: \(food.name)")
-                    print("   Calories: \(food.calories)")
-                    print("   Protein: \(food.protein)g")
-                    print("   Carbs: \(food.carbs)g")
-                    print("   Fats: \(food.fats)g")
+                    print("✅ \(isLeftoverMode ? "Leftovers" : "Food") analyzed: \(food.name)")
                 }
             } catch let error as FoodAnalysisService.FoodAnalysisError {
                 await MainActor.run {
@@ -16201,7 +16557,8 @@ class FoodDataManager: ObservableObject {
 // MARK: - OpenAI Food Analysis Service
 class FoodAnalysisService {
     static let shared = FoodAnalysisService()
-    private let apiKey = "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"
+    static let openAIKey = "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"
+    private let apiKey = FoodAnalysisService.openAIKey
     private let endpoint = "https://api.openai.com/v1/chat/completions"
     
     enum FoodAnalysisError: Error {
@@ -16220,12 +16577,13 @@ class FoodAnalysisService {
         
         // Prepare the prompt
         let prompt = """
-        Analyze this food image and provide detailed nutritional information in JSON format.
-        
+        Analyze this baby food image and provide detailed nutritional information in JSON format.
+
+        This is food being prepared or served to a baby (typically 4–18 months old). Estimate nutritional values for a single baby-sized serving (usually 2–4 oz / 60–120g).
+
         If the image shows a nutrition label, extract the exact values from the label.
-        If it's a photo of actual food, estimate nutritional values based on typical serving sizes.
         If multiple food items are visible, combine them into a single meal analysis.
-        
+
         Return ONLY valid JSON (no markdown, no explanation) with this exact structure:
         {
           "name": "Descriptive food name",
@@ -16241,22 +16599,23 @@ class FoodAnalysisService {
           "icon": "🍽️",
           "ingredients": ["Ingredient 1 - calories, weight", "Ingredient 2 - calories, weight"]
         }
-        
+
         Guidelines:
-        - name: Clear, concise food name (e.g., "Grilled Chicken Salad")
-        - servings: Default to 1 unless label shows otherwise
+        - name: Clear baby-friendly food name (e.g., "Sweet Potato Puree", "Banana Oatmeal")
+        - servings: Default to 1 baby serving
         - All nutritional values in integer format
         - protein, carbs, fats, fiber, sugar in grams
-        - sodium in milligrams
-        - healthScore: 0-10 based on nutritional balance (10 = very healthy)
-        - icon: Single emoji that represents the food
-        - ingredients: List 2-4 main ingredients with their estimated calories and weight
-        
-        Health score criteria:
-        - High protein, fiber, vitamins: +points
-        - High sugar, sodium, saturated fat: -points
-        - Whole foods, vegetables: +points
-        - Processed foods, fried items: -points
+        - sodium in milligrams (baby foods should be very low sodium)
+        - healthScore: 0-10 based on nutritional balance for babies (10 = excellent for baby)
+        - icon: Single emoji representing the food
+        - ingredients: List 2-4 main ingredients with estimated calories and weight
+
+        Baby health score criteria:
+        - Iron-rich foods (meat, fortified cereals, lentils, spinach): +points
+        - Whole fruits and vegetables: +points
+        - High fiber, healthy fats (avocado, salmon): +points
+        - High added sugar, salt, processed: -points
+        - Allergens present (note in name if relevant): neutral
         """
         
         // Prepare request body
@@ -16369,6 +16728,108 @@ class FoodAnalysisService {
         } catch {
             throw FoodAnalysisError.networkError(error)
         }
+    }
+
+    // Detects what a baby left on their plate and estimates how much was eaten
+    func analyzeLeftovers(image: UIImage) async throws -> ScannedFood {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            throw FoodAnalysisError.imageConversionFailed
+        }
+        let base64Image = imageData.base64EncodedString()
+
+        let prompt = """
+        This is a photo of a baby's plate after eating. Identify what food was served and estimate how much the baby ate vs. what is left over.
+
+        Return ONLY valid JSON (no markdown, no explanation) with this exact structure:
+        {
+          "name": "Food name + leftover summary (e.g. 'Mashed Peas – ~70% eaten')",
+          "servings": 1,
+          "calories": 0,
+          "protein": 0,
+          "carbs": 0,
+          "fats": 0,
+          "fiber": 0,
+          "sugar": 0,
+          "sodium": 0,
+          "healthScore": 0,
+          "icon": "🍽️",
+          "ingredients": ["Food item: estimated portion eaten vs leftover"]
+        }
+
+        Guidelines:
+        - Identify all foods visible on the plate
+        - Estimate percentage eaten for each item (from most eaten to least)
+        - Calculate calories and macros for the EATEN portion only
+        - healthScore 0–10 for the food itself (not based on how much was eaten)
+        - sodium in milligrams
+        - ingredients: list each food with its eaten/leftover estimate
+        """
+
+        let requestBody: [String: Any] = [
+            "model": "gpt-4o",
+            "messages": [[
+                "role": "user",
+                "content": [
+                    ["type": "text", "text": prompt],
+                    ["type": "image_url", "image_url": ["url": "data:image/jpeg;base64,\(base64Image)"]]
+                ]
+            ]],
+            "max_tokens": 800,
+            "temperature": 0.3
+        ]
+
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: requestBody),
+              let url = URL(string: endpoint) else {
+            throw FoodAnalysisError.invalidResponse
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jsonData
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw FoodAnalysisError.apiError("HTTP error")
+        }
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let first = choices.first,
+              let message = first["message"] as? [String: Any],
+              let content = message["content"] as? String else {
+            throw FoodAnalysisError.invalidResponse
+        }
+
+        let cleaned = content
+            .replacingOccurrences(of: "```json", with: "")
+            .replacingOccurrences(of: "```", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard let foodData = cleaned.data(using: .utf8),
+              let foodJson = try? JSONSerialization.jsonObject(with: foodData) as? [String: Any] else {
+            throw FoodAnalysisError.invalidResponse
+        }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+
+        return ScannedFood(
+            name: foodJson["name"] as? String ?? "Leftovers",
+            servings: foodJson["servings"] as? Int ?? 1,
+            timestamp: formatter.string(from: Date()),
+            calories: foodJson["calories"] as? Int ?? 0,
+            protein: foodJson["protein"] as? Int ?? 0,
+            carbs: foodJson["carbs"] as? Int ?? 0,
+            fats: foodJson["fats"] as? Int ?? 0,
+            fiber: foodJson["fiber"] as? Int ?? 0,
+            sugar: foodJson["sugar"] as? Int ?? 0,
+            sodium: foodJson["sodium"] as? Int ?? 0,
+            healthScore: foodJson["healthScore"] as? Int ?? 5,
+            icon: foodJson["icon"] as? String ?? "🍽️",
+            imageName: nil,
+            ingredients: foodJson["ingredients"] as? [String] ?? []
+        )
     }
 }
 
