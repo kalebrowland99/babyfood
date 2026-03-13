@@ -13009,6 +13009,535 @@ class ProfileManager: ObservableObject {
 
 
 
+// MARK: - Meal Plans
+
+struct DayMealPlan: Identifiable {
+    let id = UUID()
+    let day: String
+    let breakfast: String
+    let lunch: String
+    let dinner: String
+    let snack: String
+}
+
+class MealPlanService: ObservableObject {
+    static let shared = MealPlanService()
+
+    @Published var mealPlan: [DayMealPlan] = []
+    @Published var shoppingList: [String] = []
+    @Published var isGeneratingPlan = false
+    @Published var isGeneratingList = false
+
+    private let apiKey = FoodAnalysisService.openAIKey
+    private let endpoint = "https://api.openai.com/v1/chat/completions"
+
+    func generateMealPlan(ageStage: String, restrictions: [String]) async {
+        await MainActor.run {
+            isGeneratingPlan = true
+            mealPlan = []
+            shoppingList = []
+        }
+
+        let restrictionText = restrictions.isEmpty
+            ? "No dietary restrictions."
+            : "Dietary restrictions: \(restrictions.joined(separator: ", "))."
+
+        let textureGuide: String
+        switch ageStage {
+        case "4–6 months": textureGuide = "Smooth, single-ingredient purees only (no chunks, no combos)."
+        case "6–9 months": textureGuide = "Mashed and lightly lumpy foods, simple 2-ingredient combos."
+        case "9–12 months": textureGuide = "Soft finger foods and bite-sized pieces, more complex flavours."
+        default: textureGuide = "Soft family foods in baby-appropriate portions, varied textures."
+        }
+
+        let prompt = """
+        Generate a 7-day meal plan for a \(ageStage) baby. \(restrictionText)
+        Texture guide: \(textureGuide)
+
+        Return ONLY valid JSON, no markdown, no explanation:
+        {
+          "days": [
+            { "day": "Monday", "breakfast": "...", "lunch": "...", "dinner": "...", "snack": "..." },
+            { "day": "Tuesday", "breakfast": "...", "lunch": "...", "dinner": "...", "snack": "..." },
+            { "day": "Wednesday", "breakfast": "...", "lunch": "...", "dinner": "...", "snack": "..." },
+            { "day": "Thursday", "breakfast": "...", "lunch": "...", "dinner": "...", "snack": "..." },
+            { "day": "Friday", "breakfast": "...", "lunch": "...", "dinner": "...", "snack": "..." },
+            { "day": "Saturday", "breakfast": "...", "lunch": "...", "dinner": "...", "snack": "..." },
+            { "day": "Sunday", "breakfast": "...", "lunch": "...", "dinner": "...", "snack": "..." }
+          ]
+        }
+
+        Rules:
+        - Each meal: max 7 words, descriptive and appetising
+        - Never include honey, added salt, added sugar, whole nuts, or raw hard vegetables
+        - Vary proteins, colours, and food groups across the week
+        - Include iron-rich foods at least 3 times per week
+        """
+
+        let body: [String: Any] = [
+            "model": "gpt-4o",
+            "messages": [["role": "user", "content": prompt]],
+            "max_tokens": 800,
+            "temperature": 0.7
+        ]
+
+        guard let json = try? JSONSerialization.data(withJSONObject: body),
+              let url = URL(string: endpoint) else {
+            await MainActor.run { isGeneratingPlan = false }
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = json
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            guard let resp = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let choices = resp["choices"] as? [[String: Any]],
+                  let first = choices.first,
+                  let msg = first["message"] as? [String: Any],
+                  let content = msg["content"] as? String else {
+                await MainActor.run { isGeneratingPlan = false }
+                return
+            }
+
+            let cleaned = content
+                .replacingOccurrences(of: "```json", with: "")
+                .replacingOccurrences(of: "```", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+
+            guard let planData = cleaned.data(using: .utf8),
+                  let planJson = try? JSONSerialization.jsonObject(with: planData) as? [String: Any],
+                  let days = planJson["days"] as? [[String: Any]] else {
+                await MainActor.run { isGeneratingPlan = false }
+                return
+            }
+
+            let parsed = days.compactMap { d -> DayMealPlan? in
+                guard let day = d["day"] as? String,
+                      let breakfast = d["breakfast"] as? String,
+                      let lunch = d["lunch"] as? String,
+                      let dinner = d["dinner"] as? String,
+                      let snack = d["snack"] as? String else { return nil }
+                return DayMealPlan(day: day, breakfast: breakfast, lunch: lunch, dinner: dinner, snack: snack)
+            }
+
+            await MainActor.run {
+                mealPlan = parsed
+                isGeneratingPlan = false
+            }
+        } catch {
+            await MainActor.run { isGeneratingPlan = false }
+        }
+    }
+
+    func generateShoppingList() async {
+        guard !mealPlan.isEmpty else { return }
+        await MainActor.run { isGeneratingList = true }
+
+        let planText = mealPlan.map {
+            "\($0.day): Breakfast: \($0.breakfast) | Lunch: \($0.lunch) | Dinner: \($0.dinner) | Snack: \($0.snack)"
+        }.joined(separator: "\n")
+
+        let prompt = """
+        Based on this 7-day baby meal plan:
+        \(planText)
+
+        Generate a consolidated shopping list with quantities.
+        Return ONLY valid JSON, no markdown:
+        {
+          "items": [
+            "Sweet potatoes (4 medium)",
+            "Avocado (3)",
+            "Rolled oats (1 cup)"
+          ]
+        }
+
+        Rules:
+        - Group by category: Produce first, then Grains, Proteins, Dairy/Alternatives, Pantry
+        - Consolidate duplicates across the week
+        - 15–25 items maximum
+        - Include realistic quantities for a baby (small amounts)
+        """
+
+        let body: [String: Any] = [
+            "model": "gpt-4o",
+            "messages": [["role": "user", "content": prompt]],
+            "max_tokens": 400,
+            "temperature": 0.3
+        ]
+
+        guard let json = try? JSONSerialization.data(withJSONObject: body),
+              let url = URL(string: endpoint) else {
+            await MainActor.run { isGeneratingList = false }
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = json
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            guard let resp = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let choices = resp["choices"] as? [[String: Any]],
+                  let first = choices.first,
+                  let msg = first["message"] as? [String: Any],
+                  let content = msg["content"] as? String else {
+                await MainActor.run { isGeneratingList = false }
+                return
+            }
+
+            let cleaned = content
+                .replacingOccurrences(of: "```json", with: "")
+                .replacingOccurrences(of: "```", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+
+            guard let listData = cleaned.data(using: .utf8),
+                  let listJson = try? JSONSerialization.jsonObject(with: listData) as? [String: Any],
+                  let items = listJson["items"] as? [String] else {
+                await MainActor.run { isGeneratingList = false }
+                return
+            }
+
+            await MainActor.run {
+                shoppingList = items
+                isGeneratingList = false
+            }
+        } catch {
+            await MainActor.run { isGeneratingList = false }
+        }
+    }
+}
+
+struct MealPlanView: View {
+    @StateObject private var service = MealPlanService.shared
+    @State private var selectedAgeStage = "6–9 months"
+    @State private var selectedRestrictions: Set<String> = []
+    @State private var showShoppingList = false
+    @State private var checkedItems: Set<String> = []
+
+    private let ageStages = ["4–6 months", "6–9 months", "9–12 months", "12+ months"]
+    private let restrictions = ["Vegetarian", "Dairy-free", "Gluten-free", "Nut-free", "Egg-free"]
+    private let mealIcons = ["breakfast": "☀️", "lunch": "🌤️", "dinner": "🌙", "snack": "🍎"]
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.98, green: 0.94, blue: 0.96),
+                    Color(red: 0.96, green: 0.93, blue: 0.98)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Header
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("🍽️ Meal Plans")
+                                .font(.system(size: 28, weight: .bold))
+                                .foregroundColor(.black)
+                            Text("AI-generated, age-appropriate weekly plans")
+                                .font(.system(size: 13))
+                                .foregroundColor(.gray)
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+
+                    // Age stage selector
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Baby's age stage")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 20)
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(ageStages, id: \.self) { stage in
+                                    Button(action: { selectedAgeStage = stage }) {
+                                        Text(stage)
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundColor(selectedAgeStage == stage ? .white : .black)
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 9)
+                                            .background(
+                                                selectedAgeStage == stage
+                                                    ? Color(red: 0.15, green: 0.15, blue: 0.20)
+                                                    : Color.white
+                                            )
+                                            .clipShape(Capsule())
+                                            .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                    }
+
+                    // Dietary restrictions
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Dietary needs")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 20)
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(restrictions, id: \.self) { r in
+                                    Button(action: {
+                                        if selectedRestrictions.contains(r) {
+                                            selectedRestrictions.remove(r)
+                                        } else {
+                                            selectedRestrictions.insert(r)
+                                        }
+                                    }) {
+                                        HStack(spacing: 5) {
+                                            if selectedRestrictions.contains(r) {
+                                                Image(systemName: "checkmark")
+                                                    .font(.system(size: 11, weight: .bold))
+                                            }
+                                            Text(r)
+                                                .font(.system(size: 14, weight: .medium))
+                                        }
+                                        .foregroundColor(selectedRestrictions.contains(r) ? .white : .black)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 9)
+                                        .background(
+                                            selectedRestrictions.contains(r)
+                                                ? Color(red: 0.83, green: 0.69, blue: 0.52)
+                                                : Color.white
+                                        )
+                                        .clipShape(Capsule())
+                                        .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                    }
+
+                    // Generate button
+                    Button(action: {
+                        Task {
+                            await service.generateMealPlan(
+                                ageStage: selectedAgeStage,
+                                restrictions: Array(selectedRestrictions)
+                            )
+                        }
+                    }) {
+                        HStack(spacing: 10) {
+                            if service.isGeneratingPlan {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                    .scaleEffect(0.9)
+                                Text("Generating your plan...")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
+                            } else {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
+                                Text(service.mealPlan.isEmpty ? "Generate Week Plan" : "Regenerate Plan")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 54)
+                        .background(
+                            service.isGeneratingPlan
+                                ? Color.gray.opacity(0.5)
+                                : Color(red: 0.15, green: 0.15, blue: 0.20)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
+                    }
+                    .disabled(service.isGeneratingPlan)
+                    .padding(.horizontal, 20)
+
+                    // Meal plan cards
+                    if !service.mealPlan.isEmpty {
+                        VStack(spacing: 12) {
+                            ForEach(service.mealPlan) { day in
+                                DayMealCard(day: day)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .transition(.opacity.combined(with: .move(edge: .bottom)))
+
+                        // Shopping list button
+                        Button(action: {
+                            if service.shoppingList.isEmpty {
+                                Task { await service.generateShoppingList() }
+                            } else {
+                                showShoppingList = true
+                            }
+                        }) {
+                            HStack(spacing: 10) {
+                                if service.isGeneratingList {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                        .scaleEffect(0.9)
+                                    Text("Building shopping list...")
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundColor(.white)
+                                } else {
+                                    Text("🛒")
+                                        .font(.system(size: 18))
+                                    Text(service.shoppingList.isEmpty ? "Get Shopping List" : "View Shopping List (\(service.shoppingList.count))")
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 54)
+                            .background(Color(red: 0.83, green: 0.69, blue: 0.52))
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .shadow(color: Color(red: 0.83, green: 0.69, blue: 0.52).opacity(0.4), radius: 8, x: 0, y: 4)
+                        }
+                        .disabled(service.isGeneratingList)
+                        .padding(.horizontal, 20)
+                        .onChange(of: service.shoppingList.count) { count in
+                            if count > 0 { showShoppingList = true }
+                        }
+                    }
+
+                    Spacer(minLength: 100)
+                }
+            }
+        }
+        .sheet(isPresented: $showShoppingList) {
+            ShoppingListSheet(
+                items: service.shoppingList,
+                checkedItems: $checkedItems
+            )
+        }
+        .preferredColorScheme(.light)
+    }
+}
+
+struct DayMealCard: View {
+    let day: DayMealPlan
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Day header
+            HStack {
+                Text(day.day.uppercased())
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(.white)
+                    .tracking(1)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(Color(red: 0.15, green: 0.15, blue: 0.20))
+
+            // Meals
+            VStack(spacing: 0) {
+                MealRow(icon: "☀️", label: "Breakfast", meal: day.breakfast)
+                Divider().padding(.horizontal, 16)
+                MealRow(icon: "🌤️", label: "Lunch", meal: day.lunch)
+                Divider().padding(.horizontal, 16)
+                MealRow(icon: "🌙", label: "Dinner", meal: day.dinner)
+                Divider().padding(.horizontal, 16)
+                MealRow(icon: "🍎", label: "Snack", meal: day.snack)
+            }
+            .background(Color.white)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .shadow(color: .black.opacity(0.07), radius: 8, x: 0, y: 3)
+    }
+}
+
+struct MealRow: View {
+    let icon: String
+    let label: String
+    let meal: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(icon)
+                .font(.system(size: 18))
+                .frame(width: 28)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.gray)
+                    .textCase(.uppercase)
+                    .tracking(0.5)
+                Text(meal)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.black)
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+}
+
+struct ShoppingListSheet: View {
+    let items: [String]
+    @Binding var checkedItems: Set<String>
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(items, id: \.self) { item in
+                    Button(action: {
+                        if checkedItems.contains(item) {
+                            checkedItems.remove(item)
+                        } else {
+                            checkedItems.insert(item)
+                        }
+                    }) {
+                        HStack(spacing: 14) {
+                            Image(systemName: checkedItems.contains(item) ? "checkmark.circle.fill" : "circle")
+                                .font(.system(size: 22))
+                                .foregroundColor(checkedItems.contains(item) ? Color(red: 0.83, green: 0.69, blue: 0.52) : .gray)
+
+                            Text(item)
+                                .font(.system(size: 15))
+                                .foregroundColor(checkedItems.contains(item) ? .gray : .black)
+                                .strikethrough(checkedItems.contains(item))
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("🛒 Shopping List")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") { dismiss() }
+                        .font(.system(size: 16, weight: .semibold))
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if !checkedItems.isEmpty {
+                        Button("Clear") { checkedItems = [] }
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+        }
+        .preferredColorScheme(.light)
+    }
+}
+
 struct MainAppView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @ObservedObject private var languageManager = LanguageManager.shared
@@ -13040,7 +13569,7 @@ struct MainAppView: View {
                 if selectedTab == 0 {
                     HomeView(selectedDay: $selectedDay, streakCount: $streakCount)
                 } else if selectedTab == 1 {
-                    ProgressTabView(showFoodDatabase: $showFoodDatabase)
+                    MealPlanView()
                 } else if selectedTab == 2 {
                     BabyFoodChatView()
                 } else if selectedTab == 3 {
@@ -13065,8 +13594,8 @@ struct MainAppView: View {
                                 selectedTab = 0
                             }
                             
-                            // Progress Tab
-                            TabButton(icon: "chart.bar.fill", label: NSLocalizedString("Progress", comment: ""), isSelected: selectedTab == 1) {
+                            // Meal Plans Tab
+                            TabButton(icon: "fork.knife", label: "Meals", isSelected: selectedTab == 1) {
                                 selectedTab = 1
                             }
                             
@@ -15466,7 +15995,7 @@ struct DashedCircle: View {
 // MARK: - Food Scan Flow
 struct FoodScanFlow: View {
     @Binding var isPresented: Bool
-    @State private var currentStep = 0 // 0-3: onboarding, 4: camera, 5: food detail
+    @State private var currentStep = 4 // skip onboarding, go straight to camera
     @State private var scannedFood: ScannedFood?
     
     var body: some View {
