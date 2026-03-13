@@ -1418,6 +1418,9 @@
         }
       }
     },
+    "AI Settings" : {
+
+    },
     "ai_nutrition_analysis" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1698,6 +1701,9 @@
           }
         }
       }
+    },
+    "API key saved" : {
+
     },
     "Application refers to any application or software program provided by the Company, including but not limited to thrifty.ai, and any other applications or software programs provided by the Company." : {
       "localizations" : {
@@ -4604,6 +4610,9 @@
         }
       }
     },
+    "Get your key at platform.openai.com → API Keys" : {
+
+    },
     "get_best_scan" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7032,6 +7041,9 @@
         }
       }
     },
+    "OpenAI API Key" : {
+
+    },
     "Or take a photo of the food label" : {
       "localizations" : {
         "en" : {
@@ -8345,6 +8357,9 @@
         }
       }
     },
+    "Save Key" : {
+
+    },
     "Scan food" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -8800,6 +8815,9 @@
           }
         }
       }
+    },
+    "sk-..." : {
+
     },
     "skip" : {
       "extractionState" : "manual",

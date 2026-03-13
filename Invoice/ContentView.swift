@@ -13461,8 +13461,6 @@ struct MainAppView: View {
     @State private var selectedDay = 5 // Tuesday is selected (index 5 in the week)
     @State private var selectedTab = 0 // Start with Home tab
     @State private var streakCount = 0
-    @State private var showAddMenu = false
-    @State private var showScanFlow = false
     @State private var showFoodDatabase = false
     @State private var confettiTrigger = 0
     @State private var refreshID = UUID()
@@ -13526,23 +13524,6 @@ struct MainAppView: View {
                                 selectedTab = 3
                             }
                             
-                            // Add Button
-                            Button(action: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                    showAddMenu.toggle()
-                                }
-                            }) {
-                                ZStack {
-                                    Circle()
-                                        .fill(Color(red: 0.15, green: 0.15, blue: 0.20))
-                                        .frame(width: 56, height: 56)
-                                    
-                                    Image(systemName: showAddMenu ? "xmark" : "plus")
-                                        .font(.system(size: 24, weight: .semibold))
-                                        .foregroundColor(.white)
-                                }
-                            }
-                            .offset(x: -8)
                         }
                         .padding(.horizontal, 20)
                         .padding(.bottom, max(geometry.safeAreaInsets.bottom, 18))
@@ -13550,84 +13531,6 @@ struct MainAppView: View {
                 }
                 .ignoresSafeArea(edges: .bottom)
                 
-                // Add Menu Overlay
-                if showAddMenu {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                showAddMenu = false
-                            }
-                        }
-                    
-                    VStack {
-                        Spacer()
-                        
-                        VStack(spacing: 16) {
-                            HStack(spacing: 16) {
-                                // Food Database Button
-                                Button(action: {
-                                    // Open food database
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        showAddMenu = false
-                                    }
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        showFoodDatabase = true
-                                    }
-                                }) {
-                                    VStack(spacing: 16) {
-                                        Image(systemName: "magnifyingglass")
-                                            .font(.system(size: 48, weight: .regular))
-                                            .foregroundColor(.black)
-                                        
-                                        Text("food_database")
-                                            .font(.system(size: 20, weight: .semibold))
-                                            .foregroundColor(.black)
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 40)
-                                    .background(Color.white)
-                                    .cornerRadius(24)
-                                    .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
-                                }
-                                
-                                // Scan Food Button
-                                Button(action: {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                        showAddMenu = false
-                                    }
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        showScanFlow = true
-                                    }
-                                }) {
-                                    VStack(spacing: 16) {
-                                        Image(systemName: "camera.viewfinder")
-                                            .font(.system(size: 48, weight: .regular))
-                                            .foregroundColor(.black)
-                                        
-                                        Text("scan_food")
-                                            .font(.system(size: 20, weight: .semibold))
-                                            .foregroundColor(.black)
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 40)
-                                    .background(Color.white)
-                                    .cornerRadius(24)
-                                    .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
-                                }
-                            }
-                            .padding(.horizontal, 20)
-                        }
-                        .padding(.bottom, 120)
-                    }
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-                
-                // Scan Flow Overlay
-                if showScanFlow {
-                    FoodScanFlow(isPresented: $showScanFlow)
-                        .transition(.move(edge: .bottom))
-                }
             }
         }
         .fullScreenCover(isPresented: $showFoodDatabase) {
@@ -14007,7 +13910,7 @@ struct HomeView: View {
     @State private var selectedDate: Date = Date()
     @State private var weekDays: [Date] = []
     @State private var daysWithMeals: Set<String> = []
-    @State private var macroPageIndex = 0
+    @State private var showScanFlow = false
     
     private let calendar = Calendar.current
     
@@ -14215,61 +14118,57 @@ struct HomeView: View {
             
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 12) {
-                    // Main Calorie Card
+                    // Main Foods-Logged Card
                     ZStack {
                         RoundedRectangle(cornerRadius: 28)
                             .fill(Color.white)
-                            .opacity(1.0) // Ensure fully opaque
+                            .opacity(1.0)
                             .shadow(color: Color.black.opacity(0.04), radius: 20, x: 0, y: 6)
-                        
+
                         HStack(spacing: 0) {
                             VStack(alignment: .leading, spacing: 10) {
-                                let remainingCalories = foodDataManager.getRemainingNutrition().calories
-                                let isOverLimit = remainingCalories < 0
-                                
-                                Text("\(remainingCalories)")
+                                let count = foodDataManager.todaysMeals.count
+
+                                Text("\(count)")
                                     .font(.system(size: 45, weight: .bold))
                                     .kerning(-2.5)
-                                    .foregroundColor(isOverLimit ? Color(red: 0.90, green: 0.50, blue: 0.55) : .black)
-                                
+                                    .foregroundColor(.black)
+
                                 HStack(spacing: 8) {
-                                    Text(isOverLimit ? "Calories over" : "Calories left")
+                                    Text("Foods logged today")
                                         .font(.system(size: 14, weight: .regular))
-                                        .foregroundColor(isOverLimit ? Color(red: 0.90, green: 0.50, blue: 0.55).opacity(0.7) : Color.black.opacity(0.5))
-                                    
+                                        .foregroundColor(Color.black.opacity(0.5))
+
                                     HStack(spacing: 4) {
-                                        Image(systemName: "brain.head.profile")
+                                        Text("🔥")
                                             .font(.system(size: 11))
-                                            .foregroundColor(Color.black.opacity(0.5))
-                                        Text("+\(foodDataManager.todaysMeals.count)")
-                                            .font(.system(size: 14, weight: .semibold))
+                                        Text("\(foodDataManager.streakCount) day streak")
+                                            .font(.system(size: 13, weight: .semibold))
                                             .foregroundColor(Color.black.opacity(0.5))
                                     }
                                 }
                             }
                             .padding(.leading, 34)
-                            
+
                             Spacer()
-                            
+
                             ZStack {
-                                let progress = min(1.0, CGFloat(foodDataManager.dailyTotals.calories) / CGFloat(max(1, foodDataManager.nutritionGoals.dailyCalories)))
-                                let isOverLimit = foodDataManager.dailyTotals.calories > foodDataManager.nutritionGoals.dailyCalories
-                                
+                                let progress = min(1.0, CGFloat(foodDataManager.todaysMeals.count) / 3.0)
+
                                 Circle()
                                     .strokeBorder(Color.black.opacity(0.08), lineWidth: 6)
                                     .frame(width: 128, height: 128)
-                                
-                                // Progress circle
+
                                 Circle()
                                     .trim(from: 0, to: progress)
                                     .stroke(
-                                        isOverLimit ? Color(red: 0.90, green: 0.50, blue: 0.55) : Color(red: 0.92, green: 0.58, blue: 0.65),
+                                        Color(red: 0.92, green: 0.58, blue: 0.65),
                                         style: StrokeStyle(lineWidth: 6, lineCap: .round)
                                     )
                                     .frame(width: 128, height: 128)
                                     .rotationEffect(.degrees(-90))
-                                
-                                Text("✨")
+
+                                Text("🥣")
                                     .font(.system(size: 42))
                             }
                             .padding(.trailing, 30)
@@ -14279,158 +14178,109 @@ struct HomeView: View {
                     .frame(height: 190)
                     .padding(.horizontal, 20)
                     
-                    // Macro Cards - Swipeable
-                    TabView(selection: $macroPageIndex) {
-                        // Page 1: Protein, Carbs, Fats
-                        HStack(spacing: 12) {
-                            let remainingNutrition = foodDataManager.getRemainingNutrition()
-                            let dailyTotals = foodDataManager.dailyTotals
-                            let goals = foodDataManager.nutritionGoals
-                            
-                            MacroCard(
-                                amount: "\(remainingNutrition.protein)g",
-                                label: NSLocalizedString("Protein", comment: "") + " " + NSLocalizedString("left", comment: ""),
-                                icon: "🍗",
-                                circleColor: Color(red: 0.85, green: 0.75, blue: 0.92).opacity(0.6),
-                                value: remainingNutrition.protein,
-                                consumed: dailyTotals.protein,
-                                goal: goals.protein
-                            )
-                            .frame(maxWidth: .infinity)
-                            
-                            MacroCard(
-                                amount: "\(remainingNutrition.carbs)g",
-                                label: NSLocalizedString("Carbs", comment: "") + " " + NSLocalizedString("left", comment: ""),
-                                icon: "🌾",
-                                circleColor: Color(red: 0.98, green: 0.85, blue: 0.88).opacity(0.6),
-                                value: remainingNutrition.carbs,
-                                consumed: dailyTotals.carbs,
-                                goal: goals.carbs
-                            )
-                            .frame(maxWidth: .infinity)
-                            
-                            MacroCard(
-                                amount: "\(remainingNutrition.fats)g",
-                                label: NSLocalizedString("Fats", comment: "") + " " + NSLocalizedString("left", comment: ""),
-                                icon: "💧",
-                                circleColor: Color(red: 0.92, green: 0.85, blue: 0.95).opacity(0.6),
-                                value: remainingNutrition.fats,
-                                consumed: dailyTotals.fats,
-                                goal: goals.fats
-                            )
-                            .frame(maxWidth: .infinity)
-                        }
-                        .padding(.horizontal, 20)
-                        .tag(0)
-                        
-                        // Page 2: Fiber, Sugar, Sodium
-                        HStack(spacing: 12) {
-                            let remainingNutrition = foodDataManager.getRemainingNutrition()
-                            let dailyTotals = foodDataManager.dailyTotals
-                            let goals = foodDataManager.nutritionGoals
-                            
-                            MacroCard(
-                                amount: "\(dailyTotals.fiber)g",
-                                label: NSLocalizedString("Fiber", comment: "") + " " + NSLocalizedString("eaten", comment: ""),
-                                icon: "🌾",
-                                circleColor: Color(red: 0.88, green: 0.82, blue: 0.92).opacity(0.6),
-                                value: dailyTotals.fiber,
-                                consumed: dailyTotals.fiber,
-                                goal: goals.fiber,
-                                isConsumed: true
-                            )
-                            .frame(maxWidth: .infinity)
-                            
-                            MacroCard(
-                                amount: "\(dailyTotals.sugar)g",
-                                label: NSLocalizedString("Sugar", comment: "") + " " + NSLocalizedString("eaten", comment: ""),
-                                icon: "🍬",
-                                circleColor: Color(red: 0.98, green: 0.82, blue: 0.88).opacity(0.6),
-                                value: dailyTotals.sugar,
-                                consumed: dailyTotals.sugar,
-                                goal: goals.sugar,
-                                isConsumed: true
-                            )
-                            .frame(maxWidth: .infinity)
-                            
-                            MacroCard(
-                                amount: "\(dailyTotals.sodium)mg",
-                                label: NSLocalizedString("Sodium", comment: "") + " " + NSLocalizedString("eaten", comment: ""),
-                                icon: "🧂",
-                                circleColor: Color(red: 0.90, green: 0.85, blue: 0.95).opacity(0.6),
-                                value: dailyTotals.sodium,
-                                consumed: dailyTotals.sodium,
-                                goal: goals.sodium,
-                                isConsumed: true
-                            )
-                            .frame(maxWidth: .infinity)
-                        }
-                        .padding(.horizontal, 20)
-                        .tag(1)
+                    // Baby Stats Cards
+                    HStack(spacing: 12) {
+                        MacroCard(
+                            amount: "\(foodDataManager.todaysMeals.count)",
+                            label: "Today's foods",
+                            icon: "🍽️",
+                            circleColor: Color(red: 0.85, green: 0.75, blue: 0.92).opacity(0.6),
+                            value: foodDataManager.todaysMeals.count,
+                            consumed: foodDataManager.todaysMeals.count,
+                            goal: 3,
+                            isConsumed: true
+                        )
+                        .frame(maxWidth: .infinity)
+
+                        MacroCard(
+                            amount: "\(daysWithMeals.count)/7",
+                            label: "Days logged",
+                            icon: "📅",
+                            circleColor: Color(red: 0.98, green: 0.85, blue: 0.88).opacity(0.6),
+                            value: daysWithMeals.count,
+                            consumed: daysWithMeals.count,
+                            goal: 7,
+                            isConsumed: true
+                        )
+                        .frame(maxWidth: .infinity)
+
+                        MacroCard(
+                            amount: "\(foodDataManager.streakCount)",
+                            label: "Day streak",
+                            icon: "🔥",
+                            circleColor: Color(red: 0.92, green: 0.85, blue: 0.95).opacity(0.6),
+                            value: min(foodDataManager.streakCount, 30),
+                            consumed: min(foodDataManager.streakCount, 30),
+                            goal: 30,
+                            isConsumed: true
+                        )
+                        .frame(maxWidth: .infinity)
                     }
-                    .frame(height: 175)
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                    .padding(.top, 6)
-                    
-                    // Page indicator dots (2 dots)
-                    HStack(spacing: 8) {
-                        Circle()
-                            .fill(macroPageIndex == 0 ? Color(red: 0.92, green: 0.58, blue: 0.65) : Color(red: 0.92, green: 0.58, blue: 0.65).opacity(0.3))
-                            .frame(width: 6, height: 6)
-                        Circle()
-                            .fill(macroPageIndex == 1 ? Color(red: 0.92, green: 0.58, blue: 0.65) : Color(red: 0.92, green: 0.58, blue: 0.65).opacity(0.3))
-                            .frame(width: 6, height: 6)
-                    }
-                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 20)
                     .padding(.top, 6)
                     .padding(.bottom, 2)
                     
-                    // Recently Uploaded Section
+                    // Today's Feeding Log Section
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Recently uploaded")
-                            .font(.system(size: 22, weight: .bold))
-                            .foregroundColor(.black)
-                            .padding(.horizontal, 20)
-                        
+                        HStack {
+                            Text("Today's feeding log")
+                                .font(.system(size: 22, weight: .bold))
+                                .foregroundColor(.black)
+
+                            Spacer()
+
+                            Button(action: { showScanFlow = true }) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "camera.viewfinder")
+                                        .font(.system(size: 14, weight: .semibold))
+                                    Text("Log food")
+                                        .font(.system(size: 14, weight: .semibold))
+                                }
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(Color(red: 0.92, green: 0.58, blue: 0.65))
+                                .cornerRadius(20)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+
                         if foodDataManager.todaysMeals.isEmpty {
-                            // Empty state
                             ZStack {
                                 RoundedRectangle(cornerRadius: 24)
                                     .fill(Color.white)
-                                    .opacity(1.0) // Ensure fully opaque
+                                    .opacity(1.0)
                                     .shadow(color: Color.black.opacity(0.03), radius: 12, x: 0, y: 2)
-                                
+
                                 VStack(spacing: 0) {
                                     HStack(spacing: 14) {
                                         ZStack {
                                             Circle()
                                                 .fill(Color(red: 0.95, green: 0.95, blue: 0.96))
                                                 .frame(width: 65, height: 65)
-                                            
-                                            Text("🥗")
+                                            Text("🥣")
                                                 .font(.system(size: 34))
                                         }
-                                        
+
                                         VStack(alignment: .leading, spacing: 5) {
                                             Rectangle()
                                                 .fill(Color(red: 0.92, green: 0.92, blue: 0.93))
                                                 .frame(width: 120, height: 10)
                                                 .cornerRadius(5)
-                                            
                                             Rectangle()
                                                 .fill(Color(red: 0.94, green: 0.94, blue: 0.95))
                                                 .frame(width: 85, height: 8)
                                                 .cornerRadius(4)
                                         }
-                                        
+
                                         Spacer()
                                     }
                                     .padding(16)
                                     .frame(maxWidth: .infinity)
                                     .background(Color.white.opacity(0.5))
                                     .cornerRadius(24)
-                                    
-                                    Text("Tap + to add your first meal of the day")
+
+                                    Text("Scan your baby's food to log it")
                                         .font(.system(size: 15, weight: .regular))
                                         .foregroundColor(Color.black.opacity(0.4))
                                         .multilineTextAlignment(.center)
@@ -14441,7 +14291,6 @@ struct HomeView: View {
                             .frame(height: 195)
                             .padding(.horizontal, 20)
                         } else {
-                            // Meal list
                             ForEach(foodDataManager.todaysMeals) { meal in
                                 MealRowView(meal: meal)
                                     .padding(.horizontal, 20)
@@ -14452,13 +14301,16 @@ struct HomeView: View {
                     
                     Spacer(minLength: 100)
                 }
-                .background(Color.clear) // Ensure no translucent effects
+                .background(Color.clear)
             }
-            .background(Color.clear) // Prevent gradient bleed-through
+            .background(Color.clear)
         }
+        }
+        .fullScreenCover(isPresented: $showScanFlow) {
+            FoodScanFlow(isPresented: $showScanFlow)
         }
     }
-    
+
 }
 
 // MARK: - Progress View
