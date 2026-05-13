@@ -49,6 +49,8 @@
 	<string>Thrifty</string>
 	<key>GIDClientID</key>
 	<string>442045211912-p06i2u6v4kgdqrhnjtq8nti2562mv4j9.apps.googleusercontent.com</string>
+	<key>SupportEmail</key>
+	<string>YOUR_GMAIL@gmail.com</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>processing</string>

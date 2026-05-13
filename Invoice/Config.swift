@@ -2,7 +2,7 @@ import Foundation
 
 enum Config {
     // MARK: - OpenAI Configuration
-    static let openAIApiKey: String = APIKeys.openAI
+    static var openAIApiKey: String { AppConfiguration.openAIKey }
     static let defaultModel = "gpt-4-turbo-preview"
     static let defaultMaxTokens = 500
     static let defaultTemperature = 0.7

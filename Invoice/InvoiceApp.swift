@@ -17,8 +17,13 @@ struct InvoiceApp: App {
     @State private var appRefreshID = UUID()
     
     init() {
-        // Configure Firebase when app launches
-        FirebaseApp.configure()
+        // Firebase: add `Invoice/GoogleService-Info.plist` from the Firebase Console (iOS app).
+        if let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+           let options = FirebaseOptions(contentsOfFile: path) {
+            FirebaseApp.configure(options: options)
+        } else {
+            FirebaseApp.configure()
+        }
         
         // Suppress verbose Firebase internal logs AFTER configuration
         // This stops the constant [FirebaseFirestore][I-FST000001] messages
@@ -40,7 +45,7 @@ struct InvoiceApp: App {
         FirebaseConfiguration.shared.setLoggerLevel(.error) // Only show errors in production
         #endif
         
-        print("🔥 Firebase configured successfully with offline persistence")
+        print("🔥 Firebase configured successfully with offline persistence (project: \(FirebaseApp.app()?.options.projectID ?? "?"))")
     }
     
     var body: some Scene {

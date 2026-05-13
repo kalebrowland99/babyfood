@@ -12942,13 +12942,13 @@ class MealPlanService: ObservableObject {
     @Published var isGeneratingPlan = false
     @Published var isGeneratingList = false
 
-    private let apiKey: String = {
-        let stored = UserDefaults.standard.string(forKey: "openai_api_key") ?? ""
-        return stored.isEmpty ? APIKeys.openAI : stored
-    }()
     private let endpoint = "https://api.openai.com/v1/chat/completions"
 
     func generateMealPlan(ageStage: String, restrictions: [String]) async {
+        guard AppConfiguration.hasOpenAIKey else {
+            await MainActor.run { isGeneratingPlan = false }
+            return
+        }
         await MainActor.run {
             isGeneratingPlan = true
             mealPlan = []
@@ -13006,7 +13006,7 @@ class MealPlanService: ObservableObject {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(AppConfiguration.openAIKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = json
 
@@ -13053,6 +13053,10 @@ class MealPlanService: ObservableObject {
 
     func generateShoppingList() async {
         guard !mealPlan.isEmpty else { return }
+        guard AppConfiguration.hasOpenAIKey else {
+            await MainActor.run { isGeneratingList = false }
+            return
+        }
         await MainActor.run { isGeneratingList = true }
 
         let planText = mealPlan.map {
@@ -13095,7 +13099,7 @@ class MealPlanService: ObservableObject {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(AppConfiguration.openAIKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = json
 
@@ -13579,10 +13583,6 @@ class BabyFoodChatService: ObservableObject {
     @Published var messages: [ChatMessage] = []
     @Published var isLoading = false
 
-    private let apiKey: String = {
-        let stored = UserDefaults.standard.string(forKey: "openai_api_key") ?? ""
-        return stored.isEmpty ? APIKeys.openAI : stored
-    }()
     private let endpoint = "https://api.openai.com/v1/chat/completions"
 
     private let systemPrompt = """
@@ -13606,6 +13606,14 @@ class BabyFoodChatService: ObservableObject {
     """
 
     func sendMessage(_ content: String) async {
+        guard AppConfiguration.hasOpenAIKey else {
+            await MainActor.run {
+                let userMsg = ChatMessage(role: "user", content: content, timestamp: Date())
+                messages.append(userMsg)
+                messages.append(ChatMessage(role: "assistant", content: "Add your OpenAI API key: set OPENAI_API_KEY in the Xcode scheme (Run → Arguments → Environment), or set OpenAI_API_KEY in Invoice-Info.plist, or paste it into APIKeys.openAI in APIKeys.swift for local builds only.", timestamp: Date()))
+            }
+            return
+        }
         let userMsg = ChatMessage(role: "user", content: content, timestamp: Date())
         let history: [ChatMessage] = await MainActor.run {
             messages.append(userMsg)
@@ -13631,7 +13639,7 @@ class BabyFoodChatService: ObservableObject {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(AppConfiguration.openAIKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
 
@@ -14833,7 +14841,7 @@ struct ProfileView: View {
     
     // Function to send support email
     private func sendSupportEmail() {
-        let email = "support@calorietracker.app" // Replace with your actual support email
+        let email = AppConfiguration.supportEmail
         let subject = "Support Request"
         let body = "Please describe your issue:"
         

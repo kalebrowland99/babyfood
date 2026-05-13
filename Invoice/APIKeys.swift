@@ -1,6 +1,3 @@
-// Mirror of APIKeys.swift — copy to APIKeys.swift or edit APIKeys.swift directly.
-// Do not commit real API keys to git.
-
 import Foundation
 
 /// Optional local overrides. Prefer Xcode scheme environment variables or `Invoice-Info.plist` keys
