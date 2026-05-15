@@ -15,7 +15,7 @@
 			<string>GoogleSignIn</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.442045211912-p06i2u6v4kgdqrhnjtq8nti2562mv4j9</string>
+				<string>com.googleusercontent.apps.848927857490-p0q8js362qouu72lkgnas50h4ls4gt4p</string>
 			</array>
 		</dict>
 		<dict>
@@ -48,7 +48,7 @@
 	<key>FacebookDisplayName</key>
 	<string>Thrifty</string>
 	<key>GIDClientID</key>
-	<string>442045211912-p06i2u6v4kgdqrhnjtq8nti2562mv4j9.apps.googleusercontent.com</string>
+	<string>848927857490-p0q8js362qouu72lkgnas50h4ls4gt4p.apps.googleusercontent.com</string>
 	<key>SupportEmail</key>
 	<string>YOUR_GMAIL@gmail.com</string>
 	<key>UIBackgroundModes</key>
