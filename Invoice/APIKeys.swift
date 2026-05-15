@@ -1,4 +1,5 @@
 import Foundation
+import FirebaseAuth
 
 /// Optional local overrides. Prefer Xcode scheme environment variables or `Invoice-Info.plist` keys
 /// so secrets are not committed. See `AppConfiguration`.
@@ -55,4 +56,20 @@ enum AppConfiguration {
     }
 
     static var hasOpenAIKey: Bool { !openAIKey.isEmpty }
+
+    /// When `true` (default), signed-in users use Cloud Functions for OpenAI (secret on server). Set `OPENAI_USE_CLOUD_FUNCTIONS` to `false` in Info.plist to force direct API only (local key).
+    static var prefersOpenAICloudProxy: Bool {
+        if let b = Bundle.main.infoDictionary?["OPENAI_USE_CLOUD_FUNCTIONS"] as? Bool { return b }
+        if let s = Bundle.main.infoDictionary?["OPENAI_USE_CLOUD_FUNCTIONS"] as? String {
+            let t = s.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            return t == "1" || t == "true" || t == "yes"
+        }
+        return true
+    }
+
+    /// Signed-in + cloud proxy preferred, or a direct API key is available.
+    static var hasOpenAIAccess: Bool {
+        if prefersOpenAICloudProxy && Auth.auth().currentUser != nil { return true }
+        return hasOpenAIKey
+    }
 }

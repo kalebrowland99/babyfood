@@ -12925,40 +12925,88 @@ class ProfileManager: ObservableObject {
 
 // MARK: - Meal Plans
 
-struct DayMealPlan: Identifiable {
-    let id = UUID()
-    let day: String
-    let breakfast: String
-    let lunch: String
-    let dinner: String
-    let snack: String
-}
+/// OpenAI via Firebase Callable `babyFoodOpenAI` (secret `OPENAI_API_KEY` in Cloud Functions), with direct-key fallback for local dev.
+private enum OpenAIProxyClient {
+    private static let region = "us-central1"
+    private static let openAIEndpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
 
-class MealPlanService: ObservableObject {
-    static let shared = MealPlanService()
+    private static var useCloud: Bool {
+        AppConfiguration.prefersOpenAICloudProxy && Auth.auth().currentUser != nil
+    }
 
-    @Published var mealPlan: [DayMealPlan] = []
-    @Published var shoppingList: [String] = []
-    @Published var isGeneratingPlan = false
-    @Published var isGeneratingList = false
+    static func fetchMealPlanJSON(ageStage: String, restrictions: [String]) async throws -> String {
+        if useCloud {
+            return try await invokeCallable(kind: "meal_plan", payload: ["ageStage": ageStage, "restrictions": restrictions])
+        }
+        let prompt = buildMealPlanPrompt(ageStage: ageStage, restrictions: restrictions)
+        return try await directChatCompletions(messages: [["role": "user", "content": prompt]], maxTokens: 800, temperature: 0.7)
+    }
 
-    private let endpoint = "https://api.openai.com/v1/chat/completions"
+    static func fetchShoppingListJSON(planText: String) async throws -> String {
+        if useCloud {
+            return try await invokeCallable(kind: "shopping_list", payload: ["planText": planText])
+        }
+        let prompt = buildShoppingListPrompt(planText: planText)
+        return try await directChatCompletions(messages: [["role": "user", "content": prompt]], maxTokens: 400, temperature: 0.3)
+    }
 
-    func generateMealPlan(ageStage: String, restrictions: [String]) async {
+    static func fetchChatJSON(messages: [[String: String]], maxTokens: Int, temperature: Double) async throws -> String {
+        if useCloud {
+            let cloudMessages = messages.filter { ($0["role"] ?? "") != "system" }
+            return try await invokeCallable(kind: "chat", payload: [
+                "messages": cloudMessages,
+                "max_tokens": maxTokens,
+                "temperature": temperature
+            ])
+        }
+        return try await directChatCompletions(messages: messages, maxTokens: maxTokens, temperature: temperature)
+    }
+
+    private static func invokeCallable(kind: String, payload: [String: Any]) async throws -> String {
+        let functions = Functions.functions(region: region)
+        let callable = functions.httpsCallable("babyFoodOpenAI")
+        var body: [String: Any] = ["kind": kind]
+        for (k, v) in payload { body[k] = v }
+        let result = try await callable.call(body)
+        guard let dict = result.data as? [String: Any], let content = dict["content"] as? String else {
+            throw NSError(domain: "OpenAIProxy", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid response from babyFoodOpenAI"])
+        }
+        return content
+    }
+
+    private static func directChatCompletions(messages: [[String: String]], maxTokens: Int, temperature: Double) async throws -> String {
         guard AppConfiguration.hasOpenAIKey else {
-            await MainActor.run { isGeneratingPlan = false }
-            return
+            throw NSError(domain: "OpenAIProxy", code: 2, userInfo: [NSLocalizedDescriptionKey: "No OpenAI API key configured"])
         }
-        await MainActor.run {
-            isGeneratingPlan = true
-            mealPlan = []
-            shoppingList = []
+        let body: [String: Any] = [
+            "model": "gpt-4o",
+            "messages": messages,
+            "max_tokens": maxTokens,
+            "temperature": temperature
+        ]
+        guard let json = try? JSONSerialization.data(withJSONObject: body) else {
+            throw NSError(domain: "OpenAIProxy", code: 3, userInfo: [NSLocalizedDescriptionKey: "Could not encode request"])
         }
+        var request = URLRequest(url: openAIEndpoint)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(AppConfiguration.openAIKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = json
+        let (data, _) = try await URLSession.shared.data(for: request)
+        guard let resp = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let choices = resp["choices"] as? [[String: Any]],
+              let first = choices.first,
+              let msg = first["message"] as? [String: Any],
+              let content = msg["content"] as? String else {
+            throw NSError(domain: "OpenAIProxy", code: 4, userInfo: [NSLocalizedDescriptionKey: "Invalid OpenAI response"])
+        }
+        return content
+    }
 
+    private static func buildMealPlanPrompt(ageStage: String, restrictions: [String]) -> String {
         let restrictionText = restrictions.isEmpty
             ? "No dietary restrictions."
             : "Dietary restrictions: \(restrictions.joined(separator: ", "))."
-
         let textureGuide: String
         switch ageStage {
         case "4–6 months": textureGuide = "Smooth, single-ingredient purees only (no chunks, no combos)."
@@ -12966,8 +13014,7 @@ class MealPlanService: ObservableObject {
         case "9–12 months": textureGuide = "Soft finger foods and bite-sized pieces, more complex flavours."
         default: textureGuide = "Soft family foods in baby-appropriate portions, varied textures."
         }
-
-        let prompt = """
+        return """
         Generate a 7-day meal plan for a \(ageStage) baby. \(restrictionText)
         Texture guide: \(textureGuide)
 
@@ -12990,37 +13037,62 @@ class MealPlanService: ObservableObject {
         - Vary proteins, colours, and food groups across the week
         - Include iron-rich foods at least 3 times per week
         """
+    }
 
-        let body: [String: Any] = [
-            "model": "gpt-4o",
-            "messages": [["role": "user", "content": prompt]],
-            "max_tokens": 800,
-            "temperature": 0.7
-        ]
+    private static func buildShoppingListPrompt(planText: String) -> String {
+        """
+        Based on this 7-day baby meal plan:
+        \(planText)
 
-        guard let json = try? JSONSerialization.data(withJSONObject: body),
-              let url = URL(string: endpoint) else {
+        Generate a consolidated shopping list with quantities.
+        Return ONLY valid JSON, no markdown:
+        {
+          "items": [
+            "Sweet potatoes (4 medium)",
+            "Avocado (3)",
+            "Rolled oats (1 cup)"
+          ]
+        }
+
+        Rules:
+        - Group by category: Produce first, then Grains, Proteins, Dairy/Alternatives, Pantry
+        - Consolidate duplicates across the week
+        - 15–25 items maximum
+        - Include realistic quantities for a baby (small amounts)
+        """
+    }
+}
+
+struct DayMealPlan: Identifiable {
+    let id = UUID()
+    let day: String
+    let breakfast: String
+    let lunch: String
+    let dinner: String
+    let snack: String
+}
+
+class MealPlanService: ObservableObject {
+    static let shared = MealPlanService()
+
+    @Published var mealPlan: [DayMealPlan] = []
+    @Published var shoppingList: [String] = []
+    @Published var isGeneratingPlan = false
+    @Published var isGeneratingList = false
+
+    func generateMealPlan(ageStage: String, restrictions: [String]) async {
+        guard AppConfiguration.hasOpenAIAccess else {
             await MainActor.run { isGeneratingPlan = false }
             return
         }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(AppConfiguration.openAIKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = json
+        await MainActor.run {
+            isGeneratingPlan = true
+            mealPlan = []
+            shoppingList = []
+        }
 
         do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            guard let resp = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let choices = resp["choices"] as? [[String: Any]],
-                  let first = choices.first,
-                  let msg = first["message"] as? [String: Any],
-                  let content = msg["content"] as? String else {
-                await MainActor.run { isGeneratingPlan = false }
-                return
-            }
-
+            let content = try await OpenAIProxyClient.fetchMealPlanJSON(ageStage: ageStage, restrictions: restrictions)
             let cleaned = content
                 .replacingOccurrences(of: "```json", with: "")
                 .replacingOccurrences(of: "```", with: "")
@@ -13053,7 +13125,7 @@ class MealPlanService: ObservableObject {
 
     func generateShoppingList() async {
         guard !mealPlan.isEmpty else { return }
-        guard AppConfiguration.hasOpenAIKey else {
+        guard AppConfiguration.hasOpenAIAccess else {
             await MainActor.run { isGeneratingList = false }
             return
         }
@@ -13063,57 +13135,8 @@ class MealPlanService: ObservableObject {
             "\($0.day): Breakfast: \($0.breakfast) | Lunch: \($0.lunch) | Dinner: \($0.dinner) | Snack: \($0.snack)"
         }.joined(separator: "\n")
 
-        let prompt = """
-        Based on this 7-day baby meal plan:
-        \(planText)
-
-        Generate a consolidated shopping list with quantities.
-        Return ONLY valid JSON, no markdown:
-        {
-          "items": [
-            "Sweet potatoes (4 medium)",
-            "Avocado (3)",
-            "Rolled oats (1 cup)"
-          ]
-        }
-
-        Rules:
-        - Group by category: Produce first, then Grains, Proteins, Dairy/Alternatives, Pantry
-        - Consolidate duplicates across the week
-        - 15–25 items maximum
-        - Include realistic quantities for a baby (small amounts)
-        """
-
-        let body: [String: Any] = [
-            "model": "gpt-4o",
-            "messages": [["role": "user", "content": prompt]],
-            "max_tokens": 400,
-            "temperature": 0.3
-        ]
-
-        guard let json = try? JSONSerialization.data(withJSONObject: body),
-              let url = URL(string: endpoint) else {
-            await MainActor.run { isGeneratingList = false }
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(AppConfiguration.openAIKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = json
-
         do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            guard let resp = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let choices = resp["choices"] as? [[String: Any]],
-                  let first = choices.first,
-                  let msg = first["message"] as? [String: Any],
-                  let content = msg["content"] as? String else {
-                await MainActor.run { isGeneratingList = false }
-                return
-            }
-
+            let content = try await OpenAIProxyClient.fetchShoppingListJSON(planText: planText)
             let cleaned = content
                 .replacingOccurrences(of: "```json", with: "")
                 .replacingOccurrences(of: "```", with: "")
@@ -13583,8 +13606,6 @@ class BabyFoodChatService: ObservableObject {
     @Published var messages: [ChatMessage] = []
     @Published var isLoading = false
 
-    private let endpoint = "https://api.openai.com/v1/chat/completions"
-
     private let systemPrompt = """
     You are a warm, knowledgeable baby nutrition expert and chef. You help mothers confidently introduce solid foods to their babies.
 
@@ -13606,11 +13627,11 @@ class BabyFoodChatService: ObservableObject {
     """
 
     func sendMessage(_ content: String) async {
-        guard AppConfiguration.hasOpenAIKey else {
+        guard AppConfiguration.hasOpenAIAccess else {
             await MainActor.run {
                 let userMsg = ChatMessage(role: "user", content: content, timestamp: Date())
                 messages.append(userMsg)
-                messages.append(ChatMessage(role: "assistant", content: "Add your OpenAI API key: set OPENAI_API_KEY in the Xcode scheme (Run → Arguments → Environment), or set OpenAI_API_KEY in Invoice-Info.plist, or paste it into APIKeys.openAI in APIKeys.swift for local builds only.", timestamp: Date()))
+                messages.append(ChatMessage(role: "assistant", content: "Sign in to use AI (OpenAI runs on Firebase). For simulator-only testing, set OPENAI_USE_CLOUD_FUNCTIONS to false in Invoice-Info.plist and add OPENAI_API_KEY in your Xcode scheme.", timestamp: Date()))
             }
             return
         }
@@ -13624,36 +13645,9 @@ class BabyFoodChatService: ObservableObject {
         var apiMessages: [[String: String]] = [["role": "system", "content": systemPrompt]]
         for msg in history { apiMessages.append(["role": msg.role, "content": msg.content]) }
 
-        let requestBody: [String: Any] = [
-            "model": "gpt-4o",
-            "messages": apiMessages,
-            "max_tokens": 600,
-            "temperature": 0.7
-        ]
-
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: requestBody),
-              let url = URL(string: endpoint) else {
-            await MainActor.run { isLoading = false }
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(AppConfiguration.openAIKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
-
         do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let choices = json["choices"] as? [[String: Any]],
-                  let first = choices.first,
-                  let message = first["message"] as? [String: Any],
-                  let content = message["content"] as? String else {
-                await MainActor.run { isLoading = false }
-                return
-            }
-            let aiMsg = ChatMessage(role: "assistant", content: content.trimmingCharacters(in: .whitespacesAndNewlines), timestamp: Date())
+            let text = try await OpenAIProxyClient.fetchChatJSON(messages: apiMessages, maxTokens: 600, temperature: 0.7)
+            let aiMsg = ChatMessage(role: "assistant", content: text.trimmingCharacters(in: .whitespacesAndNewlines), timestamp: Date())
             await MainActor.run {
                 messages.append(aiMsg)
                 isLoading = false

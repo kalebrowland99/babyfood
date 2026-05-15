@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "invoice-8b29c"
+    "default": "baby-food-834f7",
+    "invoice": "invoice-8b29c"
   }
 }

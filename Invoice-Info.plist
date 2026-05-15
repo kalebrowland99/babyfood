@@ -49,6 +49,8 @@
 	<string>Thrifty</string>
 	<key>GIDClientID</key>
 	<string>848927857490-p0q8js362qouu72lkgnas50h4ls4gt4p.apps.googleusercontent.com</string>
+	<key>OPENAI_USE_CLOUD_FUNCTIONS</key>
+	<true/>
 	<key>SupportEmail</key>
 	<string>YOUR_GMAIL@gmail.com</string>
 	<key>UIBackgroundModes</key>
