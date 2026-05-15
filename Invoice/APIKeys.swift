@@ -48,11 +48,11 @@ enum AppConfiguration {
         if let dict = Bundle.main.infoDictionary,
            let s = dict["SupportEmail"] as? String {
             let t = s.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !t.isEmpty, t != "YOUR_GMAIL@gmail.com" { return t }
+            if !t.isEmpty { return t }
         }
         let fromKeys = APIKeys.supportEmail.trimmingCharacters(in: .whitespacesAndNewlines)
         if !fromKeys.isEmpty { return fromKeys }
-        return "YOUR_GMAIL@gmail.com"
+        return "babyfoodhelp@gmail.com"
     }
 
     static var hasOpenAIKey: Bool { !openAIKey.isEmpty }
