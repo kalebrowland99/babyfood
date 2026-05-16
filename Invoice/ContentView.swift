@@ -2316,16 +2316,15 @@ class StoreManager: ObservableObject {
     @Published private(set) var purchasedSubscriptions: [Product] = []
     @Published var isSubscribed = false
     
+    /// Yearly premium (7-day free trial in App Store Connect) and yearly winback ($39.99, no trial).
     private let productIds = [
-        "com.thrifty.thrifty.unlimited.yearly149",        // Yearly subscription
-        "com.thrifty.thrifty.unlimited.yearly.winback79"  // Yearly winback offer
+        "com.bitetime.app.premium.yearly",
+        "com.bitetime.app.premium.yearly.winback"
     ]
     
-    // Fallback product IDs (temporarily for testing while new products are pending approval)
-    private let fallbackProductIds = [
-        "com.thrifty.thrifty.unlimited.monthly",         // Monthly subscription (for testing)
-        "com.thrifty.thrifty.unlimited.monthly.winback" // Monthly winback offer (for testing)
-    ]
+    private var allPaidSubscriptionProductIds: Set<String> {
+        Set(productIds)
+    }
     
     init() {
         Task {
@@ -2341,66 +2340,27 @@ class StoreManager: ObservableObject {
             for product in subscriptions {
                 print("   - \(product.id): \(product.displayPrice)")
             }
-            
-            // Check if we got the expected number of products
             if subscriptions.count < productIds.count {
-                print("⚠️ Missing products detected!")
-                let loadedIds = subscriptions.map { $0.id }
-                for productId in productIds {
-                    if !loadedIds.contains(productId) {
-                        print("❌ Missing product: \(productId)")
-                    }
-                }
-                print("💡 Trying fallback product IDs for testing...")
-                
-                // Try fallback products since new ones aren't available
-                do {
-                    let fallbackProducts = try await Product.products(for: fallbackProductIds)
-                    print("✅ Fallback products loaded successfully: \(fallbackProducts.count) products")
-                    for product in fallbackProducts {
-                        print("   - \(product.id): \(product.displayPrice)")
-                    }
-                    // Use fallback products if we got more products than with new IDs
-                    if fallbackProducts.count > subscriptions.count {
-                        subscriptions = fallbackProducts
-                        print("⚠️ Using old product IDs temporarily until new ones are approved")
-                    }
-                } catch {
-                    print("❌ Fallback products also failed:", error)
+                let loadedIds = Set(subscriptions.map(\.id))
+                for productId in productIds where !loadedIds.contains(productId) {
+                    print("❌ Missing product: \(productId)")
                 }
             }
-            
         } catch {
             print("❌ Failed to load products:", error)
-            print("🔍 Attempting to load products with these IDs:")
             for productId in productIds {
                 print("   - \(productId)")
             }
-            
-            // Try fallback products immediately if main load failed
-            print("💡 Trying fallback product IDs...")
-            do {
-                subscriptions = try await Product.products(for: fallbackProductIds)
-                print("✅ Fallback products loaded successfully: \(subscriptions.count) products")
-                for product in subscriptions {
-                    print("   - \(product.id): \(product.displayPrice)")
-                }
-                print("⚠️ Using old product IDs temporarily until new ones are approved")
-            } catch {
-                print("❌ Even fallback products failed:", error)
-                print("💡 This usually means:")
-                print("   1. Products are not yet approved in App Store Connect")
-                print("   2. Products are not available in this region")
-                print("   3. There's a configuration issue")
-            }
+            print("💡 Ensure both yearly SKUs exist in App Store Connect and match these IDs.")
         }
     }
     
     func updateSubscriptionStatus() async {
+        let paidIds = allPaidSubscriptionProductIds
         for await result in Transaction.currentEntitlements {
             switch result {
             case .verified(let transaction):
-                if transaction.productID == productIds[0] {
+                if paidIds.contains(transaction.productID) {
                     isSubscribed = true
                     return
                 }
@@ -2507,7 +2467,7 @@ struct TermsAndPrivacyText: View {
     
     private var termsText: some View {
         VStack(spacing: 2) {
-            Text("By continuing you agree to Thrifty's")
+            Text("By continuing you agree to Little Bites'")
                 .font(.system(size: 12))
                 .foregroundColor(.black)
             
@@ -2517,7 +2477,7 @@ struct TermsAndPrivacyText: View {
                     .foregroundColor(.black)
                     .underline(color: .black)
                     .onTapGesture {
-                        print("✅ Opening Thrifty Terms of Service")
+                        print("✅ Opening Little Bites Terms of Service")
                         showingTermsOfService = true
                     }
                 
@@ -2598,7 +2558,7 @@ struct TermsOfServiceView: View {
     
     private var introductionText: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Welcome to Thrifty. These Terms of Service govern your use of our application and services.")
+            Text("Welcome to Little Bites. These Terms of Service govern your use of our application and services.")
                 .font(.system(size: 16))
                 .foregroundColor(.black)
             
@@ -2615,7 +2575,7 @@ struct TermsOfServiceView: View {
                 .foregroundColor(.black)
                 .padding(.top, 10)
             
-            Text("Thrifty provides an AI-powered item scanning platform that helps users identify and evaluate thrift store items using artificial intelligence technology.")
+            Text("Little Bites helps you plan baby meals, log first foods, and track nutrition with guidance tailored to your family.")
                 .font(.system(size: 16))
                 .foregroundColor(.black)
             
@@ -2624,11 +2584,11 @@ struct TermsOfServiceView: View {
                 .foregroundColor(.black)
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("• AI-powered item identification and analysis")
-                Text("• Price estimation and market value assessment")
-                Text("• Brand and product recognition technology")
-                Text("• Unlimited item scanning capabilities")
-                Text("• Thrift store item evaluation tools")
+                Text("• Meal ideas and introduction schedules aligned with your baby's age")
+                Text("• Food logging, allergens, and texture milestones in one place")
+                Text("• Personalized tips based on your onboarding answers")
+                Text("• Optional photo or barcode capture where supported")
+                Text("• Tools to stay consistent as you expand your baby's menu")
             }
             .font(.system(size: 16))
             .foregroundColor(.black)
@@ -2669,7 +2629,7 @@ struct TermsOfServiceView: View {
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(.black)
             
-            Text("You retain ownership of any images and content you upload to our Service. However, you grant us a limited license to process and analyze your content to provide item identification, pricing analysis, and improve our services.")
+            Text("You retain ownership of any images and content you upload to our Service. However, you grant us a limited license to process and analyze your content to provide meal planning, food logging, nutrition insights, and to improve our services.")
                 .font(.system(size: 16))
                 .foregroundColor(.black)
             
@@ -2678,7 +2638,7 @@ struct TermsOfServiceView: View {
                 .foregroundColor(.black)
                 .padding(.top, 10)
             
-            Text("All technology, software, and AI models used in our Service remain the exclusive property of Thrifty and are protected by copyright and other intellectual property laws.")
+            Text("All technology, software, and AI models used in our Service remain the exclusive property of Little Bites and are protected by copyright and other intellectual property laws.")
                 .font(.system(size: 16))
                 .foregroundColor(.black)
         }
@@ -2691,7 +2651,7 @@ struct TermsOfServiceView: View {
                 .foregroundColor(.black)
                 .padding(.top, 10)
             
-            Text("Our Service is provided \"as is\" without warranties of any kind. We strive to provide accurate and helpful AI-generated item analysis, but cannot guarantee the absolute accuracy of price estimates, brand identification, or market value assessments.")
+            Text("Our Service is provided \"as is\" without warranties of any kind. We strive to provide accurate and helpful guidance, but cannot guarantee medical outcomes; always consult your pediatrician for feeding or health decisions.")
                 .font(.system(size: 16))
                 .foregroundColor(.black)
             
@@ -2700,7 +2660,7 @@ struct TermsOfServiceView: View {
                 .foregroundColor(.black)
                 .padding(.top, 10)
             
-            Text("In no event shall Thrifty be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service.")
+            Text("In no event shall Little Bites be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service.")
                 .font(.system(size: 16))
                 .foregroundColor(.black)
         }
@@ -2717,7 +2677,7 @@ struct TermsOfServiceView: View {
                 .font(.system(size: 16))
                 .foregroundColor(.black)
             
-            Text(NSLocalizedString("📧 By email: helpthrifty@gmail.com", comment: ""))
+            Text(NSLocalizedString("📧 By email: babyfoodhelp@gmail.com", comment: ""))
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.blue)
         }
@@ -2828,7 +2788,7 @@ struct PrivacyPolicyView: View {
             Group {
                 Text("Account means a unique account created for You to access our Service or parts of our Service.")
                     Text("Affiliate means an entity that controls, is controlled by or is under common control with a party...")
-                Text("Application refers to any application or software program provided by the Company, including but not limited to thrifty.ai, and any other applications or software programs provided by the Company.")
+                Text("Application refers to any application or software program provided by the Company, including but not limited to the Little Bites application, and any other applications or software programs provided by the Company.")
                 Text("Company (referred to as either \"the Company\", \"We\", \"Us\" or \"Our\" in this Agreement) refers to Totally Science, 60 Heather Drive.")
                 Text("Country refers to: New York, United States")
                 }
@@ -3063,7 +3023,7 @@ struct PrivacyPolicyView: View {
                 .font(.system(size: 16))
                 .foregroundColor(.black)
             
-            Text(NSLocalizedString("📧 By email: helpthrifty@gmail.com", comment: ""))
+            Text(NSLocalizedString("📧 By email: babyfoodhelp@gmail.com", comment: ""))
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.blue)
         }
@@ -4874,7 +4834,7 @@ struct ProgressGraphView: View {
             .padding(.top, 8)
             
             // Title
-            Text("You have great potential to crush your goal")
+            Text("You're set up to reach your feeding goals")
                 .font(.system(size: 32, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
@@ -4883,7 +4843,7 @@ struct ProgressGraphView: View {
             // Graph container
             VStack(spacing: 16) {
                 // Graph title
-                Text("Your weight transition")
+                Text("New foods & textures over time")
                     .font(.system(size: 17))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 24)
@@ -4914,10 +4874,10 @@ struct ProgressGraphView: View {
                         let graphWidth = geometry.size.width - 48 // Account for padding
                         let graphHeight: CGFloat = 160
                         
-                        // Define exact data points first
-                        let point1 = CGPoint(x: 0, y: graphHeight * 0.8)           // 3 days
-                        let point2 = CGPoint(x: graphWidth * 0.5, y: graphHeight * 0.5)  // 7 days  
-                        let point3 = CGPoint(x: graphWidth, y: graphHeight * 0.2)   // 30 days
+                        // Curve rises = more variety of solids logged (conceptual, not medical data)
+                        let point1 = CGPoint(x: 0, y: graphHeight * 0.82)           // week 1
+                        let point2 = CGPoint(x: graphWidth * 0.5, y: graphHeight * 0.52)  // week 2
+                        let point3 = CGPoint(x: graphWidth, y: graphHeight * 0.18)   // ~1 month
                         
                         // Area under curve
                         Path { path in
@@ -4957,7 +4917,7 @@ struct ProgressGraphView: View {
                         
                         // Data points - using the SAME coordinate system
                         Group {
-                            // First point (3 days)
+                            // First point (week 1)
                             Circle()
                                 .fill(.white)
                                 .frame(width: 12, height: 12)
@@ -4969,7 +4929,7 @@ struct ProgressGraphView: View {
                                 .opacity(showGraph ? 1 : 0)
                                 .animation(.easeOut(duration: 0.3).delay(0.5), value: showGraph)
                             
-                            // Second point (7 days)
+                            // Second point (week 2)
                             Circle()
                                 .fill(.white)
                                 .frame(width: 12, height: 12)
@@ -4981,7 +4941,7 @@ struct ProgressGraphView: View {
                                 .opacity(showGraph ? 1 : 0)
                                 .animation(.easeOut(duration: 0.3).delay(0.8), value: showGraph)
                             
-                            // Third point with trophy (30 days)
+                            // Third point — milestone (about 1 month)
                             ZStack {
                                 Circle()
                                     .fill(.white)
@@ -4995,7 +4955,7 @@ struct ProgressGraphView: View {
                                     .fill(Color(red: 0.83, green: 0.69, blue: 0.52))
                                     .frame(width: 32, height: 32)
                                     .overlay(
-                                        Image(systemName: "trophy.fill")
+                                        Image(systemName: "leaf.fill")
                                             .foregroundColor(.white)
                                             .font(.system(size: 16))
                                     )
@@ -5012,13 +4972,13 @@ struct ProgressGraphView: View {
                 
                 // Time labels
                 HStack {
-                    Text("3 Days")
+                    Text("Week 1")
                         .font(.system(size: 15))
                     Spacer()
-                    Text("7 Days")
+                    Text("Week 2")
                         .font(.system(size: 15))
                     Spacer()
-                    Text("30 Days")
+                    Text("~1 month")
                         .font(.system(size: 15))
                 }
                 .padding(.horizontal, 24)
@@ -5027,7 +4987,7 @@ struct ProgressGraphView: View {
                 .animation(.easeOut(duration: 0.6).delay(1.2), value: showGraph)
                 
                 // Description text - full text without truncation
-                Text("Based on Cal AI's historical data, weight loss is usually delayed at first, but after 7 days, you can burn fat like crazy!")
+                Text("Babies often need many gentle tries with each food. When families log meals with Little Bites, variety of safe solids and textures tends to grow steadily after the first week or two.")
                     .font(.system(size: 15))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
@@ -5474,7 +5434,7 @@ struct ThriftingTransitionView: View {
         .preferredColorScheme(.light)
         .onAppear {
             coordinator.currentStep = 10
-            MixpanelService.shared.trackQuestionViewed(questionTitle: "Cal AI Comparison", stepNumber: 10)
+            MixpanelService.shared.trackQuestionViewed(questionTitle: "Little Bites Comparison", stepNumber: 10)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 showChart = true
                 // Enable the button after all animations complete (0.3s initial delay + 0.9s for animations + 0.1s buffer)
@@ -5528,11 +5488,11 @@ struct GoalSpeedView: View {
             
             // Title and subtitle
             VStack(alignment: .leading, spacing: 8) {
-                Text("AI Powered Fake Detection")
+                Text("AI-powered feeding insights")
                     .font(.system(size: 32, weight: .bold))
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("Thrifty analyzes stitching, logos, and materials. We flag possible fakes automatically.")
+                Text("Little Bites turns your answers into a clear plan—so you know what to offer next and how to stay on track.")
                     .font(.system(size: 17))
                     .foregroundColor(.gray)
                     .lineLimit(nil)
@@ -5568,7 +5528,7 @@ struct GoalSpeedView: View {
                 let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                 impactFeedback.impactOccurred()
                 // Track question-specific answer
-                coordinator.trackQuestionAnswered(answer: "Viewed AI Powered Fake Detection")
+                coordinator.trackQuestionAnswered(answer: "Viewed AI feeding insights")
                 coordinator.nextStep()
                 navigateToNext = true
             })
@@ -5652,7 +5612,7 @@ struct GoalConfirmationView: View {
             .padding(.horizontal, 24)
             
             // Subtitle
-            Text("90% of users say that the change is obvious after using Thrifty.")
+            Text("90% of users say that the change is obvious after using Little Bites.")
                 .font(.system(size: 17))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
@@ -6031,8 +5991,8 @@ struct AnimatedGraph: View {
                     .frame(height: 240)
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    // Your weight label
-                    Text("Your weight")
+                    // Chart title — solids / variety, not weight
+                    Text("Foods & textures offered")
                         .font(.system(size: 20))
                         .foregroundColor(.black)
                         .padding(.leading, 24)
@@ -6041,7 +6001,7 @@ struct AnimatedGraph: View {
                         .animation(.easeOut(duration: 0.6).delay(0.3), value: showGraph)
                     
                     ZStack {
-                        // Creativity line and fill
+                        // With Little Bites — more variety of solids over time (upper curve)
                         Path { path in
                             path.move(to: CGPoint(x: 24, y: 120))
                             path.addCurve(
@@ -6057,7 +6017,7 @@ struct AnimatedGraph: View {
                         .fill(Color.green.opacity(0.08))
                         .animation(.easeOut(duration: 1).delay(0.5), value: showGraph)
                         
-                        // Normal writing line
+                        // On your own — slower expansion of foods tried (lower / flatter curve)
                         Path { path in
                             path.move(to: CGPoint(x: 24, y: 120))
                             path.addCurve(
@@ -6070,7 +6030,7 @@ struct AnimatedGraph: View {
                         .stroke(Color.black, lineWidth: 1)
                         .animation(.easeOut(duration: 1), value: showGraph)
                         
-                        // Creativity line
+                        // With Little Bites — guided variety (upper curve)
                         Path { path in
                             path.move(to: CGPoint(x: 24, y: 120))
                             path.addCurve(
@@ -6083,23 +6043,30 @@ struct AnimatedGraph: View {
                         .stroke(Color.green, lineWidth: 1)
                         .animation(.easeOut(duration: 1).delay(0.5), value: showGraph)
                         
-                        // Normal writing text
-                        Text("Normal dieting")
+                        // Label for slower path
+                        Text("On your own")
                             .font(.system(size: 10))
                             .foregroundColor(Color.gray.opacity(0.95))
                             .offset(x: 40, y: 60)
                             .opacity(showGraph ? 1 : 0)
                             .animation(.easeOut(duration: 0.6).delay(0.6), value: showGraph)
                         
-                        // Month labels
+                        Text("With Little Bites")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundColor(Color.green.opacity(0.95))
+                            .offset(x: 150, y: 28)
+                            .opacity(showGraph ? 1 : 0)
+                            .animation(.easeOut(duration: 0.6).delay(0.75), value: showGraph)
+                        
+                        // Axis labels — first weeks vs half-year of solids
                         HStack {
-                            Text("Month 1")
+                            Text("Start")
                                 .font(.system(size: 15))
                                 .padding(.leading, 24)
                             
                             Spacer()
                             
-                            Text("Month 6")
+                            Text("6 months")
                                 .font(.system(size: 15))
                                 .padding(.trailing, 24)
                         }
@@ -6114,7 +6081,7 @@ struct AnimatedGraph: View {
             }
             
             // Bottom text
-            Text("80% of Cal AI users maintain their weight")
+            Text("Little Bites families tend to introduce more unique foods and textures by 6 months than when they wing it alone.")
                 .font(.system(size: 17))
                 .foregroundColor(.gray)
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -6221,7 +6188,7 @@ struct LongTermResultsView: View {
         .preferredColorScheme(.light)
         .onAppear {
             coordinator.currentStep = 3
-            MixpanelService.shared.trackQuestionViewed(questionTitle: "Cal AI creates long-term results", stepNumber: 3)
+            MixpanelService.shared.trackQuestionViewed(questionTitle: "Little Bites creates long-term results", stepNumber: 3)
         }
     }
 }
@@ -7210,7 +7177,7 @@ struct WeightLossSpeedView: View {
     }
 }
 
-// Cal AI Comparison View
+// Little Bites Comparison View
 struct CalAIComparisonView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var coordinator = OnboardingCoordinator()
@@ -7248,7 +7215,7 @@ struct CalAIComparisonView: View {
             
             // Title
             VStack(alignment: .leading, spacing: 8) {
-                Text("Lose twice as much weight with Cal AI vs on your own")
+                Text("Lose twice as much weight with Little Bites vs on your own")
                     .font(.system(size: 32, weight: .bold))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -7259,9 +7226,9 @@ struct CalAIComparisonView: View {
             
             // Comparison chart
             HStack(spacing: 40) {
-                // Without Cal AI
+                // Without Little Bites
                 VStack(spacing: 16) {
-                    Text("Without\nCal AI")
+                    Text("Without\nLittle Bites")
                         .font(.system(size: 17, weight: .medium))
                         .multilineTextAlignment(.center)
                         .foregroundColor(.black)
@@ -7278,9 +7245,9 @@ struct CalAIComparisonView: View {
                     .cornerRadius(16)
                 }
                 
-                // With Cal AI
+                // With Little Bites
                 VStack(spacing: 16) {
-                    Text("With\nCal AI")
+                    Text("With\nLittle Bites")
                         .font(.system(size: 17, weight: .medium))
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white)
@@ -7306,7 +7273,7 @@ struct CalAIComparisonView: View {
             }
             
             // Description
-            Text("Cal AI makes it easy and holds you accountable.")
+            Text("Little Bites makes it easy and holds you accountable.")
                 .font(.system(size: 17))
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
@@ -7689,7 +7656,7 @@ struct AccomplishmentView: View {
 // Onboarding Coordinator to manage flow and progress
 class OnboardingCoordinator: ObservableObject {
     @Published var currentStep: Int = 0
-    @Published var totalSteps: Int = 34 // Total number of onboarding steps (all Cal AI screens including custom plan and loading)
+    @Published var totalSteps: Int = 34 // Total number of onboarding steps (all Little Bites screens including custom plan and loading)
     
     // Track step timing for analytics
     private var stepStartTime: Date?
@@ -7699,7 +7666,7 @@ class OnboardingCoordinator: ObservableObject {
         "Choose your Gender",
         "How many meals do you eat out per week?", 
         "Have you tried other calorie tracking apps?", 
-        "Cal AI creates long-term results",
+        "Little Bites creates long-term results",
         "Height & weight",
         "When were you born?",
         "Do you currently work with a personal coach or nutritionist?",
@@ -7707,11 +7674,11 @@ class OnboardingCoordinator: ObservableObject {
         "What is your desired weight?",
         "Weight target result",
         "How fast do you want to reach your goal?",
-        "Cal AI comparison chart",
+        "Little Bites comparison chart",
         "What's stopping you from reaching your goals?",
         "Do you follow a specific diet?",
         "What would you like to accomplish?",
-        "You have great potential to crush your goal",
+        "You're set up to reach your feeding goals",
         "Thank you for trusting us",
         "Give us a rating",
         "Time to generate your custom plan",
@@ -7721,10 +7688,10 @@ class OnboardingCoordinator: ObservableObject {
         "What are you struggling with?",
         "Goal Confirmation",
         "AI Powered Nutrition Analysis",
-        "Cal AI Comparison",
+        "Little Bites Comparison",
         "What's stopping you from reaching your goals?",
         "What is your ultimate goal?",
-        "You have great potential to crush your goal",
+        "You're set up to reach your feeding goals",
         "Thank you for trusting us",
         "Give us rating",
         "Your Custom Plan",
@@ -9354,6 +9321,27 @@ class RecentFindsManager: ObservableObject {
 }
 
 
+// MARK: - Bundle hero (replaces legacy main.mp4)
+
+struct MainHeroImageView: View {
+    private var uiImage: UIImage? {
+        if let url = Bundle.main.url(forResource: "main", withExtension: "png") {
+            return UIImage(contentsOfFile: url.path)
+        }
+        return UIImage(named: "main")
+    }
+
+    var body: some View {
+        Group {
+            if let img = uiImage {
+                Image(uiImage: img)
+                    .resizable()
+                    .scaledToFit()
+            }
+        }
+    }
+}
+
 struct ContentView: View {
     @StateObject private var authManager = AuthenticationManager.shared
     @ObservedObject private var languageManager = LanguageManager.shared
@@ -9368,31 +9356,6 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 // Language Toggle - Fixed at top
                 HStack {
-                    #if DEBUG
-                    // Debug button — bypasses auth, onboarding, and paywall
-                    Button(action: {
-                        // Set onboarding first so the onChange(of: isLoggedIn)
-                        // handler doesn't re-trigger the onboarding flow
-                        authManager.hasCompletedOnboarding = true
-                        authManager.hasCompletedSubscription = true
-                        authManager.isLoggedIn = true
-                        print("🐛 DEBUG: Jumped straight to main app")
-                    }) {
-                        HStack(spacing: 5) {
-                            Image(systemName: "arrow.right.circle.fill")
-                                .font(.system(size: 13))
-                            Text("Debug")
-                                .font(.system(size: 13, weight: .bold))
-                        }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(Color(red: 0.2, green: 0.5, blue: 1.0))
-                        .clipShape(Capsule())
-                        .shadow(color: Color(red: 0.2, green: 0.5, blue: 1.0).opacity(0.4), radius: 6, x: 0, y: 3)
-                    }
-                    #endif
-                    
                     Spacer()
                     
                     // Language Picker Button (right side)
@@ -9423,8 +9386,14 @@ struct ContentView: View {
                 Text("Tracking\nmade easy")
                     .font(.system(size: 42, weight: .bold))
                     .multilineTextAlignment(.center)
-                    .padding(.bottom, 40)
-                
+                    .padding(.bottom, 24)
+
+                MainHeroImageView()
+                    .frame(maxHeight: min(420, UIScreen.main.bounds.height * 0.42))
+                    .padding(.horizontal, 12)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .shadow(color: Color.black.opacity(0.06), radius: 16, x: 0, y: 8)
+
                 Spacer()
                 
                 // Bottom Buttons
@@ -9558,7 +9527,7 @@ struct FirstTimeCongratsPopup: View {
                     .multilineTextAlignment(.center)
                 
                 // Description
-                Text("You've unlocked the Thrifty Map — your new shortcut to finding stores faster so you can profit with ease.")
+                Text("You've unlocked the Little Bites Map — a simple way to see progress and what's next on your baby's food journey.")
                     .font(.system(size: 16))
                     .foregroundColor(.black.opacity(0.8))
                     .multilineTextAlignment(.center)
@@ -10695,69 +10664,71 @@ struct TryForFreeView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header - removed restore button
-            HStack {
-                Spacer()
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 16)
+            HStack { Spacer() }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
             
-            // Main content
-            VStack(spacing: 0) {
-                // Title
-                Text(remoteConfig.hardPaywall ? "We want you to try\nCal AI for free" : "We want you to try\nCal AI")
-                    .font(.system(size: 28, weight: .bold))
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.black)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 20)
-                    .opacity(showContent ? 1 : 0)
-                    .animation(.easeOut(duration: 0.6).delay(0.3), value: showContent)
-                
-            }
-            
-            // Bottom section with button and payment text
-            VStack(spacing: 16) {
-                // Payment info (conditional based on paywall mode)
-                if remoteConfig.hardPaywall {
-                HStack(spacing: 12) {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(.black)
-                    
-                    Text("No Payment Due Now")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.black)
-                }
+            Text(remoteConfig.hardPaywall ? "We want you to try\nLittle Bites for free" : "We want you to try\nLittle Bites")
+                .font(.system(size: 28, weight: .bold))
+                .multilineTextAlignment(.center)
+                .foregroundColor(.black)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 12)
                 .opacity(showContent ? 1 : 0)
-                .animation(.easeOut(duration: 0.6).delay(1.0), value: showContent)
+                .animation(.easeOut(duration: 0.6).delay(0.2), value: showContent)
+            
+            Spacer()
+            
+            MainHeroImageView()
+                .frame(maxHeight: min(400, UIScreen.main.bounds.height * 0.42))
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 8)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .shadow(color: Color.black.opacity(0.06), radius: 12, x: 0, y: 4)
+                .opacity(showContent ? 1 : 0)
+                .animation(.easeOut(duration: 0.6).delay(0.45), value: showContent)
+            
+            Spacer()
+            
+            VStack(spacing: 16) {
+                if remoteConfig.hardPaywall {
+                    HStack(spacing: 12) {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.black)
+                        
+                        Text("No Payment Due Now")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.black)
+                    }
+                    .opacity(showContent ? 1 : 0)
+                    .animation(.easeOut(duration: 0.6).delay(0.65), value: showContent)
                 }
                 
-                // Try button (conditional text based on paywall mode)
                 NavigationLink(isActive: $navigateToSubscription) {
                     SubscriptionView()
                 } label: {
-                    Text(remoteConfig.hardPaywall ? "Try for $0.00" : "Try Thrifty")
+                    Text(remoteConfig.hardPaywall ? "Try for $0.00" : "Try Little Bites")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
                         .background(Color.black)
                         .clipShape(
-                        RoundedCorner(radius: 16, corners: [.topLeft, .topRight, .bottomLeft, .bottomRight])
-                    )
+                            RoundedCorner(radius: 16, corners: [.topLeft, .topRight, .bottomLeft, .bottomRight])
+                        )
                 }
                 .opacity(showContent ? 1 : 0)
-                .animation(.easeOut(duration: 0.6).delay(1.2), value: showContent)
+                .animation(.easeOut(duration: 0.6).delay(0.8), value: showContent)
                 
-                // Legal text (conditional based on paywall mode)
                 if !remoteConfig.hardPaywall {
-                Text("Just $12 per month (billed yearly)")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                    .opacity(showContent ? 1 : 0)
-                    .animation(.easeOut(duration: 0.6).delay(1.4), value: showContent)
+                    Text("$79.99/year · 7-day free trial for new subscribers")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .opacity(showContent ? 1 : 0)
+                        .animation(.easeOut(duration: 0.6).delay(0.95), value: showContent)
                 }
             }
             .padding(.bottom, 32)
@@ -10767,9 +10738,7 @@ struct TryForFreeView: View {
         .navigationBarHidden(true)
         .onAppear {
             showContent = true
-            // Track winback subscription view
             MixpanelService.shared.trackSubscriptionViewed(planType: "winback_offer")
-            // FacebookPixelService.shared.trackSubscriptionViewed(planType: "winback_offer")
         }
     }
 }
@@ -10806,7 +10775,8 @@ struct SubscriptionView: View {
                 // Bottom section with button and payment text
                 VStack(spacing: 12) {
                     if currentStep == 1 {
-                        // Step 1: No payment due now text
+                        // Step 1: trial checkout messaging only when hard paywall (real free trial flow)
+                        if remoteConfig.hardPaywall {
                         HStack(spacing: 12) {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 16, weight: .bold))
@@ -10818,6 +10788,7 @@ struct SubscriptionView: View {
                         }
                         .opacity(showContent ? 1 : 0)
                         .animation(.easeOut(duration: 0.6).delay(1.0), value: showContent)
+                        }
                         
                         // Step 1: Try button (conditional text based on paywall mode)
                         Button(action: {
@@ -10825,7 +10796,7 @@ struct SubscriptionView: View {
                                 currentStep = 2
                             }
                         }) {
-                            Text(remoteConfig.hardPaywall ? "Try For $0.00" : "Try Thrifty")
+                            Text(remoteConfig.hardPaywall ? "Try For $0.00" : "Try Little Bites")
                                 .font(.system(size: 17, weight: .semibold))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -10891,10 +10862,9 @@ struct SubscriptionView: View {
                                         }
                                         print("🎯 Looking for yearly subscription product...")
                                         
-                        // Find the subscription product (try yearly first for best value, then fallback to monthly)
-                        guard let subscription = storeManager.subscriptions.first(where: { 
-                            $0.id == "com.thrifty.thrifty.unlimited.yearly149" || 
-                            $0.id == "com.thrifty.thrifty.unlimited.monthly" 
+                        // Primary yearly subscription (7-day trial configured in App Store Connect)
+                        guard let subscription = storeManager.subscriptions.first(where: {
+                            $0.id == "com.bitetime.app.premium.yearly"
                         }) else {
                                             print("❌ Subscription product not found")
                                             errorMessage = "Subscription product not available. Please try again."
@@ -10975,20 +10945,35 @@ struct SubscriptionView: View {
                                             }
                                         case .pending:
                                             throw StoreError.pending
-                                                                case .userCancelled:
-                            // Show winback for both hard and soft paywall modes
-                            // The difference is only in the wheel animation (handled in WinbackView)
+                                        case .userCancelled:
+                            if remoteConfig.hardPaywall {
                                 showWinback = true
-                                isPurchasing = false // Reset loading state
+                            } else {
+                                // App Review / soft paywall: exit paywall without purchase (no winback gate)
+                                authManager.markSubscriptionCompleted()
+                                if !authManager.isLoggedIn {
+                                    navigateToCreateAccount = true
+                                } else {
+                                    dismiss()
+                                }
+                            }
+                            isPurchasing = false
                                         @unknown default:
                                             isPurchasing = false // Reset loading state
                                             throw StoreError.unknown
                                         }
                                                         } catch StoreError.userCancelled {
-                        // Show winback for both hard and soft paywall modes
-                        // The difference is only in the wheel animation (handled in WinbackView)
-                            showWinback = true
-                            isPurchasing = false // Reset loading state
+                            if remoteConfig.hardPaywall {
+                                showWinback = true
+                            } else {
+                                authManager.markSubscriptionCompleted()
+                                if !authManager.isLoggedIn {
+                                    navigateToCreateAccount = true
+                                } else {
+                                    dismiss()
+                                }
+                            }
+                            isPurchasing = false
                                     } catch StoreError.pending {
                                         errorMessage = "Purchase is pending"
                                         showError = true
@@ -11007,7 +10992,7 @@ struct SubscriptionView: View {
                                             .scaleEffect(0.8)
                                     }
                                     
-                                    Text(isPurchasing ? "Processing..." : "Start my 3-Day Free Trial")
+                                    Text(isPurchasing ? "Processing..." : (remoteConfig.hardPaywall ? "Start my 7-Day Free Trial" : "Subscribe — $79.99/year"))
                                     .font(.system(size: 17, weight: .semibold))
                                     .foregroundColor(.white)
                                 }
@@ -11024,7 +11009,7 @@ struct SubscriptionView: View {
                             .animation(.easeOut(duration: 0.6).delay(1.2), value: showContent)
                             
                             // Add pricing text under the button (always show)
-                            Text("Just $12 per month (billed yearly)")
+                            Text(remoteConfig.hardPaywall ? "$79.99/year after your free trial" : "$79.99/year · cancel anytime")
                                 .font(.system(size: 14))
                                 .foregroundColor(.gray)
                                 .opacity(showContent ? 1 : 0)
@@ -11096,8 +11081,7 @@ struct SubscriptionView: View {
                 await storeManager.loadProducts()
             }
             
-                    // Note: Both hard and soft paywall modes show winback when user cancels
-        // The difference is only in the wheel animation and pricing transparency
+                    // Winback after cancel is shown only when hardPaywall is true (see purchase handlers)
         }
         .onDisappear {
             // Clear paywall state when user leaves subscription screen by going back
@@ -11133,14 +11117,25 @@ struct SubscriptionView: View {
     
     private var step1Content: some View {
         VStack(spacing: 0) {
-            // Reminder text at the top
-            Text("We'll send you a reminder\nbefore your free trial ends")
+            // Reminder text at the top (trial flow) vs neutral copy for soft / App Review mode
+            Text(remoteConfig.hardPaywall ? "We'll send you a reminder\nbefore your free trial ends" : "You're almost done")
                 .font(.system(size: 24, weight: .medium))
                 .multilineTextAlignment(.center)
                 .foregroundColor(.black)
                 .padding(.top, 40)
                 .opacity(showContent ? 1 : 0)
                 .animation(.easeOut(duration: 0.6).delay(0.3), value: showContent)
+            
+            if !remoteConfig.hardPaywall {
+                Text("Next, you can subscribe ($79.99/year with a 7-day trial for new subscribers) or tap Skip to explore the app.")
+                    .font(.system(size: 15))
+                    .foregroundColor(.black.opacity(0.72))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .opacity(showContent ? 1 : 0)
+                    .animation(.easeOut(duration: 0.6).delay(0.45), value: showContent)
+            }
             
             Spacer()
             
@@ -11202,7 +11197,7 @@ struct SubscriptionView: View {
     private var step2Content: some View {
         VStack(spacing: 0) {
             // Title - positioned higher (conditional based on paywall mode)
-            Text(remoteConfig.hardPaywall ? "Start your 3-Day FREE trial to continue." : "Subscribe to Thrifty Unlimited")
+            Text(remoteConfig.hardPaywall ? "Start your 7-Day FREE trial to continue." : "Subscribe to Little Bites Premium")
                 .font(.system(size: 28, weight: .bold))
                 .multilineTextAlignment(.center)
                 .foregroundColor(.black)
@@ -11218,52 +11213,61 @@ struct SubscriptionView: View {
             Spacer()
                 .frame(height: 40)
             
-            // Proper timeline structure - each item is self-contained
-            VStack(spacing: 0) {
-                // Today item - top line (you can adjust lineHeight individually)
-                TimelineItem(
-                    icon: "lock.fill",
-                    iconColor: .green,
-                    title: "Today",
-                    description: "Unlock all the app's features and reach your goals faster with AI-powered nutrition tracking daily.",
-                    isLast: false,
-                    showContent: showContent,
-                    lineColor: .green,
-                    lineHeight: 100, // Adjust this for top line length
-                    iconTopPadding: 15,
-                    textTopPadding: 25,
-                    showLine: true
-                )
-                
-                // In 2 days item - middle line (you can adjust lineHeight individually)
-                TimelineItem(
-                    icon: "bell.fill",
-                    iconColor: .green,
-                    title: "In 2 days - Reminder",
-                    description: "We'll send you a reminder that your trial is ending soon.",
-                    isLast: false,
-                    showContent: showContent,
-                    lineColor: .green,
-                    lineHeight: 80, // Adjust this for middle line length
-                    iconTopPadding: 15,
-                    textTopPadding: 25,
-                    showLine: true
-                )
-                    
-                // In 3 days item - bottom line (you can adjust lineHeight individually)
-                TimelineItem(
-                    icon: "plus",
-                    iconColor: .gray,
-                    title: "In 3 days - Billing Starts",
-                    description: "You'll be charged, unless you cancel anytime before.",
-                    isLast: true,
-                    showContent: showContent,
-                    lineColor: .gray,
-                    lineHeight: 80, // Adjust this for bottom line length
-                    iconTopPadding: 15,
-                    textTopPadding: 25,
-                    showLine: true
-                )
+            // Timeline (7-day trial) or short summary (soft paywall)
+            Group {
+                if remoteConfig.hardPaywall {
+                    VStack(spacing: 0) {
+                        TimelineItem(
+                            icon: "lock.fill",
+                            iconColor: .green,
+                            title: "Today",
+                            description: "Unlock all the app's features and reach your goals faster with AI-powered nutrition tracking daily.",
+                            isLast: false,
+                            showContent: showContent,
+                            lineColor: .green,
+                            lineHeight: 100,
+                            iconTopPadding: 15,
+                            textTopPadding: 25,
+                            showLine: true
+                        )
+                        TimelineItem(
+                            icon: "bell.fill",
+                            iconColor: .green,
+                            title: "In 5 days - Reminder",
+                            description: "We'll remind you before your 7-day free trial ends.",
+                            isLast: false,
+                            showContent: showContent,
+                            lineColor: .green,
+                            lineHeight: 80,
+                            iconTopPadding: 15,
+                            textTopPadding: 25,
+                            showLine: true
+                        )
+                        TimelineItem(
+                            icon: "plus",
+                            iconColor: .gray,
+                            title: "In 7 days - Billing Starts",
+                            description: "You'll be charged $79.99/year unless you cancel anytime before.",
+                            isLast: true,
+                            showContent: showContent,
+                            lineColor: .gray,
+                            lineHeight: 80,
+                            iconTopPadding: 15,
+                            textTopPadding: 25,
+                            showLine: true
+                        )
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text("Little Bites Premium is $79.99/year for full access to meal planning, scanning, and every premium feature.")
+                            .font(.system(size: 16))
+                            .foregroundColor(.black.opacity(0.88))
+                        Text("Eligible subscribers get a 7-day free trial at checkout. Tap Skip (top left) to explore the app without subscribing.")
+                            .font(.system(size: 15))
+                            .foregroundColor(.black.opacity(0.72))
+                    }
+                    .padding(.horizontal, 8)
+                }
             }
             .padding(.horizontal, 24)
             .opacity(showContent ? 1 : 0)
@@ -11275,27 +11279,20 @@ struct SubscriptionView: View {
     
     private var headerView: some View {
         HStack {
-            // Skip button on the left
-            Button(action: {
-                // Skip paywall and let user into the app
-                // Onboarding data is preserved in OnboardingDataManager.shared
-                print("🚀 User skipped paywall - preserving onboarding data")
-                
-                // Mark subscription as completed to allow app access
-                authManager.markSubscriptionCompleted()
-                
-                // If user is not logged in, navigate to account creation
-                // This preserves the onboarding flow
-                if !authManager.isLoggedIn {
-                    navigateToCreateAccount = true
-                } else {
-                    // User is logged in, dismiss to main app
-                    dismiss()
+            if !remoteConfig.hardPaywall {
+                Button(action: {
+                    print("🚀 User skipped paywall (soft / review mode) — preserving onboarding data")
+                    authManager.markSubscriptionCompleted()
+                    if !authManager.isLoggedIn {
+                        navigateToCreateAccount = true
+                    } else {
+                        dismiss()
+                    }
+                }) {
+                    Text("Skip")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundColor(.blue)
                 }
-            }) {
-                Text("Skip")
-                    .font(.system(size: 17, weight: .medium))
-                    .foregroundColor(.blue)
             }
             
             Spacer()
@@ -11336,6 +11333,13 @@ struct OneTimeOfferView: View {
             // Header with X button
             HStack {
                 Button(action: {
+                    if !remoteConfig.hardPaywall {
+                        print("🚀 User closed winback (soft / review mode) — completing onboarding without purchase")
+                        authManager.markSubscriptionCompleted()
+                        if !authManager.isLoggedIn {
+                            navigateToCreateAccount = true
+                        }
+                    }
                     parentPresented = false
                 }) {
                     Image(systemName: "xmark")
@@ -11406,13 +11410,25 @@ struct OneTimeOfferView: View {
                     )
                 }
                 
-                // Pricing
-                HStack(spacing: 8) {
-                    Text("$149.00")
+                // Pricing: full yearly price vs winback (no free trial on winback)
+                HStack(spacing: 10) {
+                    Text("$79.99/yr")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.gray)
+                        .strikethrough()
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.gray)
+                    Text("$39.99/yr")
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.black)
-                        .strikethrough()
                 }
+                
+                Text("Winback yearly plan — no free trial. You are charged $39.99 when you subscribe.")
+                    .font(.system(size: 13))
+                    .foregroundColor(.black.opacity(0.72))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 20)
                 
                 // Warning text with black triangle and exclamation mark
                 HStack {
@@ -11431,10 +11447,7 @@ struct OneTimeOfferView: View {
                 }
                 .padding(.horizontal, 24)
                 
-                // Combined LOWEST PRICE EVER with yearly plan box - only show when NOT hardPaywall
-                if !remoteConfig.hardPaywall {
                 VStack(spacing: 0) {
-                    // LOWEST PRICE EVER header
                     Text("LOWEST PRICE EVER")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.white)
@@ -11443,18 +11456,17 @@ struct OneTimeOfferView: View {
                         .background(Color.black)
                         .cornerRadius(12, corners: [.topLeft, .topRight])
                     
-                    // Yearly plan box (seamlessly connected to header with no top corners)
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Yearly")
+                            Text("Yearly winback")
                                 .font(.system(size: 18, weight: .semibold))
                                 .foregroundColor(.black)
-                            Text("Winback Offer • $79.99")
+                            Text("$39.99/year · billed immediately")
                                 .font(.system(size: 14))
                                 .foregroundColor(.gray)
                         }
                         Spacer()
-                        Text("$79.99 /yearly")
+                        Text("$39.99")
                             .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.black)
                     }
@@ -11466,11 +11478,10 @@ struct OneTimeOfferView: View {
                         RoundedCorner(radius: 12, corners: [.bottomLeft, .bottomRight])
                             .stroke(Color.black, lineWidth: 2)
                     )
-                    .offset(y: -1) // Slight overlap to create seamless connection
+                    .offset(y: -1)
                 }
                 .padding(.horizontal, 24)
-                .padding(.top, 16) // Move closer to button
-                }
+                .padding(.top, 16)
                 
                 // CLAIM YOUR ONE TIME OFFER button
                 Button(action: {
@@ -11539,13 +11550,11 @@ struct OneTimeOfferView: View {
         }
         
         do {
-            // Find the winback product for one-time offer (try yearly winback first, then fallback to monthly)
-            guard let specialSubscription = storeManager.subscriptions.first(where: { 
-                $0.id == "com.thrifty.thrifty.unlimited.yearly.winback79" ||
-                $0.id == "com.thrifty.thrifty.unlimited.monthly.winback" 
+            guard let specialSubscription = storeManager.subscriptions.first(where: {
+                $0.id == "com.bitetime.app.premium.yearly.winback"
             }) else {
                 print("❌ Winback offer product not found in available products")
-                print("🔍 Looking for: com.thrifty.thrifty.unlimited.yearly.winback79 or monthly.winback")
+                print("🔍 Looking for: com.bitetime.app.premium.yearly.winback")
                 print("📦 Available products:")
                 for product in storeManager.subscriptions {
                     print("   - \(product.id)")
@@ -11562,10 +11571,10 @@ struct OneTimeOfferView: View {
             case .success(let verification):
                 switch verification {
                 case .verified(let transaction):
-                    print("✅ Successfully purchased $79.00 winback offer: \(transaction.productID)")
+                    print("✅ Successfully purchased winback yearly: \(transaction.productID)")
                     
-                    // Track successful winback subscription purchase
-                    MixpanelService.shared.trackSubscriptionPurchased(planType: "winback_79.00", price: 79.00)
+                    let winbackPrice = Double(truncating: specialSubscription.price as NSNumber)
+                    MixpanelService.shared.trackSubscriptionPurchased(planType: "winback_yearly", price: winbackPrice)
                     
                     // Record transaction for Apple consumption tracking
                     // COMMENTED OUT - ConsumptionRequestService not needed for calorie tracking app
@@ -11586,19 +11595,19 @@ struct OneTimeOfferView: View {
                     
                     // Send conversion to SKAdNetwork for Meta Ads attribution
                     if #available(iOS 15.4, *) {
-                        let conversionValue = 55  // $79 winback = high value
+                        let conversionValue = 55
                         SKAdNetwork.updatePostbackConversionValue(conversionValue) { error in
                             if let error = error {
                                 print("⚠️ SKAdNetwork error: \(error)")
                             } else {
-                                print("✅ SKAdNetwork conversion value updated: \(conversionValue) for winback offer ($79)")
+                                print("✅ SKAdNetwork conversion value updated: \(conversionValue) for winback (\(winbackPrice))")
                             }
                         }
                     } else if #available(iOS 14.0, *) {
                         // Fallback for iOS 14.0-15.3
                         let conversionValue = 55
                         SKAdNetwork.updateConversionValue(conversionValue)
-                        print("✅ SKAdNetwork conversion value updated: \(conversionValue) for winback offer ($79)")
+                        print("✅ SKAdNetwork conversion value updated: \(conversionValue) for winback offer")
                     }
                     
                     // Store purchase event to send AFTER user logs in (to capture email)
@@ -11624,7 +11633,15 @@ struct OneTimeOfferView: View {
                     showError = true
                 }
             case .userCancelled:
-                // User cancelled, no error needed
+                if !remoteConfig.hardPaywall {
+                    print("🚀 Winback purchase cancelled — soft mode: completing onboarding without purchase")
+                    authManager.markSubscriptionCompleted()
+                    isPresented = false
+                    parentPresented = false
+                    if !authManager.isLoggedIn {
+                        navigateToCreateAccount = true
+                    }
+                }
                 break
             case .pending:
                 errorMessage = "Purchase is pending approval"
@@ -11832,7 +11849,7 @@ class RemoteConfigManager: NSObject, ObservableObject {
     private func loadConfigFromFirestore() {
         // Ensure we only try to load once Firebase is configured
         guard FirebaseApp.app() != nil else {
-            print("⚠️ Firebase not configured yet, delaying config loag d...")
+            print("⚠️ Firebase not configured yet, delaying config load...")
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.loadConfigFromFirestore()
             }
@@ -11874,7 +11891,7 @@ class RemoteConfigManager: NSObject, ObservableObject {
                     self?.hardPaywall = hardPaywall
                     print("✅ Config loaded from Firestore - hardPaywall: \(hardPaywall)")
                 } else {
-                    print("ℹ️ No config found in Firestore, using default (hardPaywall: true)")
+                    print("ℹ️ No config found in Firestore, using default (hardPaywall: true). App Review: set app_config/paywall_config field hardpaywall = false")
                     print("🔍 Document exists: \(document?.exists ?? false)")
                     print("🔍 Document path: \(self?.configCollection ?? "")/paywall_config")
                     print("🔍 Expected field: \(self?.hardPaywallKey ?? "")")
@@ -11891,7 +11908,7 @@ class RemoteConfigManager: NSObject, ObservableObject {
                     print("   1. Go to Firebase Console → Firestore")
                     print("   2. Create collection: app_config")
                     print("   3. Create document: paywall_config")
-                    print("   4. Add field: hardpaywall (boolean) = true")
+                    print("   4. Add field: hardpaywall (boolean) = true for production, or false so reviewers can use Skip / cancel flows")
                 }
             }
         }
@@ -12124,7 +12141,7 @@ class AuthenticationManager: NSObject, ObservableObject {
         sendVerificationEmail.call([
             "email": email,
             "verificationCode": verificationCode,
-            "appName": "Thrifty"
+            "appName": "Little Bites"
         ]) { (result: HTTPSCallableResult?, error: Error?) in
             DispatchQueue.main.async {
                 self.isLoading = false
@@ -14820,19 +14837,6 @@ struct ProfileView: View {
     @State private var showDeleteAlert = false
     @State private var showPersonalDetailsSheet = false
     
-    // Debug function to reset app state
-    private func resetAppState() {
-        // Clear UserDefaults
-        if let bundleID = Bundle.main.bundleIdentifier {
-            UserDefaults.standard.removePersistentDomain(forName: bundleID)
-        }
-        
-        // Logout user
-        authManager.logOut()
-        
-        print("🔧 DEBUG: App state reset - returning to login screen")
-    }
-    
     // Function to send support email
     private func sendSupportEmail() {
         let email = AppConfiguration.supportEmail
@@ -15031,33 +15035,6 @@ struct ProfileView: View {
                 .cornerRadius(16)
                 .shadow(color: Color.black.opacity(0.04), radius: 12, x: 0, y: 4)
                 .padding(.horizontal, 20)
-                
-                // Debug Section
-                #if DEBUG
-                Text("debug")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(Color.orange.opacity(0.8))
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
-                
-                VStack(spacing: 0) {
-                    ProfileButton(
-                        icon: "arrow.counterclockwise.circle.fill",
-                        title: "🔧 Reset App & Logout (Debug)",
-                        action: {
-                            resetAppState()
-                        }
-                    )
-                }
-                .background(Color.orange.opacity(0.1))
-                .cornerRadius(16)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.orange.opacity(0.3), lineWidth: 2)
-                )
-                .padding(.horizontal, 20)
-                .padding(.bottom, 16)
-                #endif
             }
             .padding(.bottom, 120)
         }

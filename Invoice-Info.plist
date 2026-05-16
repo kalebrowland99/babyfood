@@ -4,7 +4,7 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>invoice.app.skadevents</string>
+		<string>com.bitetime.app.skadevents</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -32,10 +32,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.thrifty.thrifty</string>
+			<string>com.bitetime.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>thriftyapp</string>
+				<string>bitetimeapp</string>
 			</array>
 		</dict>
 	</array>
@@ -46,7 +46,7 @@
 	<key>FacebookClientToken</key>
 	<string>8a0ec108ef6a2b03fda69aa18cb5afa8</string>
 	<key>FacebookDisplayName</key>
-	<string>Thrifty</string>
+	<string>Little Bites</string>
 	<key>GIDClientID</key>
 	<string>848927857490-p0q8js362qouu72lkgnas50h4ls4gt4p.apps.googleusercontent.com</string>
 	<key>OPENAI_USE_CLOUD_FUNCTIONS</key>

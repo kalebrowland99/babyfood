@@ -8,11 +8,11 @@
 	</array>
 	<key>com.apple.developer.in-app-payments</key>
 	<array>
-		<string>merchant.com.thrifty.thrifty</string>
+		<string>merchant.com.bitetime.app</string>
 	</array>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.thrifty.thrifty</string>
+		<string>$(AppIdentifierPrefix)com.bitetime.app</string>
 	</array>
 </dict>
 </plist>

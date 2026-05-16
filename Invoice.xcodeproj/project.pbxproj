@@ -52,6 +52,7 @@
 		F8B4ABCA2E79BE8500906F4B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F8B4ABC92E79BE8500906F4B /* FirebaseMessaging */; };
 		F8B4ABCC2E79BFFA00906F4B /* FirebaseMessagingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8B4ABCB2E79BFFA00906F4B /* FirebaseMessagingDelegate.swift */; };
 		F8BCEA032E33512A00197AD1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8BCEA022E33512A00197AD1 /* UIKit.framework */; platformFilter = ios; };
+		F8F691E92E7678250073C7F7 /* main.png in Resources */ = {isa = PBXBuildFile; fileRef = F8F691E82E7678250073C7F7 /* main.png */; };
 		F8F691EB2E7680F20073C7F7 /* ai-summary.png in Resources */ = {isa = PBXBuildFile; fileRef = F8F691EA2E7680F20073C7F7 /* ai-summary.png */; };
 		F8F691ED2E788B260073C7F7 /* ConfettiSwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F691EC2E788B250073C7F7 /* ConfettiSwiftUI.swift */; };
 		F8FE60EA2E75DBE800014042 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = F8FE60E92E75DBE800014042 /* Mixpanel */; };
@@ -120,6 +121,7 @@
 		F896B5472E8D8C6F001C63D8 /* RefundRequestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefundRequestService.swift; sourceTree = "<group>"; };
 		F8B4ABCB2E79BFFA00906F4B /* FirebaseMessagingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseMessagingDelegate.swift; sourceTree = "<group>"; };
 		F8BCEA022E33512A00197AD1 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		F8F691E82E7678250073C7F7 /* main.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = main.png; sourceTree = "<group>"; };
 		F8F691EA2E7680F20073C7F7 /* ai-summary.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ai-summary.png"; sourceTree = "<group>"; };
 		F8F691EC2E788B250073C7F7 /* ConfettiSwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiSwiftUI.swift; sourceTree = "<group>"; };
 		F8FE60F22E75DD7C00014042 /* MixpanelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixpanelService.swift; sourceTree = "<group>"; };
@@ -243,7 +245,7 @@
 				F8B4ABCB2E79BFFA00906F4B /* FirebaseMessagingDelegate.swift */,
 				F8F691EC2E788B250073C7F7 /* ConfettiSwiftUI.swift */,
 				F8F691EA2E7680F20073C7F7 /* ai-summary.png */,
-				F8F691E82E7678250073C7F7 /* main.mp4 */,
+				F8F691E82E7678250073C7F7 /* main.png */,
 				F8FE610F2E75E42000014042 /* APIKeys.swift.template */,
 				F8FE61102E75E42000014042 /* FirebaseStorageService.swift */,
 				F8FE61112E75E42000014042 /* SerpAPIConfig.swift */,
@@ -449,7 +451,7 @@
 				3421BC562F1A8EDC002594DF /* Localizable.xcstrings in Resources */,
 				F8FE61152E75E42000014042 /* APIKeys.swift.template in Resources */,
 				B442D08FCB4A4DFC92A6DD51009C7AE6 /* Pleasent Poetry.mp3 in Resources */,
-				F8F691E92E7678250073C7F7 /* main.mp4 in Resources */,
+				F8F691E92E7678250073C7F7 /* main.png in Resources */,
 				1ABB18876684410BB4745E37B4F97AAD /* Run It Up.mp3 in Resources */,
 				F8F691EB2E7680F20073C7F7 /* ai-summary.png in Resources */,
 				5E3796BBEF284349845E6CB22F3AC65A /* Yacht Parties.mp3 in Resources */,
@@ -669,9 +671,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Invoice-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Cal AI";
+				INFOPLIST_KEY_CFBundleDisplayName = "Little Bites";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Cal AI needs camera access to scan food items and track your nutrition.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Little Bites needs camera access to scan food items and track your nutrition.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Invoice uses your location to provide location-based services.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Invoice may use microphone access for audio features.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Invoice needs photo library access to attach photos to your invoices.";
@@ -690,7 +692,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
 				MARKETING_VERSION = 1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = calai.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bitetime.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
@@ -719,9 +721,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Invoice-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Cal AI";
+				INFOPLIST_KEY_CFBundleDisplayName = "Little Bites";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Cal AI needs camera access to scan food items and track your nutrition.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Little Bites needs camera access to scan food items and track your nutrition.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Invoice uses your location to provide location-based services.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Invoice may use microphone access for audio features.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Invoice needs photo library access to attach photos to your invoices.";
@@ -740,7 +742,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
 				MARKETING_VERSION = 1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = calai.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bitetime.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
@@ -763,7 +765,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = calai.app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bitetime.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -785,7 +787,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = calai.app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bitetime.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -806,7 +808,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = invoice.app.uitests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bitetime.app.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -827,7 +829,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MACOSX_DEPLOYMENT_TARGET = 12.7;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = invoice.app.uitests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bitetime.app.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";

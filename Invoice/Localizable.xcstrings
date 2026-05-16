@@ -57,54 +57,54 @@
     "·" : {
 
     },
-    "\"Cal AI takes the guesswork out of nutrition. I can finally reach my fitness goals without spending hours tracking every meal. It's a game changer!\"" : {
+    "\"I used to get overwhelmed by calorie counting. Little Bites makes it simple—I know exactly what to eat and what to avoid. It makes healthy eating fun again!\"" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "\"Cal AI takes the guesswork out of nutrition. I can finally reach my fitness goals without spending hours tracking every meal. It's a game changer!\""
+            "value" : "\"I used to get overwhelmed by calorie counting. Little Bites makes it simple—I know exactly what to eat and what to avoid. It makes healthy eating fun again!\""
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "\"Cal AI elimina las conjeturas en materia de nutrición. Finalmente puedo alcanzar mis objetivos de acondicionamiento físico sin pasar horas siguiendo cada comida. ¡Es un punto de inflexión!\""
+            "value" : "\"Solía ​​abrumarme contando calorías. Little Bites lo hace simple: sé exactamente qué comer y qué evitar. ¡Hace que comer saludable vuelva a ser divertido!\""
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "«Cal AI избавляет от догадок о питании. Наконец-то я могу достичь своих целей в фитнесе, не тратя часы на отслеживание каждого приема пищи. Это меняет правила игры!»"
-          }
-        }
-      }
-    },
-    "\"I used to get overwhelmed by calorie counting. Cal AI makes it simple—I know exactly what to eat and what to avoid. It makes healthy eating fun again!\"" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "\"I used to get overwhelmed by calorie counting. Cal AI makes it simple—I know exactly what to eat and what to avoid. It makes healthy eating fun again!\""
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "\"Solía ​​abrumarme contando calorías. Cal AI lo hace simple: sé exactamente qué comer y qué evitar. ¡Hace que comer saludable vuelva a ser divertido!\""
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "«Раньше меня утомлял подсчет калорий. Cal AI упрощает задачу — я точно знаю, что есть, а чего следует избегать. Здоровое питание снова становится увлекательным!»"
+            "value" : "«Раньше меня утомлял подсчет калорий. Little Bites упрощает задачу — я точно знаю, что есть, а чего следует избегать. Здоровое питание снова становится увлекательным!»"
           }
         }
       }
     },
     "\"I was terrified about introducing allergenic foods. This app guided me step by step and my son now eats everything. No more picky eating anxiety!\"" : {
 
+    },
+    "\"Little Bites takes the guesswork out of nutrition. I can finally reach my fitness goals without spending hours tracking every meal. It's a game changer!\"" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"Little Bites takes the guesswork out of nutrition. I can finally reach my fitness goals without spending hours tracking every meal. It's a game changer!\""
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"Little Bites elimina las conjeturas en materia de nutrición. Finalmente puedo alcanzar mis objetivos de acondicionamiento físico sin pasar horas siguiendo cada comida. ¡Es un punto de inflexión!\""
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«Little Bites избавляет от догадок о питании. Наконец-то я могу достичь своих целей в фитнесе, не тратя часы на отслеживание каждого приема пищи. Это меняет правила игры!»"
+          }
+        }
+      }
     },
     "\"This app took all the guesswork out of starting solids. My daughter is 7 months and has already tried 15 new foods! I feel so much more confident as a mom.\"" : {
 
@@ -419,6 +419,7 @@
       }
     },
     "• AI-powered item identification and analysis" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -441,6 +442,7 @@
       }
     },
     "• Brand and product recognition technology" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -461,6 +463,9 @@
           }
         }
       }
+    },
+    "• Food logging, allergens, and texture milestones in one place" : {
+
     },
     "• Maintain the security of your account" : {
       "localizations" : {
@@ -484,7 +489,17 @@
         }
       }
     },
+    "• Meal ideas and introduction schedules aligned with your baby's age" : {
+
+    },
+    "• Optional photo or barcode capture where supported" : {
+
+    },
+    "• Personalized tips based on your onboarding answers" : {
+
+    },
     "• Price estimation and market value assessment" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -573,6 +588,7 @@
       }
     },
     "• Thrift store item evaluation tools" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -594,7 +610,11 @@
         }
       }
     },
+    "• Tools to stay consistent as you expand your baby's menu" : {
+
+    },
     "• Unlimited item scanning capabilities" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -638,31 +658,31 @@
         }
       }
     },
-    "+ 1000 Cal AI users" : {
+    "+ 1000 happy moms" : {
+
+    },
+    "+ 1000 Little Bites users" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ 1000 Cal AI users"
+            "value" : "+ 1000 Little Bites users"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ 1000 usuarios de Cal AI"
+            "value" : "+ 1000 usuarios de Little Bites"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+ 1000 пользователей Cal AI"
+            "value" : "+ 1000 пользователей Little Bites"
           }
         }
       }
-    },
-    "+ 1000 happy moms" : {
-
     },
     "+%lld" : {
       "extractionState" : "stale",
@@ -733,6 +753,9 @@
         }
       }
     },
+    "~1 month" : {
+
+    },
     "✨" : {
 
     },
@@ -763,24 +786,24 @@
     "💧" : {
 
     },
-    "📧 By email: helpthrifty@gmail.com" : {
+    "📧 By email: babyfoodhelp@gmail.com" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "📧 By email: helpthrifty@gmail.com"
+            "value" : "📧 By email: babyfoodhelp@gmail.com"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "📧 Por correo electrónico: helpthrifty@gmail.com"
+            "value" : "📧 Por correo electrónico: babyfoodhelp@gmail.com"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "📧 По электронной почте: helpthrifty@gmail.com."
+            "value" : "📧 По электронной почте: babyfoodhelp@gmail.com."
           }
         }
       }
@@ -809,7 +832,17 @@
     "🛒 Shopping List" : {
 
     },
+    "$39.99" : {
+
+    },
+    "$39.99/year · billed immediately" : {
+
+    },
+    "$39.99/yr" : {
+
+    },
     "$79.99 /yearly" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -831,7 +864,16 @@
         }
       }
     },
-    "$149.00" : {
+    "$79.99/year · 7-day free trial for new subscribers" : {
+
+    },
+    "$79.99/year · cancel anytime" : {
+
+    },
+    "$79.99/year after your free trial" : {
+
+    },
+    "$79.99/yr" : {
 
     },
     "1" : {
@@ -860,6 +902,7 @@
       }
     },
     "3 Days" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -884,7 +927,11 @@
     "5 foods" : {
 
     },
+    "6 months" : {
+
+    },
     "7 Days" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -959,6 +1006,7 @@
       }
     },
     "30 Days" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1002,24 +1050,25 @@
         }
       }
     },
-    "80% of Cal AI users maintain their weight" : {
+    "80% of Little Bites users maintain their weight" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "80% of Cal AI users maintain their weight"
+            "value" : "80% of Little Bites users maintain their weight"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El 80% de los usuarios de Cal AI mantienen su peso"
+            "value" : "El 80% de los usuarios de Little Bites mantienen su peso"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "80% пользователей Cal AI поддерживают свой вес"
+            "value" : "80% пользователей Little Bites поддерживают свой вес"
           }
         }
       }
@@ -1027,47 +1076,47 @@
     "90% of parents say their baby accepts new foods more willingly when introduced gradually with a plan." : {
 
     },
-    "90% of users say that the change is obvious after using Cal AI and it is not easy to rebound." : {
+    "90% of users say that the change is obvious after using Little Bites and it is not easy to rebound." : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "90% of users say that the change is obvious after using Cal AI and it is not easy to rebound."
+            "value" : "90% of users say that the change is obvious after using Little Bites and it is not easy to rebound."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El 90% de los usuarios dice que el cambio es obvio después de usar Cal AI y que no es fácil recuperarse."
+            "value" : "El 90% de los usuarios dice que el cambio es obvio después de usar Little Bites y que no es fácil recuperarse."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "90% пользователей говорят, что изменения очевидны после использования Cal AI, и восстановить их непросто."
+            "value" : "90% пользователей говорят, что изменения очевидны после использования Little Bites, и восстановить их непросто."
           }
         }
       }
     },
-    "90% of users say that the change is obvious after using Thrifty." : {
+    "90% of users say that the change is obvious after using Little Bites." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "90% of users say that the change is obvious after using Thrifty."
+            "value" : "90% of users say that the change is obvious after using Little Bites."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El 90% de los usuarios dice que el cambio es evidente después de usar Thrifty."
+            "value" : "El 90% de los usuarios dice que el cambio es evidente después de usar Little Bites."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "90% пользователей говорят, что изменения очевидны после использования Thrifty."
+            "value" : "90% пользователей говорят, что изменения очевидны после использования Little Bites."
           }
         }
       }
@@ -1394,6 +1443,7 @@
       }
     },
     "AI Powered Fake Detection" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1414,9 +1464,6 @@
           }
         }
       }
-    },
-    "AI Settings" : {
-
     },
     "ai_nutrition_analysis" : {
       "extractionState" : "manual",
@@ -1442,6 +1489,9 @@
       }
     },
     "AI-generated, age-appropriate weekly plans" : {
+
+    },
+    "AI-powered feeding insights" : {
 
     },
     "All creative data is processed on the device and is not stored on our servers. You may delete your lyric data at any time." : {
@@ -1488,24 +1538,24 @@
         }
       }
     },
-    "All technology, software, and AI models used in our Service remain the exclusive property of Thrifty and are protected by copyright and other intellectual property laws." : {
+    "All technology, software, and AI models used in our Service remain the exclusive property of Little Bites and are protected by copyright and other intellectual property laws." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "All technology, software, and AI models used in our Service remain the exclusive property of Thrifty and are protected by copyright and other intellectual property laws."
+            "value" : "All technology, software, and AI models used in our Service remain the exclusive property of Little Bites and are protected by copyright and other intellectual property laws."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toda la tecnología, el software y los modelos de IA utilizados en nuestro Servicio siguen siendo propiedad exclusiva de Thrifty y están protegidos por derechos de autor y otras leyes de propiedad intelectual."
+            "value" : "Toda la tecnología, el software y los modelos de IA utilizados en nuestro Servicio siguen siendo propiedad exclusiva de Little Bites y están protegidos por derechos de autor y otras leyes de propiedad intelectual."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Все технологии, программное обеспечение и модели искусственного интеллекта, используемые в нашем Сервисе, остаются исключительной собственностью Thrifty и защищены авторским правом и другими законами об интеллектуальной собственности."
+            "value" : "Все технологии, программное обеспечение и модели искусственного интеллекта, используемые в нашем Сервисе, остаются исключительной собственностью Little Bites и защищены авторским правом и другими законами об интеллектуальной собственности."
           }
         }
       }
@@ -1695,27 +1745,24 @@
         }
       }
     },
-    "API key saved" : {
-
-    },
-    "Application refers to any application or software program provided by the Company, including but not limited to thrifty.ai, and any other applications or software programs provided by the Company." : {
+    "Application refers to any application or software program provided by the Company, including but not limited to the Little Bites application, and any other applications or software programs provided by the Company." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Application refers to any application or software program provided by the Company, including but not limited to thrifty.ai, and any other applications or software programs provided by the Company."
+            "value" : "Application refers to any application or software program provided by the Company, including but not limited to the Little Bites application, and any other applications or software programs provided by the Company."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aplicación se refiere a cualquier aplicación o programa de software proporcionado por la Compañía, incluido, entre otros, thrifty.ai y cualquier otra aplicación o programa de software proporcionado por la Compañía."
+            "value" : "Aplicación se refiere a cualquier aplicación o programa de software proporcionado por la Compañía, incluido, entre otros, the Little Bites application y cualquier otra aplicación o programa de software proporcionado por la Compañía."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "«Приложение» означает любое приложение или программное обеспечение, предоставляемое Компанией, включая, помимо прочего, thrifty.ai и любые другие приложения или программное обеспечение, предоставляемые Компанией."
+            "value" : "«Приложение» означает любое приложение или программное обеспечение, предоставляемое Компанией, включая, помимо прочего, the Little Bites application и любые другие приложения или программное обеспечение, предоставляемые Компанией."
           }
         }
       }
@@ -1819,6 +1866,9 @@
     "Babies introduced to more\nfoods early are far less\npicky eaters" : {
 
     },
+    "Babies often need many gentle tries with each food. When families log meals with Little Bites, variety of safe solids and textures tends to grow steadily after the first week or two." : {
+
+    },
     "Baby Food AI" : {
 
     },
@@ -1848,24 +1898,25 @@
         }
       }
     },
-    "Based on Cal AI's historical data, weight loss is usually delayed at first, but after 7 days, you can burn fat like crazy!" : {
+    "Based on Little Bites' historical data, weight loss is usually delayed at first, but after 7 days, you can burn fat like crazy!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Based on Cal AI's historical data, weight loss is usually delayed at first, but after 7 days, you can burn fat like crazy!"
+            "value" : "Based on Little Bites' historical data, weight loss is usually delayed at first, but after 7 days, you can burn fat like crazy!"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Según los datos históricos de Cal AI, la pérdida de peso generalmente se retrasa al principio, pero después de 7 días, ¡puedes quemar grasa como loco!"
+            "value" : "Según los datos históricos de Little Bites, la pérdida de peso generalmente se retrasa al principio, pero después de 7 días, ¡puedes quemar grasa como loco!"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Судя по историческим данным Cal AI, похудение обычно сначала задерживается, но уже через 7 дней вы сможете сжигать жир как сумасшедший!"
+            "value" : "Судя по историческим данным Little Bites, похудение обычно сначала задерживается, но уже через 7 дней вы сможете сжигать жир как сумасшедший!"
           }
         }
       }
@@ -2061,24 +2112,24 @@
         }
       }
     },
-    "By continuing you agree to Thrifty's" : {
+    "By continuing you agree to Little Bites'" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "By continuing you agree to Thrifty's"
+            "value" : "By continuing you agree to Little Bites'"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al continuar, aceptas las condiciones de Thrifty."
+            "value" : "Al continuar, aceptas las condiciones de Little Bites."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Продолжая, вы соглашаетесь с Thrifty's"
+            "value" : "Продолжая, вы соглашаетесь с Little Bites'"
           }
         }
       }
@@ -2108,110 +2159,19 @@
     "cal" : {
 
     },
-    "Cal AI" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cal AI"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cal AI"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Кал ИИ"
-          }
-        }
-      }
-    },
-    "Cal AI creates\nlong-term results" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cal AI creates\nlong-term results"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cal AI crea\nresultados a largo plazo"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Калифорнийский ИИ создает\nдолгосрочные результаты"
-          }
-        }
-      }
-    },
-    "Cal AI makes it easy and holds you accountable." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cal AI makes it easy and holds you accountable."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cal AI lo hace fácil y lo hace responsable."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cal AI упрощает задачу и требует от вас ответственности."
-          }
-        }
-      }
-    },
-    "Cal AI was made for\npeople like you" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cal AI was made for\npeople like you"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cal AI fue creado para\ngente como tu"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cal AI был создан для\nтакие люди, как ты"
-          }
-        }
-      }
-    },
     "cal_ai" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal AI"
+            "value" : "Little Bites"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal AI"
+            "value" : "Little Bites"
           }
         },
         "ru" : {
@@ -2228,13 +2188,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal AI Comparison"
+            "value" : "Little Bites Comparison"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparación de Cal AI"
+            "value" : "Comparación de Little Bites"
           }
         },
         "ru" : {
@@ -2251,19 +2211,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal AI comparison chart"
+            "value" : "Little Bites comparison chart"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuadro comparativo de Cal AI"
+            "value" : "Cuadro comparativo de Little Bites"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Сравнительная таблица Cal AI"
+            "value" : "Сравнительная таблица Little Bites"
           }
         }
       }
@@ -2274,19 +2234,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal AI creates long-term results"
+            "value" : "Little Bites creates long-term results"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal AI crea resultados a largo plazo"
+            "value" : "Little Bites crea resultados a largo plazo"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal AI создает долгосрочные результаты"
+            "value" : "Little Bites создает долгосрочные результаты"
           }
         }
       }
@@ -2297,19 +2257,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal AI makes it easy and holds you accountable."
+            "value" : "Little Bites makes it easy and holds you accountable."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal AI lo hace fácil y lo hace responsable."
+            "value" : "Little Bites lo hace fácil y lo hace responsable."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cal AI упрощает задачу и требует от вас ответственности."
+            "value" : "Little Bites упрощает задачу и требует от вас ответственности."
           }
         }
       }
@@ -3321,6 +3281,7 @@
       }
     },
     "Debug" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3796,6 +3757,9 @@
           }
         }
       }
+    },
+    "Eligible subscribers get a 7-day free trial at checkout. Tap Skip (top left) to explore the app without subscribing." : {
+
     },
     "email" : {
       "extractionState" : "manual",
@@ -4300,6 +4264,9 @@
         }
       }
     },
+    "Foods & textures offered" : {
+
+    },
     "Foods logged today" : {
 
     },
@@ -4604,9 +4571,6 @@
           }
         }
       }
-    },
-    "Get your key at platform.openai.com → API Keys" : {
-
     },
     "get_best_scan" : {
       "extractionState" : "manual",
@@ -5307,24 +5271,24 @@
         }
       }
     },
-    "In no event shall Thrifty be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service." : {
+    "In no event shall Little Bites be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In no event shall Thrifty be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service."
+            "value" : "In no event shall Little Bites be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the Service."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En ningún caso Thrifty será responsable de ningún daño indirecto, incidental, especial, consecuente o punitivo que resulte de su uso del Servicio."
+            "value" : "En ningún caso Little Bites será responsable de ningún daño indirecto, incidental, especial, consecuente o punitivo que resulte de su uso del Servicio."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ни при каких обстоятельствах Thrifty не несет ответственности за любые косвенные, случайные, особые, косвенные или штрафные убытки, возникшие в результате использования вами Сервиса."
+            "value" : "Ни при каких обстоятельствах Little Bites не несет ответственности за любые косвенные, случайные, особые, косвенные или штрафные убытки, возникшие в результате использования вами Сервиса."
           }
         }
       }
@@ -5519,6 +5483,7 @@
 
     },
     "Just $12 per month (billed yearly)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5842,7 +5807,152 @@
       }
     },
     "Little Bites" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кал ИИ"
+          }
+        }
+      }
+    },
+    "Little Bites analyzes stitching, logos, and materials. We flag possible fakes automatically." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites analyzes stitching, logos, and materials. We flag possible fakes automatically."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites analiza costuras, logotipos y materiales. Marcamos posibles falsificaciones automáticamente."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites анализирует строчки, логотипы и материалы. Мы автоматически отмечаем возможные фейки."
+          }
+        }
+      }
+    },
+    "Little Bites creates\nlong-term results" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites creates\nlong-term results"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites crea\nresultados a largo plazo"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Калифорнийский ИИ создает\nдолгосрочные результаты"
+          }
+        }
+      }
+    },
+    "Little Bites families tend to introduce more unique foods and textures by 6 months than when they wing it alone." : {
 
+    },
+    "Little Bites helps you plan baby meals, log first foods, and track nutrition with guidance tailored to your family." : {
+
+    },
+    "Little Bites makes it easy and holds you accountable." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites makes it easy and holds you accountable."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites lo hace fácil y lo hace responsable."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites упрощает задачу и требует от вас ответственности."
+          }
+        }
+      }
+    },
+    "Little Bites Premium is $79.99/year for full access to meal planning, scanning, and every premium feature." : {
+
+    },
+    "Little Bites provides an AI-powered item scanning platform that helps users identify and evaluate thrift store items using artificial intelligence technology." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites provides an AI-powered item scanning platform that helps users identify and evaluate thrift store items using artificial intelligence technology."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites proporciona una plataforma de escaneo de artículos basada en inteligencia artificial que ayuda a los usuarios a identificar y evaluar artículos de tiendas de segunda mano utilizando tecnología de inteligencia artificial."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites предоставляет платформу сканирования предметов на базе искусственного интеллекта, которая помогает пользователям идентифицировать и оценивать товары в комиссионных магазинах с использованием технологии искусственного интеллекта."
+          }
+        }
+      }
+    },
+    "Little Bites turns your answers into a clear plan—so you know what to offer next and how to stay on track." : {
+
+    },
+    "Little Bites was made for\npeople like you" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites was made for\npeople like you"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites fue creado para\ngente como tu"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Bites был создан для\nтакие люди, как ты"
+          }
+        }
+      }
     },
     "loading" : {
       "comment" : "Loading indicator text",
@@ -5956,24 +6066,24 @@
         }
       }
     },
-    "Lose twice as much weight with Cal AI vs on your own" : {
+    "Lose twice as much weight with Little Bites vs on your own" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lose twice as much weight with Cal AI vs on your own"
+            "value" : "Lose twice as much weight with Little Bites vs on your own"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pierde el doble de peso con Cal AI que por tu cuenta"
+            "value" : "Pierde el doble de peso con Little Bites que por tu cuenta"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Похудейте в два раза больше с помощью Cal AI, чем в одиночку."
+            "value" : "Похудейте в два раза больше с помощью Little Bites, чем в одиночку."
           }
         }
       }
@@ -5984,19 +6094,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lose twice as much weight with Cal AI vs on your own"
+            "value" : "Lose twice as much weight with Little Bites vs on your own"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pierde el doble de peso con Cal AI que por tu cuenta"
+            "value" : "Pierde el doble de peso con Little Bites que por tu cuenta"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Похудейте в два раза больше с помощью Cal AI, чем в одиночку."
+            "value" : "Похудейте в два раза больше с помощью Little Bites, чем в одиночку."
           }
         }
       }
@@ -6256,6 +6366,7 @@
       }
     },
     "Month 1" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6278,6 +6389,7 @@
       }
     },
     "Month 6" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6345,6 +6457,9 @@
         }
       }
     },
+    "New foods & textures over time" : {
+
+    },
     "New foods per week" : {
 
     },
@@ -6369,6 +6484,9 @@
           }
         }
       }
+    },
+    "Next, you can subscribe ($79.99/year with a 7-day trial for new subscribers) or tap Skip to explore the app." : {
+
     },
     "no" : {
       "extractionState" : "manual",
@@ -6550,6 +6668,7 @@
       }
     },
     "Normal dieting" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6990,6 +7109,9 @@
         }
       }
     },
+    "On your own" : {
+
+    },
     "ONE TIME OFFER" : {
       "localizations" : {
         "en" : {
@@ -7034,9 +7156,6 @@
           }
         }
       }
-    },
-    "OpenAI API Key" : {
-
     },
     "Or take a photo of the food label" : {
       "extractionState" : "stale",
@@ -7152,6 +7271,7 @@
       }
     },
     "Our Service is provided \"as is\" without warranties of any kind. We strive to provide accurate and helpful AI-generated item analysis, but cannot guarantee the absolute accuracy of price estimates, brand identification, or market value assessments." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7172,6 +7292,9 @@
           }
         }
       }
+    },
+    "Our Service is provided \"as is\" without warranties of any kind. We strive to provide accurate and helpful guidance, but cannot guarantee medical outcomes; always consult your pediatrician for feeding or health decisions." : {
+
     },
     "Our Service may contain links to other websites that are not operated by Us..." : {
       "localizations" : {
@@ -7759,19 +7882,19 @@
         }
       }
     },
-    "Reach your goals twice as fast with\nCal AI vs on your own" : {
+    "Reach your goals twice as fast with\nLittle Bites vs on your own" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reach your goals twice as fast with\nCal AI vs on your own"
+            "value" : "Reach your goals twice as fast with\nLittle Bites vs on your own"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alcanza tus objetivos dos veces más rápido con\nCal AI versus por tu cuenta"
+            "value" : "Alcanza tus objetivos dos veces más rápido con\nLittle Bites versus por tu cuenta"
           }
         },
         "ru" : {
@@ -8354,9 +8477,6 @@
         }
       }
     },
-    "Save Key" : {
-
-    },
     "Scan food" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -8817,9 +8937,6 @@
         }
       }
     },
-    "sk-..." : {
-
-    },
     "skip" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8937,6 +9054,9 @@
         }
       }
     },
+    "Start" : {
+
+    },
     "START" : {
       "localizations" : {
         "en" : {
@@ -8960,6 +9080,7 @@
       }
     },
     "Start my 3-Day Free Trial" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8981,7 +9102,11 @@
         }
       }
     },
+    "Start my 7-Day Free Trial" : {
+
+    },
     "Start your 3-Day FREE trial to continue." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9002,6 +9127,9 @@
           }
         }
       }
+    },
+    "Start your 7-Day FREE trial to continue." : {
+
     },
     "start_weight_label" : {
       "extractionState" : "manual",
@@ -9048,24 +9176,27 @@
         }
       }
     },
-    "Subscribe to Thrifty Unlimited" : {
+    "Subscribe — $79.99/year" : {
+
+    },
+    "Subscribe to Little Bites Premium" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Subscribe to Thrifty Unlimited"
+            "value" : "Subscribe to Little Bites Premium"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suscríbete a Thrifty Unlimited"
+            "value" : "Suscríbete a Little Bites Premium"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Подпишитесь на Thrifty Unlimited"
+            "value" : "Подпишитесь на Little Bites Premium"
           }
         }
       }
@@ -9722,50 +9853,6 @@
         }
       }
     },
-    "Thrifty analyzes stitching, logos, and materials. We flag possible fakes automatically." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thrifty analyzes stitching, logos, and materials. We flag possible fakes automatically."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thrifty analiza costuras, logotipos y materiales. Marcamos posibles falsificaciones automáticamente."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thrifty анализирует строчки, логотипы и материалы. Мы автоматически отмечаем возможные фейки."
-          }
-        }
-      }
-    },
-    "Thrifty provides an AI-powered item scanning platform that helps users identify and evaluate thrift store items using artificial intelligence technology." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thrifty provides an AI-powered item scanning platform that helps users identify and evaluate thrift store items using artificial intelligence technology."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thrifty proporciona una plataforma de escaneo de artículos basada en inteligencia artificial que ayuda a los usuarios a identificar y evaluar artículos de tiendas de segunda mano utilizando tecnología de inteligencia artificial."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thrifty предоставляет платформу сканирования предметов на базе искусственного интеллекта, которая помогает пользователям идентифицировать и оценивать товары в комиссионных магазинах с использованием технологии искусственного интеллекта."
-          }
-        }
-      }
-    },
     "Time to generate your custom plan!" : {
       "localizations" : {
         "en" : {
@@ -10152,12 +10239,12 @@
         }
       }
     },
-    "Try Thrifty" : {
+    "Try Little Bites" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Try Thrifty"
+            "value" : "Try Little Bites"
           }
         },
         "es" : {
@@ -10387,19 +10474,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You've unlocked the Thrifty Map — your new shortcut to finding stores faster so you can profit with ease."
+            "value" : "You've unlocked the Little Bites Map — your new shortcut to finding stores faster so you can profit with ease."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has desbloqueado Thrifty Map, tu nuevo atajo para encontrar tiendas más rápido y poder obtener ganancias con facilidad."
+            "value" : "Has desbloqueado Little Bites Map, tu nuevo atajo para encontrar tiendas más rápido y poder obtener ganancias con facilidad."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Вы разблокировали карту Thrifty — новый ярлык для более быстрого поиска магазинов и удобного получения прибыли."
+            "value" : "Вы разблокировали карту Little Bites — новый ярлык для более быстрого поиска магазинов и удобного получения прибыли."
           }
         }
       }
@@ -10763,18 +10850,18 @@
         }
       }
     },
-    "We want you to try\nCal AI" : {
+    "We want you to try\nLittle Bites" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We want you to try\nCal AI"
+            "value" : "We want you to try\nLittle Bites"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "queremos que lo pruebes\nCal AI"
+            "value" : "queremos que lo pruebes\nLittle Bites"
           }
         },
         "ru" : {
@@ -10785,18 +10872,18 @@
         }
       }
     },
-    "We want you to try\nCal AI for free" : {
+    "We want you to try\nLittle Bites for free" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We want you to try\nCal AI for free"
+            "value" : "We want you to try\nLittle Bites for free"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "queremos que lo pruebes\nCal AI gratis"
+            "value" : "queremos que lo pruebes\nLittle Bites gratis"
           }
         },
         "ru" : {
@@ -10845,6 +10932,12 @@
 
     },
     "We'll use this to recommend age-appropriate portions." : {
+
+    },
+    "Week 1" : {
+
+    },
+    "Week 2" : {
 
     },
     "Weight" : {
@@ -11099,18 +11192,18 @@
         }
       }
     },
-    "Welcome to Thrifty. These Terms of Service govern your use of our application and services." : {
+    "Welcome to Little Bites. These Terms of Service govern your use of our application and services." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Welcome to Thrifty. These Terms of Service govern your use of our application and services."
+            "value" : "Welcome to Little Bites. These Terms of Service govern your use of our application and services."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bienvenido a Thrifty. Estos Términos de servicio rigen el uso que usted haga de nuestra aplicación y servicios."
+            "value" : "Bienvenido a Little Bites. Estos Términos de servicio rigen el uso que usted haga de nuestra aplicación y servicios."
           }
         },
         "ru" : {
@@ -11566,6 +11659,7 @@
       }
     },
     "Winback Offer • $79.99" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11587,18 +11681,21 @@
         }
       }
     },
-    "With\nCal AI" : {
+    "Winback yearly plan — no free trial. You are charged $39.99 when you subscribe." : {
+
+    },
+    "With\nLittle Bites" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "With\nCal AI"
+            "value" : "With\nLittle Bites"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "con\nCal AI"
+            "value" : "con\nLittle Bites"
           }
         },
         "ru" : {
@@ -11612,19 +11709,22 @@
     "With\nour plan" : {
 
     },
+    "With Little Bites" : {
+
+    },
     "with_calai" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "With\nCal AI"
+            "value" : "With\nLittle Bites"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "con\nCal AI"
+            "value" : "con\nLittle Bites"
           }
         },
         "ru" : {
@@ -11638,18 +11738,18 @@
     "Without\na plan" : {
 
     },
-    "Without\nCal AI" : {
+    "Without\nLittle Bites" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Without\nCal AI"
+            "value" : "Without\nLittle Bites"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "sin\nCal AI"
+            "value" : "sin\nLittle Bites"
           }
         },
         "ru" : {
@@ -11666,13 +11766,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Without\nCal AI"
+            "value" : "Without\nLittle Bites"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "sin\nCal AI"
+            "value" : "sin\nLittle Bites"
           }
         },
         "ru" : {
@@ -11753,6 +11853,7 @@
       }
     },
     "Yearly" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11773,6 +11874,9 @@
           }
         }
       }
+    },
+    "Yearly winback" : {
+
     },
     "yes" : {
       "extractionState" : "manual",
@@ -11846,6 +11950,7 @@
       }
     },
     "You have great potential to crush your goal" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11912,6 +12017,7 @@
       }
     },
     "You retain ownership of any images and content you upload to our Service. However, you grant us a limited license to process and analyze your content to provide item identification, pricing analysis, and improve our services." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11932,6 +12038,9 @@
           }
         }
       }
+    },
+    "You retain ownership of any images and content you upload to our Service. However, you grant us a limited license to process and analyze your content to provide meal planning, food logging, nutrition insights, and to improve our services." : {
+
     },
     "You will reach your goal in " : {
       "extractionState" : "stale",
@@ -11979,24 +12088,34 @@
         }
       }
     },
-    "You've unlocked the Thrifty Map — your new shortcut to finding stores faster so you can profit with ease." : {
+    "You're almost done" : {
+
+    },
+    "You're set up to reach your feeding goals" : {
+
+    },
+    "You've unlocked the Little Bites Map — a simple way to see progress and what's next on your baby's food journey." : {
+
+    },
+    "You've unlocked the Little Bites Map — your new shortcut to finding stores faster so you can profit with ease." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You've unlocked the Thrifty Map — your new shortcut to finding stores faster so you can profit with ease."
+            "value" : "You've unlocked the Little Bites Map — your new shortcut to finding stores faster so you can profit with ease."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has desbloqueado Thrifty Map, tu nuevo atajo para encontrar tiendas más rápido y poder obtener ganancias con facilidad."
+            "value" : "Has desbloqueado Little Bites Map, tu nuevo atajo para encontrar tiendas más rápido y poder obtener ganancias con facilidad."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Вы разблокировали карту Thrifty — новый ярлык для более быстрого поиска магазинов и удобного получения прибыли."
+            "value" : "Вы разблокировали карту Little Bites — новый ярлык для более быстрого поиска магазинов и удобного получения прибыли."
           }
         }
       }
@@ -12167,6 +12286,7 @@
       }
     },
     "Your weight" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12211,6 +12331,7 @@
       }
     },
     "Your weight transition" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

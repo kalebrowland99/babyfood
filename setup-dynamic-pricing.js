@@ -28,14 +28,21 @@ async function setupDynamicPricing() {
     if (doc.exists) {
       console.log('📄 Document already exists. Updating with new pricing fields...\n');
       
-      // Update existing document with new fields
-      await configRef.update({
+      const existing = doc.data() || {};
+      const patch = {
         '9dollarpricing': false, // Start with false (use old pricing)
         newmainpriceid: 'price_1Sa0MTEAO5iISw7SKeYn77np', // $9.99 main
         newwinbackpriceid: 'price_1Sa0NTEAO5iISw7Sic1M8dOC', // $4.99 winback
         removetrial: false, // Start with false (include 3-day trial)
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
-      });
+      };
+      // iOS reads `hardpaywall` for StoreKit paywall / App Review bypass (false = Skip + no winback gate)
+      if (existing.hardpaywall === undefined) {
+        patch.hardpaywall = true;
+        console.log('ℹ️  paywall_config was missing hardpaywall — set to true. Use false during App Store review.\n');
+      }
+      
+      await configRef.update(patch);
       
       console.log('✅ Updated existing configuration with new pricing fields\n');
     } else {
@@ -71,6 +78,7 @@ async function setupDynamicPricing() {
     console.log('📊 Current Configuration:');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('Dynamic Pricing Settings:');
+    console.log(`  • hardpaywall: ${data.hardpaywall} (${data.hardpaywall === false ? 'review-friendly StoreKit paywall' : 'production paywall'})`);
     console.log(`  • Use $9 Pricing: ${data['9dollarpricing']}`);
     console.log(`  • New Main Price ID: ${data.newmainpriceid} ($9.99)`);
     console.log(`  • New Winback Price ID: ${data.newwinbackpriceid} ($4.99)`);
@@ -89,6 +97,7 @@ async function setupDynamicPricing() {
     console.log('  1. Go to Firebase Console → Firestore Database');
     console.log('  2. Navigate to app_config/paywall_config');
     console.log('  3. Edit fields:');
+    console.log('     - hardpaywall: false for App Review (Skip + cancel exits onboarding); true for production');
     console.log('     - 9dollarpricing: switch pricing tiers');
     console.log('     - removetrial: toggle trial period');
     console.log('  4. Save changes (takes effect immediately!)\n');

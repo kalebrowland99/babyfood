@@ -66,6 +66,9 @@ struct InvoiceApp: App {
                 // Force complete app refresh when language changes
                 appRefreshID = UUID()
             }
+            .onAppear {
+                RemoteConfigManager.shared.initializeConfig()
+            }
             .onOpenURL { url in
                 // Handle Google Sign In URL callback
                 GIDSignIn.sharedInstance.handle(url)

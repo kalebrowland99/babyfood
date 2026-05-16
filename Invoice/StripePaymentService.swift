@@ -47,7 +47,7 @@ class StripePaymentService: ObservableObject {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
         let osVersion = UIDevice.current.systemVersion
         let deviceModel = UIDevice.current.model
-        let userAgent = "Thrifty/\(appVersion) (iOS \(osVersion); \(deviceModel))"
+        let userAgent = "Little Bites/\(appVersion) (iOS \(osVersion); \(deviceModel))"
         request.setValue(userAgent, forHTTPHeaderField: "User-Agent")
         
         // Request body
@@ -105,17 +105,17 @@ class StripePaymentService: ObservableObject {
         
         // Create PaymentSheet configuration (no customer - simpler flow)
         var configuration = PaymentSheet.Configuration()
-        configuration.merchantDisplayName = "Thrifty: Scan & Flip Items"
+        configuration.merchantDisplayName = "Little Bites"
         
         // Enable 3D Secure for additional authentication and reduced fraud declines
         configuration.allowsDelayedPaymentMethods = true
         
         // Only allow card and Apple Pay
-        configuration.returnURL = "thriftyapp://stripe-return"
+        configuration.returnURL = "bitetimeapp://stripe-return"
         
         // Enable Apple Pay (automatically provides billing info from Apple Wallet)
         configuration.applePay = .init(
-            merchantId: "merchant.com.thrifty.thrifty",
+            merchantId: "merchant.com.bitetime.app",
             merchantCountryCode: "US"
         )
         
