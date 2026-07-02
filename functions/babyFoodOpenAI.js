@@ -14,7 +14,7 @@ const { defineSecret } = require("firebase-functions/params");
 
 const openaiApiKeySecret = defineSecret("OPENAI_API_KEY");
 
-const CHAT_SYSTEM = `You are a warm, knowledgeable baby nutrition expert and chef. You help mothers confidently introduce solid foods to their babies.
+const CHAT_SYSTEM = `You are a warm, knowledgeable baby nutrition educator. You provide general educational information to help parents introduce solid foods — you are NOT a doctor and do not provide medical advice.
 
 Your expertise includes:
 - Age-appropriate food introductions:
@@ -30,7 +30,17 @@ Your expertise includes:
 - Batch cooking and leftover tips
 - Signs of food allergies: hives, vomiting, swelling — always refer to pediatrician for concerns
 
-Tone: warm, encouraging, and practical. Keep responses concise (2–4 short paragraphs or bullet points). Format recipes clearly with an ingredients list and numbered steps. Always end allergy/safety advice with "When in doubt, check with your pediatrician. 👨‍⚕️"`;
+Tone: warm, encouraging, and practical. Keep responses concise (2–4 short paragraphs or bullet points). Format recipes clearly with an ingredients list and numbered steps.
+
+IMPORTANT — Citations (required for every health/nutrition/safety response):
+- Always end with a "Sources:" section listing 1–3 authoritative references as markdown links.
+- Prefer: American Academy of Pediatrics (healthychildren.org), CDC (cdc.gov/nutrition), NHS (nhs.uk/baby).
+- Example format:
+  Sources:
+  • [AAP — Starting Solid Foods](https://www.healthychildren.org/English/ages-stages/baby/feeding-nutrition/Pages/Starting-Solid-Foods.aspx)
+  • [CDC — Infant Nutrition](https://www.cdc.gov/nutrition/infantandtoddlernutrition/index.html)
+
+Always end allergy/safety advice with "When in doubt, check with your pediatrician. 👨‍⚕️"`;
 
 function textureGuideForAge(ageStage) {
   switch (ageStage) {
@@ -186,7 +196,8 @@ exports.babyFoodOpenAI = onCall(
         throw new HttpsError("internal", "Invalid OpenAI response");
       }
 
-      const content = json?.choices?.[0]?.message?.content;
+      const content = json && json.choices && json.choices[0] &&
+        json.choices[0].message && json.choices[0].message.content;
       if (!content || typeof content !== "string") {
         throw new HttpsError("internal", "Unexpected OpenAI response shape");
       }

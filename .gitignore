@@ -104,3 +104,6 @@ extra-pics/*.mp4
 *.bak4
 *.bak5
 Invoice/ContentView.swift.bak*
+
+# Local deploy tooling (Node + firebase-tools)
+.tools/

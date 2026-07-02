@@ -2504,6 +2504,102 @@ struct TermsAndPrivacyText: View {
 
 }
 
+// Required subscription disclosure + legal links (Guideline 3.1.2)
+struct SubscriptionLegalFooter: View {
+    @Binding var showingPrivacyPolicy: Bool
+    let subscriptionTitle: String
+    let subscriptionLength: String
+    let subscriptionPrice: String
+    var showRestorePurchases: Bool = true
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Text("\(subscriptionTitle) · \(subscriptionLength) · \(subscriptionPrice)")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.black.opacity(0.75))
+                .multilineTextAlignment(.center)
+
+            Text("Payment is charged to your Apple ID at confirmation. Subscription auto-renews unless canceled at least 24 hours before the end of the current period. Manage or cancel in Settings → Apple ID → Subscriptions.")
+                .font(.system(size: 11))
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+
+            TermsAndPrivacyText(showingPrivacyPolicy: $showingPrivacyPolicy)
+                .padding(.top, 4)
+
+            if showRestorePurchases {
+                Button(action: {
+                    Task {
+                        do {
+                            try await AppStore.sync()
+                        } catch {
+                            print("Failed to restore purchases: \(error)")
+                        }
+                    }
+                }) {
+                    Text("Restore Purchases")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.blue)
+                        .underline()
+                }
+                .padding(.top, 4)
+            }
+        }
+    }
+}
+
+// Persistent health disclaimer for AI features (Guideline 1.4.1)
+struct HealthDisclaimerBanner: View {
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "info.circle.fill")
+                .font(.system(size: 14))
+                .foregroundColor(.blue)
+            Text("For general educational purposes only — not medical advice. Always consult your pediatrician for feeding decisions.")
+                .font(.system(size: 11))
+                .foregroundColor(.black.opacity(0.7))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.blue.opacity(0.08))
+        .cornerRadius(10)
+    }
+}
+
+struct HealthSourcesLinksView: View {
+    private let sources: [(name: String, url: String)] = [
+        ("AAP — Starting Solid Foods", "https://www.healthychildren.org/English/ages-stages/baby/feeding-nutrition/Pages/Starting-Solid-Foods.aspx"),
+        ("CDC — Infant & Toddler Nutrition", "https://www.cdc.gov/nutrition/infantandtoddlernutrition/index.html"),
+        ("NHS — Weaning & Feeding", "https://www.nhs.uk/baby/weaning-and-feeding/")
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Trusted sources")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(.gray)
+            ForEach(sources, id: \.url) { source in
+                if let url = URL(string: source.url) {
+                    Link(destination: url) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "link")
+                                .font(.system(size: 10))
+                            Text(source.name)
+                                .font(.system(size: 11))
+                                .underline()
+                        }
+                        .foregroundColor(.blue)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+    }
+}
+
 // Terms of Service View
 struct TermsOfServiceView: View {
     @Environment(\.dismiss) var dismiss
@@ -4683,14 +4779,14 @@ struct RatingView: View {
     }
 }
 
-// Update CompletionView to navigate to RatingView
+// CompletionView navigates directly to CustomPlanView (rating removed per App Store Guideline 5.6.3)
 struct CompletionView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var coordinator = OnboardingCoordinator()
     @StateObject private var remoteConfig = RemoteConfigManager.shared
     @State private var showContent = false
     @State private var confettiTrigger = 0
-    @State private var navigateToRating = false
+    @State private var navigateToCustomPlan = false
     
     var body: some View {
         ZStack {
@@ -4760,8 +4856,8 @@ struct CompletionView: View {
                 Spacer()
                 
                 // Continue button
-                NavigationLink(isActive: $navigateToRating) {
-                    RatingView()
+                NavigationLink(isActive: $navigateToCustomPlan) {
+                    CustomPlanView()
                         .horizontalSlideTransition()
                 } label: {
                     Text("Continue")
@@ -4776,7 +4872,7 @@ struct CompletionView: View {
                     let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                     impactFeedback.impactOccurred()
                     coordinator.nextStep()
-                    navigateToRating = true
+                    navigateToCustomPlan = true
                 })
                 .padding(.bottom, 40)
             }
@@ -10119,7 +10215,7 @@ struct CustomPlanSummaryView: View {
                             .font(.system(size: 18, weight: .semibold))
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Text("Based on your answers, your baby is on track to try 50+ nutritious foods in their first year. Early exposure to diverse flavors and textures reduces picky eating by up to 3x and supports lifelong healthy habits.")
+                        Text("Based on your answers, your baby is on track to try 50+ nutritious foods in their first year. Early exposure to diverse flavors and textures may support healthy eating habits — always follow guidance from your pediatrician.")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -10660,6 +10756,7 @@ struct TryForFreeView: View {
     @Environment(\.dismiss) var dismiss
     @State private var showContent = false
     @State private var navigateToSubscription = false
+    @State private var showingPrivacyPolicy = false
     @StateObject private var remoteConfig = RemoteConfigManager.shared
     
     var body: some View {
@@ -10722,7 +10819,17 @@ struct TryForFreeView: View {
                 }
                 .opacity(showContent ? 1 : 0)
                 .animation(.easeOut(duration: 0.6).delay(0.8), value: showContent)
-                
+
+                SubscriptionLegalFooter(
+                    showingPrivacyPolicy: $showingPrivacyPolicy,
+                    subscriptionTitle: "Little Bites Premium",
+                    subscriptionLength: "1 year",
+                    subscriptionPrice: remoteConfig.hardPaywall ? "$79.99/year after 7-day free trial" : "$79.99/year",
+                    showRestorePurchases: false
+                )
+                .opacity(showContent ? 1 : 0)
+                .animation(.easeOut(duration: 0.6).delay(0.9), value: showContent)
+
                 if !remoteConfig.hardPaywall {
                     Text("$79.99/year · 7-day free trial for new subscribers")
                         .font(.system(size: 14))
@@ -10736,6 +10843,11 @@ struct TryForFreeView: View {
         .padding(.horizontal, 24)
         .background(Color.white)
         .navigationBarHidden(true)
+        .sheet(isPresented: $showingPrivacyPolicy) {
+            PrivacyPolicyView()
+                .presentationDetents([.height(UIScreen.main.bounds.height * 0.8)])
+                .presentationDragIndicator(.visible)
+        }
         .onAppear {
             showContent = true
             MixpanelService.shared.trackSubscriptionViewed(planType: "winback_offer")
@@ -10810,14 +10922,12 @@ struct SubscriptionView: View {
                         .opacity(showContent ? 1 : 0)
                         .animation(.easeOut(duration: 0.6).delay(1.2), value: showContent)
                         
-                        // Step 1: Legal text (conditional based on paywall mode)
-                        if !remoteConfig.hardPaywall {
-                            Text("Annual subscription")
+                        // Step 1: Legal text
+                        Text("Little Bites Premium — Annual Subscription")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                             .opacity(showContent ? 1 : 0)
                             .animation(.easeOut(duration: 0.6).delay(1.4), value: showContent)
-                        }
                         
                         // No commitment text for Step 1
                         Text("No commitment, cancel anytime.")
@@ -10825,6 +10935,16 @@ struct SubscriptionView: View {
                             .foregroundColor(.gray)
                             .opacity(showContent ? 1 : 0)
                             .animation(.easeOut(duration: 0.6).delay(1.6), value: showContent)
+
+                        SubscriptionLegalFooter(
+                            showingPrivacyPolicy: $showingPrivacyPolicy,
+                            subscriptionTitle: "Little Bites Premium",
+                            subscriptionLength: "1 year",
+                            subscriptionPrice: remoteConfig.hardPaywall ? "$79.99/year after 7-day free trial" : "$79.99/year"
+                        )
+                        .padding(.top, 8)
+                        .opacity(showContent ? 1 : 0)
+                        .animation(.easeOut(duration: 0.6).delay(1.8), value: showContent)
                     } else {
                         // Step 2: Payment info (conditional based on paywall mode)
                         if remoteConfig.hardPaywall {
@@ -11017,44 +11137,15 @@ struct SubscriptionView: View {
                     }
                     
                     if currentStep == 2 {
-                        // Legal text for step 2 (conditional based on paywall mode)
-                        if !remoteConfig.hardPaywall {
-                            Text("Annual subscription")
-                            .font(.system(size: 14))
-                            .foregroundColor(.gray)
-                            .opacity(showContent ? 1 : 0)
-                            .animation(.easeOut(duration: 0.6).delay(1.4), value: showContent)
-                        }
-                        
-                        // Terms & Privacy links for soft paywall compliance
-                        if !remoteConfig.hardPaywall {
-                            TermsAndPrivacyText(showingPrivacyPolicy: $showingPrivacyPolicy)
-                                .padding(.top, 16)
-                                .opacity(showContent ? 1 : 0)
-                                .animation(.easeOut(duration: 0.6).delay(1.6), value: showContent)
-                            
-                            // Restore Purchases Button (required by Apple)
-                            Button(action: {
-                                Task {
-                                    do {
-                                        try await AppStore.sync()
-                                        print("✅ Purchases restored successfully")
-                                    } catch {
-                                        print("❌ Failed to restore purchases: \(error)")
-                                        errorMessage = "Failed to restore purchases"
-                                        showError = true
-                                    }
-                                }
-                            }) {
-                                Text("Restore Purchases")
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.blue)
-                                    .underline()
-                            }
-                            .padding(.top, 12)
-                            .opacity(showContent ? 1 : 0)
-                            .animation(.easeOut(duration: 0.6).delay(1.8), value: showContent)
-                        }
+                        SubscriptionLegalFooter(
+                            showingPrivacyPolicy: $showingPrivacyPolicy,
+                            subscriptionTitle: "Little Bites Premium",
+                            subscriptionLength: "1 year",
+                            subscriptionPrice: remoteConfig.hardPaywall ? "$79.99/year after 7-day free trial" : "$79.99/year"
+                        )
+                        .padding(.top, 16)
+                        .opacity(showContent ? 1 : 0)
+                        .animation(.easeOut(duration: 0.6).delay(1.6), value: showContent)
                     }
                 }
                 .padding(.bottom, 40)
@@ -11327,6 +11418,7 @@ struct OneTimeOfferView: View {
     @State private var showError = false
     @State private var errorMessage = ""
     @State private var navigateToCreateAccount = false
+    @State private var showingPrivacyPolicy = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -11511,7 +11603,16 @@ struct OneTimeOfferView: View {
                 }
                 .disabled(storeManager.subscriptions.isEmpty || isPurchasing)
                 .padding(.horizontal, 24)
-                .padding(.top, 24) // Reduced spacing from top elements
+                .padding(.top, 24)
+
+                SubscriptionLegalFooter(
+                    showingPrivacyPolicy: $showingPrivacyPolicy,
+                    subscriptionTitle: "Little Bites Premium (Winback)",
+                    subscriptionLength: "1 year",
+                    subscriptionPrice: "$39.99/year"
+                )
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
                 
                 // Retry button if products failed to load
                 if storeManager.subscriptions.isEmpty {
@@ -11537,6 +11638,11 @@ struct OneTimeOfferView: View {
         }
         .fullScreenCover(isPresented: $navigateToCreateAccount) {
             CreateAccountView()
+        }
+        .sheet(isPresented: $showingPrivacyPolicy) {
+            PrivacyPolicyView()
+                .presentationDetents([.height(UIScreen.main.bounds.height * 0.8)])
+                .presentationDragIndicator(.visible)
         }
     }
     
@@ -13216,6 +13322,12 @@ struct MealPlanView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
 
+                    HealthDisclaimerBanner()
+                        .padding(.horizontal, 20)
+
+                    HealthSourcesLinksView()
+                        .padding(.bottom, 4)
+
                     // Age stage selector
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Baby's age stage")
@@ -13624,7 +13736,7 @@ class BabyFoodChatService: ObservableObject {
     @Published var isLoading = false
 
     private let systemPrompt = """
-    You are a warm, knowledgeable baby nutrition expert and chef. You help mothers confidently introduce solid foods to their babies.
+    You are a warm, knowledgeable baby nutrition educator. You provide general educational information to help parents introduce solid foods — you are NOT a doctor and do not provide medical advice.
 
     Your expertise includes:
     - Age-appropriate food introductions:
@@ -13640,7 +13752,17 @@ class BabyFoodChatService: ObservableObject {
     - Batch cooking and leftover tips
     - Signs of food allergies: hives, vomiting, swelling — always refer to pediatrician for concerns
 
-    Tone: warm, encouraging, and practical. Keep responses concise (2–4 short paragraphs or bullet points). Format recipes clearly with an ingredients list and numbered steps. Always end allergy/safety advice with "When in doubt, check with your pediatrician. 👨‍⚕️"
+    Tone: warm, encouraging, and practical. Keep responses concise (2–4 short paragraphs or bullet points). Format recipes clearly with an ingredients list and numbered steps.
+
+    IMPORTANT — Citations (required for every health/nutrition/safety response):
+    - Always end with a "Sources:" section listing 1–3 authoritative references as markdown links.
+    - Prefer: American Academy of Pediatrics (healthychildren.org), CDC (cdc.gov/nutrition), NHS (nhs.uk/baby).
+    - Example format:
+      Sources:
+      • [AAP — Starting Solid Foods](https://www.healthychildren.org/English/ages-stages/baby/feeding-nutrition/Pages/Starting-Solid-Foods.aspx)
+      • [CDC — Infant Nutrition](https://www.cdc.gov/nutrition/infantandtoddlernutrition/index.html)
+
+    Always end allergy/safety advice with "When in doubt, check with your pediatrician. 👨‍⚕️"
     """
 
     func sendMessage(_ content: String) async {
@@ -13713,7 +13835,7 @@ struct BabyFoodChatView: View {
                             Text("Baby Food AI")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.black)
-                            Text("Your personal nutrition guide")
+                            Text("Educational nutrition info — not medical advice")
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                         }
@@ -13733,7 +13855,13 @@ struct BabyFoodChatView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
-                .padding(.bottom, 12)
+                .padding(.bottom, 8)
+
+                HealthDisclaimerBanner()
+                    .padding(.horizontal, 20)
+
+                HealthSourcesLinksView()
+                    .padding(.bottom, 4)
 
                 // Message area
                 ScrollViewReader { proxy in
@@ -13868,14 +13996,23 @@ struct ChatBubbleView: View {
                     .background(Color(red: 0.15, green: 0.15, blue: 0.20))
                     .clipShape(RoundedRectangle(cornerRadius: 18))
             } else {
-                Text(message.content)
-                    .font(.system(size: 15))
-                    .foregroundColor(.black)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
-                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
+                VStack(alignment: .leading, spacing: 0) {
+                    if let attributed = try? AttributedString(markdown: message.content) {
+                        Text(attributed)
+                            .font(.system(size: 15))
+                            .foregroundColor(.black)
+                            .tint(.blue)
+                    } else {
+                        Text(message.content)
+                            .font(.system(size: 15))
+                            .foregroundColor(.black)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
                 Spacer(minLength: 64)
             }
         }
@@ -14836,6 +14973,8 @@ struct ProfileView: View {
     @State private var showLogoutAlert = false
     @State private var showDeleteAlert = false
     @State private var showPersonalDetailsSheet = false
+    @State private var showingPrivacyPolicy = false
+    @State private var showingTermsOfService = false
     
     // Function to send support email
     private func sendSupportEmail() {
@@ -14986,7 +15125,7 @@ struct ProfileView: View {
                     ProfileButton(
                         icon: "doc.text",
                         title: NSLocalizedString("Terms of Service", comment: ""),
-                        action: {}
+                        action: { showingTermsOfService = true }
                     )
                     
                     Divider()
@@ -14995,7 +15134,7 @@ struct ProfileView: View {
                     ProfileButton(
                         icon: "checkmark.shield",
                         title: NSLocalizedString("Privacy Policy", comment: ""),
-                        action: {}
+                        action: { showingPrivacyPolicy = true }
                     )
                 }
                 .background(Color.white)
@@ -15063,6 +15202,16 @@ struct ProfileView: View {
         .sheet(isPresented: $showPersonalDetailsSheet) {
             PersonalDetailsView()
                 .environmentObject(authManager)
+        }
+        .sheet(isPresented: $showingPrivacyPolicy) {
+            PrivacyPolicyView()
+                .presentationDetents([.height(UIScreen.main.bounds.height * 0.8)])
+                .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showingTermsOfService) {
+            TermsOfServiceView()
+                .presentationDetents([.height(UIScreen.main.bounds.height * 0.8)])
+                .presentationDragIndicator(.visible)
         }
         }
     }
